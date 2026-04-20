@@ -1,0 +1,17 @@
+.overlay {
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	background-color: var(--overlay-color);
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.active {
+	z-index: var(--overlay-z-index);
+}

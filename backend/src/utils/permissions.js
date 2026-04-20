@@ -1,0 +1,32 @@
+const BOARD_PERMISSION = {
+  BOARD_MANAGE: "BOARD_MANAGE",
+  INVITE_MANAGE: "INVITE_MANAGE",
+  COLUMN_MANAGE: "COLUMN_MANAGE",
+  TASK_MANAGE: "TASK_MANAGE",
+  TASK_MOVE: "TASK_MOVE",
+  TASK_TOGGLE: "TASK_TOGGLE",
+};
+
+const ROLE_PERMISSIONS = {
+  OWNER: Object.values(BOARD_PERMISSION),
+  EDITOR: [
+    BOARD_PERMISSION.COLUMN_MANAGE,
+    BOARD_PERMISSION.TASK_MANAGE,
+    BOARD_PERMISSION.TASK_MOVE,
+    BOARD_PERMISSION.TASK_TOGGLE,
+  ],
+  MOVER: [BOARD_PERMISSION.TASK_MOVE, BOARD_PERMISSION.TASK_TOGGLE],
+};
+
+function hasBoardPermission(boardRole, permission) {
+  if (!boardRole) {
+    return false;
+  }
+
+  return ROLE_PERMISSIONS[boardRole]?.includes(permission) || false;
+}
+
+module.exports = {
+  BOARD_PERMISSION,
+  hasBoardPermission,
+};

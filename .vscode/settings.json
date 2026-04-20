@@ -1,0 +1,47 @@
+{
+	"editor.tabSize": 2,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"editor.fontFamily": "JetBrains Mono",
+	"editor.fontLigatures": true,
+	"editor.wordWrap": "on",
+	"files.trimTrailingWhitespace": true,
+	"files.autoSave": "onWindowChange",
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": "explicit"
+	},
+	"eslint.enable": true,
+	"eslint.format.enable": true,
+	"eslint.useFlatConfig": true,
+	"eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+	"prettier.useTabs": true,
+	"prettier.printWidth": 100,
+	"prettier.singleQuote": false,
+	"prettier.semi": true,
+	"prettier.bracketSameLine": false,
+	"prettier.singleAttributePerLine": false,
+	"js/ts.format.semicolons": "insert",
+	"js/ts.preferences.quoteStyle": "double",
+	"[javascript]": {
+		"editor.defaultFormatter": "vscode.typescript-language-features"
+	},
+	"[javascriptreact]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"prettier.singleAttributePerLine": true
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[typescriptreact]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"prettier.singleAttributePerLine": true
+	},
+	"[html]": {
+		"editor.defaultFormatter": "vscode.html-language-features"
+	},
+	"[css]": {
+		"editor.defaultFormatter": "vscode.css-language-features"
+	}
+}

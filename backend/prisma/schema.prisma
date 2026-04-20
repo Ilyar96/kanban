@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum GlobalRole {
+  USER
+  ADMIN
+}
+
+enum BoardRole {
+  OWNER
+  EDITOR
+  MOVER
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+model User {
+  id             String            @id @default(cuid())
+  email          String            @unique
+  passwordHash   String
+  name           String
+  globalRole     GlobalRole        @default(USER)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  ownedBoards    Board[]           @relation("BoardOwner")
+  boardMembers   BoardMember[]
+  createdTasks   Task[]            @relation("TaskCreator")
+  sentInvites    BoardInvitation[] @relation("InviteSender")
+}
+
+model Board {
+  id          String            @id @default(cuid())
+  title       String
+  description String?
+  ownerId     String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  owner       User              @relation("BoardOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members     BoardMember[]
+  columns     Column[]
+  invitations BoardInvitation[]
+}
+
+model BoardMember {
+  id        String   @id @default(cuid())
+  boardId   String
+  userId    String
+  role      BoardRole
+  createdAt DateTime @default(now())
+  board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([boardId, userId])
+}
+
+model Column {
+  id        String   @id @default(cuid())
+  title     String
+  position  Int
+  boardId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  tasks     Task[]
+
+  @@index([boardId, position])
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  completed   Boolean  @default(false)
+  position    Int
+  columnId    String
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  column      Column   @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  createdBy   User     @relation("TaskCreator", fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([columnId, position])
+}
+
+model BoardInvitation {
+  id          String           @id @default(cuid())
+  token       String           @unique
+  boardId     String
+  email       String
+  role        BoardRole
+  status      InvitationStatus @default(PENDING)
+  invitedById String
+  expiresAt   DateTime
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  board       Board            @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  invitedBy   User             @relation("InviteSender", fields: [invitedById], references: [id], onDelete: Cascade)
+
+  @@unique([boardId, email])
+}

@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+cd frontend || exit 1
+
+npm run build
+npm run lint:ts
+npm run lint:scss
