@@ -15,7 +15,8 @@
 		"preview": "vite preview",
 		"storybook": "storybook dev -p 6006 -c ./config/storybook",
 		"storybook:build": "storybook build -c ./config/storybook",
-		"prepare": "git config core.hooksPath frontend/.husky"
+		"prepare": "git config core.hooksPath frontend/.husky",
+		"generate": "plop"
 	},
 	"dependencies": {
 		"@reduxjs/toolkit": "^2.11.2",
@@ -39,6 +40,7 @@
 		"eslint-plugin-react-refresh": "^0.5.2",
 		"globals": "^17.5.0",
 		"husky": "^9.1.7",
+		"plop": "^4.0.5",
 		"postcss": "^8.5.10",
 		"prettier": "^3.8.3",
 		"sass": "^1.99.0",

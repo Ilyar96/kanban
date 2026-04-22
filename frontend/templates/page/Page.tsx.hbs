@@ -1,0 +1,17 @@
+import { classNames } from '@/shared/lib/classNames/classNames';
+import { memo } from 'react';
+import cls from './{{pascalCase pageName}}.module.scss';
+
+interface {{pascalCase pageName}}Props {
+  className?: string;
+}
+
+const {{pascalCase pageName}} = memo(({ className }: {{pascalCase pageName}}Props) => {
+  return (
+    <div className={classNames(cls.{{camelCase pageName}}, {}, [className])}>
+      {/* Содержимое {{pascalCase pageName}} */}
+    </div>
+  );
+});
+
+export default {{pascalCase pageName}};

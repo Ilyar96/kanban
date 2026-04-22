@@ -1,0 +1,19 @@
+import type { Meta, StoryObj } from '@storybook/react';
+import { {{pascalCase widgetName}} } from './{{pascalCase widgetName}}';
+
+const meta: Meta<typeof {{pascalCase widgetName}}> = {
+  title: 'widgets/{{pascalCase widgetName}}',
+  component: {{pascalCase widgetName}},
+  parameters: {
+    layout: 'fullscreen',
+  },
+  tags: [],
+  argTypes: {},
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Primary: Story = {
+  args: {},
+};

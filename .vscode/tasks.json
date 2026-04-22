@@ -32,6 +32,25 @@
 			}
 		},
 		{
+			"label": "Generate Component",
+			"type": "shell",
+			"command": "npm",
+			"args": ["run", "generate"],
+			"options": {
+				"cwd": "${workspaceFolder}/frontend"
+			},
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "new",
+				"showReuseMessage": true,
+				"clear": false
+			},
+			"problemMatcher": []
+		},
+		{
 			"label": "dev: all",
 			"dependsOn": ["backend: dev", "frontend: dev"],
 			"dependsOrder": "parallel",
