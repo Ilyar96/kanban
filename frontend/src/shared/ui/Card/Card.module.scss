@@ -1,0 +1,18 @@
+.card {
+	--card-padding: 15px;
+	padding: var(--card-padding);
+	border-radius: var(--border-radius-m);
+	box-shadow: var(--shadow-card);
+}
+
+.normal {
+	background: var(--bg-card);
+}
+
+.outlined {
+	border: 1px solid var(--border-primary);
+}
+
+.max {
+	width: 100%;
+}
