@@ -1,0 +1,82 @@
+.title,
+.textWrapper {
+	color: var(--text-primary);
+}
+
+.text {
+	color: inherit;
+	font-size: inherit;
+}
+
+.error {
+	.title,
+	&.textWrapper {
+		color: var(--text-danger);
+	}
+}
+
+.inverted {
+	.title {
+		color: var(--text-inverse);
+	}
+
+	&.textWrapper {
+		color: var(--text-secondary);
+	}
+}
+
+.left {
+	text-align: left;
+}
+
+.center {
+	text-align: center;
+}
+
+.right {
+	text-align: right;
+}
+
+.xs {
+	.title {
+		margin: 0 0 var(--spacing-xs);
+		font: var(--font-xs);
+	}
+
+	&.textWrapper {
+		font: var(--font-xs);
+	}
+}
+
+.s {
+	.title {
+		margin: 0 0 var(--spacing-xs);
+		font: var(--font-m);
+	}
+
+	&.textWrapper {
+		font: var(--font-s);
+	}
+}
+
+.m {
+	.title {
+		margin: 0 0 var(--spacing-xs);
+		font: var(--font-l);
+	}
+
+	&.textWrapper {
+		font: var(--font-m);
+	}
+}
+
+.l {
+	.title {
+		margin: 0 0 var(--spacing-xs);
+		font: var(--font-xl);
+	}
+
+	&.textWrapper {
+		font: var(--font-l);
+	}
+}

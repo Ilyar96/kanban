@@ -1,0 +1,138 @@
+.Button {
+	--outline-size: 2px;
+	--outline-size-negative: calc(var(--outline-size) * -1);
+	padding: var(--spacing-xs) var(--spacing-s);
+	color: var(--text-primary);
+	cursor: pointer;
+	user-select: none;
+	transform-origin: center;
+	will-change: transform;
+	transform: translateZ(0);
+	transition:
+		color var(--transition-base),
+		opacity var(--transition-base),
+		transform var(--transition-base),
+		background-color var(--transition-base);
+
+	&:hover {
+		opacity: 0.8;
+	}
+
+	&:disabled {
+		pointer-events: none;
+	}
+
+	&:active {
+		transform: scale(0.95);
+	}
+
+	&:focus {
+		outline: 0;
+	}
+
+	&:focus-visible {
+		outline: var(--outline-size) solid var(--border-focus);
+		outline-offset: var(--outline-size-negative);
+	}
+}
+
+.s {
+	--outline-size: 1px;
+	padding: var(--spacing-xs) var(--spacing-s);
+	font: var(--font-xs);
+	border-radius: var(--border-radius-s);
+}
+
+.m {
+	padding: var(--spacing-xs) var(--spacing-m);
+	font: var(--font-s);
+	border-radius: var(--border-radius-s);
+}
+
+.l {
+	padding: var(--spacing-s) var(--spacing-m);
+	font: var(--font-m);
+	border-radius: var(--border-radius-m);
+}
+
+.xl {
+	padding: var(--spacing-s) var(--spacing-l);
+	font: var(--font-l);
+	border-radius: var(--border-radius-m);
+}
+
+.clear,
+.clearInverted {
+	padding: 0;
+	background: none;
+	border: none;
+	outline: none;
+}
+
+.clearInverted {
+	color: var(--text-inverse);
+}
+
+.outline {
+	border: 1px solid var(--border-primary);
+	color: var(--text-primary);
+	background: none;
+}
+
+.outline_red {
+	border: 1px solid var(--text-danger);
+	color: var(--text-danger);
+	background: none;
+}
+
+.background {
+	background: var(--button-secondary-bg);
+	color: var(--button-secondary-text);
+	border: 1px solid var(--button-secondary-bg);
+}
+
+.backgroundInverted {
+	background: var(--button-primary-bg);
+	color: var(--button-primary-text);
+	border: 1px solid var(--button-primary-bg);
+}
+
+.square {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+
+	&.s {
+		width: var(--font-line-s);
+		height: var(--font-line-s);
+		font: var(--font-s);
+	}
+
+	&.m {
+		width: var(--font-line-m);
+		height: var(--font-line-m);
+		font: var(--font-m);
+	}
+
+	&.l {
+		width: var(--font-line-l);
+		height: var(--font-line-l);
+		font: var(--font-l);
+	}
+
+	&.xl {
+		width: var(--font-line-xl);
+		height: var(--font-line-xl);
+		font: var(--font-l);
+	}
+}
+
+.disabled {
+	opacity: 0.5;
+	cursor: default;
+}
+
+.fullWidth {
+	width: 100%;
+}

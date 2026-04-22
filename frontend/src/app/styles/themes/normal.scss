@@ -1,18 +1,49 @@
-body {
-	--bg-color: #e8e8ea;
-	--inverted-bg-color: #090949;
-	--primary-color: #0232c2;
-	--secondary-color: #0449e0;
-	--inverted-primary-color: #04ff04;
-	--inverted-secondary-color: #049604;
+:root,
+.app_light_theme {
+	/* Background */
+	--bg-app: #f8fbff;
+	--bg-surface: #fff;
+	--bg-card: #fff;
+	--bg-card-hover: #f2f6fb;
+	--bg-card-muted: #eef3f9;
 
-	// skeleton
-	--skeleton-color: #fff;
-	--skeleton-shadow: rgb(0, 0, 0 / 20%);
+	/* Text */
+	--text-primary: #0f1720;
+	--text-secondary: #5f6f80;
+	--text-muted: #7b8898;
+	--text-inverse: #f8fbff;
+	--text-accent: #0b5bd3;
+	--text-danger: #bd1e24;
+	--text-danger-dark: #b71d22;
+	--text-success: #166534;
 
-	// code
-	--code-bg: #fff;
+	/* Borders */
+	--border-primary: #d7e0ea;
+	--border-secondary: #e7edf4;
+	--border-focus: #7aa8ff;
 
-	// card
-	--card-bg: #d5d5d7;
+	/* Buttons */
+	--button-primary-bg: #0b5bd3;
+	--button-primary-bg-hover: #094eb5;
+	--button-primary-bg-active: #083f93;
+	--button-primary-text: #f8fbff;
+	--button-secondary-bg: #eaf1fb;
+	--button-secondary-bg-hover: #dfe9f8;
+	--button-secondary-bg-active: #cedcf4;
+	--button-secondary-text: #143b75;
+	--button-danger-bg: #dc2626;
+	--button-danger-bg-hover: #b91c1c;
+	--button-danger-bg-active: #991b1b;
+	--button-danger-text: #fff;
+
+	/* Status */
+	--status-success-bg: #dcfce7;
+	--status-success-text: #166534;
+	--status-warning-bg: #fff7d6;
+	--status-warning-text: #854d0e;
+	--status-danger-bg: #fee2e2;
+	--status-danger-text: #991b1b;
+
+	/* Effects */
+	--shadow-card: 0 8px 24px rgb(15 23 32 / 8%);
 }

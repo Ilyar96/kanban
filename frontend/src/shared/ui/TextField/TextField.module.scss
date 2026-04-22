@@ -1,0 +1,77 @@
+.textField {
+	position: relative;
+}
+
+.label {
+	display: inline-block;
+
+	&.s {
+		margin: 0 0 var(--spacing-xs);
+		font: var(--font-xs);
+	}
+
+	&.m {
+		margin: 0 0 var(--spacing-xs);
+		font: var(--font-s);
+	}
+
+	&.l {
+		margin: 0 0 var(--spacing-s);
+		font: var(--font-m);
+	}
+}
+
+.field {
+	--outline-size: 2px;
+	--outline-size-negative: calc(var(--outline-size) * -1);
+	width: 100%;
+	background: var(--bg-card);
+	border: 1px solid var(--border-primary);
+
+	&:focus {
+		outline: none;
+	}
+
+	&:focus-visible {
+		outline: var(--outline-size) solid var(--border-focus);
+		outline-offset: var(--outline-size-negative);
+	}
+
+	&.s {
+		--outline-size: 1px;
+		padding: var(--spacing-s);
+		border-radius: var(--border-radius-s);
+		font: var(--font-xs);
+	}
+
+	&.m {
+		padding: var(--spacing-m);
+		border-radius: var(--border-radius-m);
+		font: var(--font-s);
+	}
+
+	&.l {
+		padding: var(--spacing-l);
+		border-radius: var(--border-radius-l);
+		font: var(--font-m);
+	}
+}
+
+.error {
+	--offset: var(--spacing-xs);
+	position: absolute;
+	top: calc(100% + var(--offset));
+	left: 0;
+
+	&.s {
+		left: var(--border-radius-s);
+	}
+
+	&.m {
+		left: var(--border-radius-m);
+	}
+
+	&.l {
+		left: var(--border-radius-l);
+	}
+}
