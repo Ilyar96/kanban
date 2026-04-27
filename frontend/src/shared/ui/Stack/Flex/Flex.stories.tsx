@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Flex } from "./Flex";
+import { createHiddenDarkStory } from "@/shared/config/storybook/helper/hiddenDarkStory";
+import { Theme } from "@/app/providers/ThemeProvider";
+import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 
 const meta: Meta<typeof Flex> = {
 	title: "shared/Flex",
@@ -10,7 +13,7 @@ const meta: Meta<typeof Flex> = {
 	argTypes: {
 		gap: {
 			control: { type: "radio" },
-			options: ["4", "8", "16", "32"],
+			options: ["4", "8", "12", "16", "32"],
 		},
 		justify: {
 			control: { type: "radio" },
@@ -25,7 +28,7 @@ const meta: Meta<typeof Flex> = {
 			options: ["row", "column"],
 		},
 	},
-	args: {},
+	decorators: [ThemeDecorator(Theme.LIGHT)],
 };
 
 const children = (
@@ -45,12 +48,16 @@ export const Row: Story = {
 	},
 };
 
+export const RowDark: Story = createHiddenDarkStory(Row);
+
 export const RowGap16: Story = {
 	args: {
 		children,
 		gap: "16",
 	},
 };
+
+export const RowGap16Dark: Story = createHiddenDarkStory(RowGap16);
 
 export const RowCenter: Story = {
 	args: {
@@ -59,6 +66,8 @@ export const RowCenter: Story = {
 	},
 };
 
+export const RowCenterDark: Story = createHiddenDarkStory(RowCenter);
+
 export const RowEnd: Story = {
 	args: {
 		justify: "end",
@@ -66,12 +75,16 @@ export const RowEnd: Story = {
 	},
 };
 
+export const RowEndDark: Story = createHiddenDarkStory(RowEnd);
+
 export const Column: Story = {
 	args: {
 		direction: "column",
 		children,
 	},
 };
+
+export const ColumnDark: Story = createHiddenDarkStory(Column);
 
 export const ColumnGap16: Story = {
 	args: {
@@ -81,6 +94,8 @@ export const ColumnGap16: Story = {
 	},
 };
 
+export const ColumnGap16Dark: Story = createHiddenDarkStory(ColumnGap16);
+
 export const ColumnCenter: Story = {
 	args: {
 		direction: "column",
@@ -89,6 +104,8 @@ export const ColumnCenter: Story = {
 	},
 };
 
+export const ColumnCenterDark: Story = createHiddenDarkStory(ColumnCenter);
+
 export const ColumnEnd: Story = {
 	args: {
 		direction: "column",
@@ -96,3 +113,5 @@ export const ColumnEnd: Story = {
 		children,
 	},
 };
+
+export const ColumnEndDark: Story = createHiddenDarkStory(ColumnEnd);

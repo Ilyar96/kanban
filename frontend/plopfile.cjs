@@ -15,45 +15,52 @@ const namePrompt = (name) => ({
 	},
 });
 
+const domainFolders = {
+	entity: 'entities',
+	feature: 'features',
+	page: 'pages',
+	widget: 'widgets',
+};
+
 const createDomainActions = (domain, nameKey) => [
 	{
 		type: 'add',
-		path: `src/${domain}/{{pascalCase ${nameKey}}}/index.ts`,
+		path: `src/${domainFolders[domain]}/{{pascalCase ${nameKey}}}/index.ts`,
 		templateFile: `templates/${domain}/index.ts.hbs`,
 	},
 	{
 		type: 'add',
-		path: `src/${domain}/{{pascalCase ${nameKey}}}/model/selectors/.gitkeep`,
+		path: `src/${domainFolders[domain]}/{{pascalCase ${nameKey}}}/model/selectors/.gitkeep`,
 		template: '',
 	},
 	{
 		type: 'add',
-		path: `src/${domain}/{{pascalCase ${nameKey}}}/model/services/.gitkeep`,
+		path: `src/${domainFolders[domain]}/{{pascalCase ${nameKey}}}/model/services/.gitkeep`,
 		template: '',
 	},
 	{
 		type: 'add',
-		path: `src/${domain}/{{pascalCase ${nameKey}}}/model/types/index.ts`,
+		path: `src/${domainFolders[domain]}/{{pascalCase ${nameKey}}}/model/types/index.ts`,
 		templateFile: `templates/${domain}/types-index.ts.hbs`,
 	},
 	{
 		type: 'add',
-		path: `src/${domain}/{{pascalCase ${nameKey}}}/model/slice/{{camelCase ${nameKey}}}Slice.ts`,
+		path: `src/${domainFolders[domain]}/{{pascalCase ${nameKey}}}/model/slice/{{camelCase ${nameKey}}}Slice.ts`,
 		templateFile: `templates/${domain}/slice.ts.hbs`,
 	},
 	{
 		type: 'add',
-		path: `src/${domain}/{{pascalCase ${nameKey}}}/ui/{{pascalCase ${nameKey}}}/{{pascalCase ${nameKey}}}.tsx`,
+		path: `src/${domainFolders[domain]}/{{pascalCase ${nameKey}}}/ui/{{pascalCase ${nameKey}}}/{{pascalCase ${nameKey}}}.tsx`,
 		templateFile: `templates/${domain}/${domain === 'entity' ? 'Entity' : domain === 'feature' ? 'Feature' : 'Page'}.tsx.hbs`,
 	},
 	{
 		type: 'add',
-		path: `src/${domain}/{{pascalCase ${nameKey}}}/ui/{{pascalCase ${nameKey}}}/{{pascalCase ${nameKey}}}.module.scss`,
+		path: `src/${domainFolders[domain]}/{{pascalCase ${nameKey}}}/ui/{{pascalCase ${nameKey}}}/{{pascalCase ${nameKey}}}.module.scss`,
 		templateFile: `templates/${domain}/${domain === 'entity' ? 'Entity' : domain === 'feature' ? 'Feature' : 'Page'}.module.scss.hbs`,
 	},
 	{
 		type: 'add',
-		path: `src/${domain}/{{pascalCase ${nameKey}}}/ui/{{pascalCase ${nameKey}}}/{{pascalCase ${nameKey}}}.stories.tsx`,
+		path: `src/${domainFolders[domain]}/{{pascalCase ${nameKey}}}/ui/{{pascalCase ${nameKey}}}/{{pascalCase ${nameKey}}}.stories.tsx`,
 		templateFile: `templates/${domain}/${domain === 'entity' ? 'Entity' : domain === 'feature' ? 'Feature' : 'Page'}.stories.tsx.hbs`,
 	},
 ];

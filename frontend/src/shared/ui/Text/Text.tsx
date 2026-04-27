@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, type ReactNode } from "react";
 import { classNames, type Mods } from "@/shared/lib/classNames/classNames";
 import cls from "./Text.module.scss";
 
@@ -15,6 +15,7 @@ interface TextProps {
 	theme?: TextTheme;
 	align?: TextAlign;
 	size?: TextSize;
+	children?: ReactNode;
 
 	"data-testid"?: string;
 }
@@ -36,6 +37,7 @@ export const Text = memo((props: TextProps) => {
 		theme = "primary",
 		align = "left",
 		size = "m",
+		children,
 		"data-testid": dataTestId = "",
 	} = props;
 
@@ -65,6 +67,7 @@ export const Text = memo((props: TextProps) => {
 					{text}
 				</p>
 			)}
+			{children}
 		</div>
 	);
 });

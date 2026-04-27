@@ -8,83 +8,109 @@ const { requireAuth } = require("../middleware/auth");
 
 const router = express.Router();
 
+function mapAuthUser(user) {
+	return {
+		id: user.id,
+		username: user.name,
+		email: user.email,
+		roles: [user.globalRole],
+	};
+}
+
+function getLoginIdentifier(body) {
+	return (
+		(body.usernameOrEmail || body.login || body.email || body.username || "")
+	).trim();
+}
+
+async function findUserByIdentifier(identifier) {
+	const where = identifier.includes("@") ? { email: identifier } : { name: identifier };
+	return prisma.user.findFirst({ where });
+}
+
 const registerSchema = z.object({
-  body: z.object({
-    name: z.string().min(2).max(80),
-    email: z.string().email(),
-    password: z.string().min(6).max(100),
-  }),
-  params: z.object({}),
-  query: z.object({}),
+	body: z.object({
+		username: z.string().min(2).max(80).optional(),
+		name: z.string().min(2).max(80).optional(),
+		email: z.string().email(),
+		password: z.string().min(6).max(100),
+	}).refine((data) => Boolean((data.username || data.name || "").trim()), {
+		message: "Username is required",
+		path: ["username"],
+	}),
+	params: z.object({}),
+	query: z.object({}),
 });
 
 const loginSchema = z.object({
-  body: z.object({
-    email: z.string().email(),
-    password: z.string().min(6).max(100),
-  }),
-  params: z.object({}),
-  query: z.object({}),
+	body: z.object({
+		usernameOrEmail: z.string().min(2).max(120),
+		password: z.string().min(6).max(100),
+	}),
+	params: z.object({}),
+	query: z.object({}),
 });
 
 router.post("/register", validate(registerSchema), async (req, res) => {
-  const { name, email, password } = req.validated.body;
+	const { email, password } = req.validated.body;
+	const username = (req.validated.body.username || req.validated.body.name || "").trim();
 
-  const existingUser = await prisma.user.findUnique({ where: { email } });
-  if (existingUser) {
-    return res.status(409).json({ message: "User already exists" });
-  }
+	const existingUser = await prisma.user.findUnique({ where: { email } });
+	if (existingUser) {
+		return res.status(409).json({ message: "Пользователь с таким email уже существует" });
+	}
 
-  const passwordHash = await hashPassword(password);
+	const existingUsername = await prisma.user.findFirst({ where: { name: username } });
+	if (existingUsername) {
+		return res.status(409).json({ message: "Имя пользователя уже занято" });
+	}
 
-  const user = await prisma.user.create({
-    data: {
-      name,
-      email,
-      passwordHash,
-    },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      globalRole: true,
-      createdAt: true,
-    },
-  });
+	const passwordHash = await hashPassword(password);
 
-  const token = signToken({ sub: user.id, role: user.globalRole });
+	const user = await prisma.user.create({
+		data: {
+			name: username,
+			email,
+			passwordHash,
+		},
+		select: {
+			id: true,
+			name: true,
+			email: true,
+			globalRole: true,
+			createdAt: true,
+		},
+	});
 
-  return res.status(201).json({ user, token });
+	const token = signToken({ sub: user.id, role: user.globalRole });
+
+	return res.status(201).json({ user: mapAuthUser(user), token });
 });
 
-router.post("/login", validate(loginSchema), async (req, res) => {
-  const { email, password } = req.validated.body;
+router.post("/login", validate(loginSchema, { hideDetails: true }), async (req, res) => {
+	const { password } = req.validated.body;
+	const identifier = getLoginIdentifier(req.validated.body);
 
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) {
-    return res.status(401).json({ message: "Invalid email or password" });
-  }
+	const user = await findUserByIdentifier(identifier);
+	if (!user) {
+		return res.status(401).json({ message: "Неверные учетные данные" });
+	}
 
-  const isPasswordValid = await comparePassword(password, user.passwordHash);
-  if (!isPasswordValid) {
-    return res.status(401).json({ message: "Invalid email or password" });
-  }
+	const isPasswordValid = await comparePassword(password, user.passwordHash);
+	if (!isPasswordValid) {
+		return res.status(401).json({ message: "Неверные учетные данные" });
+	}
 
-  const token = signToken({ sub: user.id, role: user.globalRole });
+	const token = signToken({ sub: user.id, role: user.globalRole });
 
-  return res.json({
-    user: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      globalRole: user.globalRole,
-    },
-    token,
-  });
+	return res.json({
+		user: mapAuthUser(user),
+		token,
+	});
 });
 
 router.get("/me", requireAuth, async (req, res) => {
-  return res.json({ user: req.user });
+	return res.json({ user: mapAuthUser(req.user) });
 });
 
 module.exports = router;

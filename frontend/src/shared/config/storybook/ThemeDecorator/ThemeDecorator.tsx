@@ -17,7 +17,10 @@ export const ThemeDecorator =
 		const appClassName = theme === Theme.DARK ? "app app_dark_theme" : "app";
 
 		return (
-			<div className={appClassName}>
+			<div
+				className={appClassName}
+				style={{ display: "block" }}
+			>
 				<Story />
 			</div>
 		);

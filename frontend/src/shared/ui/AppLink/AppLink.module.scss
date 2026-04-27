@@ -1,0 +1,12 @@
+.appLink {
+	color: var(--text-accent);
+	transition: color var(--transition-base);
+
+	&.primary {
+		color: var(--text-accent);
+	}
+
+	&:hover {
+		color: var(--text-accent-hover);
+	}
+}

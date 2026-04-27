@@ -1,4 +1,6 @@
 .app_dark_theme {
+	--accent-color: #4f8cff;
+
 	/* Background */
 	--bg-app: #0f1720;
 	--bg-surface: #162130;
@@ -12,6 +14,8 @@
 	--text-muted: #9cadbf;
 	--text-inverse: #0f1720;
 	--text-accent: #8ab4ff;
+	--text-accent-hover: #6ea1ff;
+	--text-accent-active: #4f8cff;
 	--text-danger: #bd1e24;
 	--text-danger-dark: #7b1e1e;
 	--text-success: #7fe3a1;

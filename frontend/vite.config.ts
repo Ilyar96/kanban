@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from "vite";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
+import checker from "vite-plugin-checker";
 import react from "@vitejs/plugin-react";
 import path from "path";
 
@@ -11,6 +12,11 @@ export default defineConfig(({ mode }) => {
 	return {
 		plugins: [
 			react(),
+			checker({
+				typescript: {
+					tsconfigPath: "./tsconfig.app.json",
+				},
+			}),
 			!isDev &&
 				ViteImageOptimizer({
 					includePublic: true,

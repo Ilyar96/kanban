@@ -52,7 +52,7 @@ export const TextField = memo(
 			const { size, id, error } = props;
 			const fieldId = id ?? reactId;
 			const fieldSize = size ?? "m";
-			const fieldClass = classNames(cls.field, {}, [cls[fieldSize]]);
+			const fieldClass = classNames(cls.field, { [cls.error]: error }, [cls[fieldSize]]);
 
 			const renderFieldWrapper = (
 				field: ReactNode,
@@ -77,7 +77,7 @@ export const TextField = memo(
 						{field}
 						{error && (
 							<Text
-								className={classNames(cls.error, {}, [cls[fieldSize]])}
+								className={classNames(cls.errorText, {}, [cls[fieldSize]])}
 								theme="error"
 								text={error}
 								size={fieldSize === "s" ? "xs" : "s"}

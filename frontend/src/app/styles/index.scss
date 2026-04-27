@@ -8,3 +8,24 @@ body {
 	background-color: var(--bg-app);
 	color: var(--text-primary);
 }
+
+.app {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+.content-page {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	padding: var(--spacing-xl) 0;
+}
+
+*:focus {
+	outline: none;
+}
+
+*:focus-visible {
+	outline: 1px solid var(--border-focus);
+}

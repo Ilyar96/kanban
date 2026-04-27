@@ -1,5 +1,5 @@
-import type { Decorator } from "@storybook/react";
 import { VStack } from "@/shared/ui/Stack";
+import type { Decorator } from "@storybook/react-vite";
 
 export const CenteredDecorator: Decorator = (Story) => (
 	<VStack
@@ -7,6 +7,6 @@ export const CenteredDecorator: Decorator = (Story) => (
 		justify="center"
 		style={{ height: "100vh" }}
 	>
-		{Story()}
+		<Story />
 	</VStack>
 );

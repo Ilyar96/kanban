@@ -12,6 +12,8 @@
 		color var(--transition-base),
 		opacity var(--transition-base),
 		transform var(--transition-base),
+		box-shadow var(--transition-base),
+		filter var(--transition-base),
 		background-color var(--transition-base);
 
 	&:hover {
@@ -23,7 +25,11 @@
 	}
 
 	&:active {
-		transform: scale(0.95);
+		transform: translateY(1px);
+		box-shadow:
+			inset 0 2px 6px rgb(0, 0, 0, 0.25),
+			inset 0 -1px 2px rgb(255, 255, 255, 0.15);
+		filter: brightness(0.96);
 	}
 
 	&:focus {
@@ -102,17 +108,18 @@
 	align-items: center;
 	justify-content: center;
 	padding: 0;
+	line-height: 1;
 
 	&.s {
 		width: var(--font-line-s);
 		height: var(--font-line-s);
-		font: var(--font-s);
+		font: var(--font-xs);
 	}
 
 	&.m {
 		width: var(--font-line-m);
 		height: var(--font-line-m);
-		font: var(--font-m);
+		font: var(--font-s);
 	}
 
 	&.l {

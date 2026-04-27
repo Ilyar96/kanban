@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
-import { Theme } from "@/app/providers/ThemeProvider";
 import { Text } from "./Text";
+import { createHiddenDarkStory } from "@/shared/config/storybook/helper/hiddenDarkStory";
+import { Theme } from "@/app/providers/ThemeProvider";
+import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 
 const title = "Заголовок";
 const text = "Некоторое описание";
@@ -12,8 +13,7 @@ const meta: Meta<typeof Text> = {
 	parameters: {
 		layout: "fullscreen",
 	},
-	args: {},
-	decorators: [ThemeDecorator(Theme.DARK)],
+	decorators: [ThemeDecorator(Theme.LIGHT)],
 };
 
 export default meta;
@@ -26,17 +26,23 @@ export const Primary: Story = {
 	},
 };
 
+export const PrimaryDark: Story = createHiddenDarkStory(Primary);
+
 export const OnlyTitle: Story = {
 	args: {
 		title,
 	},
 };
 
+export const OnlyTitleDark: Story = createHiddenDarkStory(OnlyTitle);
+
 export const OnlyText: Story = {
 	args: {
 		text,
 	},
 };
+
+export const OnlyTextDark: Story = createHiddenDarkStory(OnlyText);
 
 export const Error: Story = {
 	args: {
@@ -46,6 +52,8 @@ export const Error: Story = {
 	},
 };
 
+export const ErrorDark: Story = createHiddenDarkStory(Error);
+
 export const SizeL: Story = {
 	args: {
 		title,
@@ -53,6 +61,8 @@ export const SizeL: Story = {
 		size: "l",
 	},
 };
+
+export const SizeLDark: Story = createHiddenDarkStory(SizeL);
 
 export const SizeM: Story = {
 	args: {
@@ -62,6 +72,8 @@ export const SizeM: Story = {
 	},
 };
 
+export const SizeMDark: Story = createHiddenDarkStory(SizeM);
+
 export const SizeS: Story = {
 	args: {
 		title,
@@ -69,6 +81,7 @@ export const SizeS: Story = {
 		size: "s",
 	},
 };
+export const SizeSDark: Story = createHiddenDarkStory(SizeS);
 export const SizeXS: Story = {
 	args: {
 		title,
@@ -76,3 +89,4 @@ export const SizeXS: Story = {
 		size: "xs",
 	},
 };
+export const SizeXSDark: Story = createHiddenDarkStory(SizeXS);

@@ -1,5 +1,6 @@
 .textField {
 	position: relative;
+	width: 100%;
 }
 
 .label {
@@ -55,23 +56,25 @@
 		border-radius: var(--border-radius-l);
 		font: var(--font-m);
 	}
+
+	&.error {
+		border-color: var(--text-danger);
+	}
 }
 
-.error {
+.errorText {
 	--offset: var(--spacing-xs);
-	position: absolute;
-	top: calc(100% + var(--offset));
-	left: 0;
+	margin: var(--offset) 0 0;
 
 	&.s {
-		left: var(--border-radius-s);
+		padding-left: var(--border-radius-s);
 	}
 
 	&.m {
-		left: var(--border-radius-m);
+		padding-left: var(--border-radius-m);
 	}
 
 	&.l {
-		left: var(--border-radius-l);
+		padding-left: var(--border-radius-l);
 	}
 }

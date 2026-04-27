@@ -6,7 +6,8 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc -b && vite build",
-		"lint:ts": "eslint \"src/**/*.{ts,tsx}\"",
+		"typecheck": "tsc -p tsconfig.app.json --noEmit",
+		"lint:ts": "eslint \"src/**/*.{ts,tsx}\" && npm run typecheck",
 		"lint:ts:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
 		"lint:scss": "npx stylelint \"**/*.scss\"",
 		"lint:scss:fix": "npx stylelint \"**/*.scss\" --fix",
@@ -23,6 +24,7 @@
 		"axios": "^1.15.1",
 		"react": "^19.2.5",
 		"react-dom": "^19.2.5",
+		"react-hook-form": "^7.73.1",
 		"react-redux": "^9.2.0",
 		"react-router-dom": "^7.14.1"
 	},
@@ -51,6 +53,7 @@
 		"typescript": "~6.0.2",
 		"typescript-eslint": "^8.58.2",
 		"vite": "^8.0.9",
+		"vite-plugin-checker": "^0.13.0",
 		"vite-plugin-image-optimizer": "^2.0.3"
 	}
 }

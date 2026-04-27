@@ -1,3 +1,5 @@
+import { LoginPage } from "@/pages/LoginPage";
+import { RegisterPage } from "@/pages/RegisterPage";
 import { RoutePaths } from "@/shared/const/router";
 import type { AppRoutes } from "@/shared/const/router";
 import type { AppRoutesProps } from "@/shared/types/router";
@@ -10,11 +12,11 @@ export const routeConfig: Record<AppRoutes, AppRoutesProps> = {
 	},
 	register: {
 		path: RoutePaths.register,
-		element: <div>Register page</div>,
+		element: <RegisterPage />,
 	},
 	login: {
 		path: RoutePaths.login,
-		element: <div>Login page</div>,
+		element: <LoginPage />,
 	},
 
 	forbidden: {

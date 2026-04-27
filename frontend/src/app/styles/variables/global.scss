@@ -1,6 +1,10 @@
 :root {
 	--font-family-main: "consolas", "times new roman", serif;
 
+	// Container
+	--container-max-width: 1200px;
+	--container-padding-x: 16px;
+
 	// xs
 	--font-size-xs: 12px;
 	--font-line-xs: 16px;

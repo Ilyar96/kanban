@@ -2,14 +2,17 @@ import type { NavigateOptions, To } from "react-router-dom";
 import type { AnyAction, EnhancedStore, Reducer, ReducersMapObject } from "@reduxjs/toolkit";
 import type { AxiosInstance } from "axios";
 import { rtkApi } from "@/shared/api/rtkApi";
+import type { UserSchema } from "@/entities/User";
+import type { LoginSchema, RegisterSchema } from "@/features/Auth";
 
 export interface StateSchema {
 	// Статические редьюсеры
-	// counter?: unknown;
+	user: UserSchema;
 	[rtkApi.reducerPath]: ReturnType<typeof rtkApi.reducer>;
 
 	// Асинхронные редьюсеры
-	// loginForm?: LoginSchema;
+	loginForm?: LoginSchema;
+	registerForm?: RegisterSchema;
 }
 
 export type StateSchemaKey = keyof StateSchema;

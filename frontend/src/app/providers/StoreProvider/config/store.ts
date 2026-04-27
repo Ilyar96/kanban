@@ -4,13 +4,14 @@ import { $api } from "@/shared/api/api";
 import { rtkApi } from "@/shared/api/rtkApi";
 import type { StateSchema, ThunkExtraArg } from "./StateSchema";
 import { createReducerManager } from "./reducerManager";
+import { userReducer } from "@/entities/User";
 
 export function createReduxStore(
 	initialState?: StateSchema,
 	asyncReducers?: ReducersMapObject<StateSchema>,
 ) {
 	const rootReducer: ReducersMapObject<StateSchema> = {
-		// counter: counterReducer,
+		user: userReducer,
 		[rtkApi.reducerPath]: rtkApi.reducer,
 		...asyncReducers,
 	};

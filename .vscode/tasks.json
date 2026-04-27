@@ -32,6 +32,28 @@
 			}
 		},
 		{
+			"label": "Start Storybook",
+			"type": "shell",
+			"command": "npm",
+			"args": ["run", "storybook"],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "new",
+				"showReuseMessage": true,
+				"clear": false
+			},
+			"options": {
+				"cwd": "${workspaceFolder}/frontend"
+			},
+			"problemMatcher": [],
+			"runOptions": {
+				"runOn": "folderOpen"
+			}
+		},
+		{
 			"label": "Generate Component",
 			"type": "shell",
 			"command": "npm",
@@ -52,9 +74,12 @@
 		},
 		{
 			"label": "dev: all",
-			"dependsOn": ["backend: dev", "frontend: dev"],
+			"dependsOn": ["backend: dev", "frontend: dev", "Start Storybook"],
 			"dependsOrder": "parallel",
-			"problemMatcher": []
+			"problemMatcher": [],
+			"runOptions": {
+				"runOn": "folderOpen"
+			}
 		}
 	]
 }
