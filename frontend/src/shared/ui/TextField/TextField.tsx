@@ -7,6 +7,7 @@ import {
 	type ReactNode,
 	type TextareaHTMLAttributes,
 } from "react";
+import type { UseFormRegisterReturn } from "react-hook-form";
 import { classNames } from "@/shared/lib/classNames/classNames";
 import cls from "./TextField.module.scss";
 import { Text } from "../Text/Text";
@@ -26,6 +27,7 @@ interface CommonTextFieldProps {
 	label?: string;
 	value?: string | number;
 	onChange?: (value: string) => void;
+	registration?: UseFormRegisterReturn;
 	autoFocus?: boolean;
 	readonly?: boolean;
 	size?: "s" | "m" | "l";
@@ -53,6 +55,20 @@ export const TextField = memo(
 			const fieldId = id ?? reactId;
 			const fieldSize = size ?? "m";
 			const fieldClass = classNames(cls.field, { [cls.error]: error }, [cls[fieldSize]]);
+
+			const assignRef = <TElement extends HTMLInputElement | HTMLTextAreaElement>(
+				element: TElement | null,
+				registrationRef?: UseFormRegisterReturn["ref"],
+				forwardedRef?: ForwardedRef<TElement>,
+			) => {
+				if (typeof forwardedRef === "function") {
+					forwardedRef(element);
+				} else if (forwardedRef) {
+					forwardedRef.current = element;
+				}
+
+				registrationRef?.(element);
+			};
 
 			const renderFieldWrapper = (
 				field: ReactNode,
@@ -88,14 +104,31 @@ export const TextField = memo(
 			};
 
 			if (props.as === "textarea") {
-				const { className, label, value, onChange, autoFocus, readonly, ...textareaProps } = props;
+				const {
+					className,
+					label,
+					value,
+					onChange,
+					registration,
+					autoFocus,
+					readonly,
+					name,
+					...textareaProps
+				} = props;
 				return renderFieldWrapper(
 					<textarea
-						ref={ref as ForwardedRef<HTMLTextAreaElement>}
+						ref={(element) =>
+							assignRef(element, registration?.ref, ref as ForwardedRef<HTMLTextAreaElement>)
+						}
 						className={fieldClass}
 						id={fieldId}
+						name={registration?.name ?? name}
 						value={value}
-						onChange={(e) => onChange?.(e.target.value)}
+						onChange={(e) => {
+							registration?.onChange(e);
+							onChange?.(e.target.value);
+						}}
+						onBlur={registration?.onBlur}
 						autoFocus={autoFocus}
 						readOnly={readonly}
 						{...textareaProps}
@@ -112,20 +145,29 @@ export const TextField = memo(
 				label,
 				value,
 				onChange,
+				registration,
 				autoFocus,
 				readonly,
+				name,
 				type = "text",
 				...inputProps
 			} = props;
 
 			return renderFieldWrapper(
 				<input
-					ref={ref as ForwardedRef<HTMLInputElement>}
+					ref={(element) =>
+						assignRef(element, registration?.ref, ref as ForwardedRef<HTMLInputElement>)
+					}
 					className={fieldClass}
 					id={fieldId}
+					name={registration?.name ?? name}
 					type={type}
 					value={value}
-					onChange={(e) => onChange?.(e.target.value)}
+					onChange={(e) => {
+						registration?.onChange(e);
+						onChange?.(e.target.value);
+					}}
+					onBlur={registration?.onBlur}
 					autoFocus={autoFocus}
 					readOnly={readonly}
 					{...inputProps}

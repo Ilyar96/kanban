@@ -1,12 +1,10 @@
-import { memo, useCallback, type SubmitEvent } from "react";
+import { memo } from "react";
+import { useForm } from "react-hook-form";
 import { useAppDispatch } from "@/shared/lib/hooks/useAppDispatch/useAppDispatch";
 import { useSelector } from "react-redux";
 import { useAuthRedirect } from "@/shared/lib/hooks/useAuthRedirect/useAuthRedirect";
-import { getRegisterUsername } from "../../model/selectors/getRegisterUsername/getRegisterUsername";
-import { getRegisterPassword } from "../../model/selectors/getRegisterPassword/getRegisterPassword";
 import { registerByCredentials } from "../../model/services/registerByCredentials/registerByCredentials";
-import { getRegisterEmail } from "../../model/selectors/getRegisterEmail/getRegisterEmail";
-import { registerActions, registerReducer } from "../../model/slice/registerByCredentialsSlice";
+import { registerReducer } from "../../model/slice/registerByCredentialsSlice";
 import { VStack } from "@/shared/ui/Stack";
 import { Card } from "@/shared/ui/Card/Card";
 import { TextField } from "@/shared/ui/TextField/TextField";
@@ -16,6 +14,7 @@ import { AppLink } from "@/shared/ui/AppLink/AppLink";
 import { RoutePaths } from "@/shared/const/router";
 import { getRegisterIsLoading } from "../../model/selectors/getRegisterIsLoading/getRegisterIsLoading";
 import { getRegisterError } from "../../model/selectors/getRegisterError/getRegisterError";
+import type { ServerErrorPayload } from "@/shared/types/serverError";
 import {
 	DynamicModuleLoader,
 	type ReducersList,
@@ -29,49 +28,70 @@ const reducers: ReducersList = {
 	registerForm: registerReducer,
 };
 
+interface RegisterFormValues {
+	username: string;
+	email: string;
+	password: string;
+}
+
+const isServerErrorPayload = (error: unknown): error is ServerErrorPayload => {
+	if (!error || typeof error !== "object") {
+		return false;
+	}
+
+	const candidate = error as Partial<ServerErrorPayload>;
+	return Boolean(candidate.issues && typeof candidate.issues === "object");
+};
+
+const normalizeIssueKey = (key: string): keyof RegisterFormValues | null => {
+	const cleanKey = key.includes(".") ? (key.split(".").at(-1) ?? key) : key;
+
+	if (cleanKey === "username" || cleanKey === "email" || cleanKey === "password") {
+		return cleanKey;
+	}
+
+	return null;
+};
+
 export const RegisterForm = memo(({ className }: RegisterFormProps) => {
 	const dispatch = useAppDispatch();
 	const { redirectAfterAuth } = useAuthRedirect();
-	const username = useSelector(getRegisterUsername);
-	const email = useSelector(getRegisterEmail);
-	const password = useSelector(getRegisterPassword);
 	const isLoading = useSelector(getRegisterIsLoading);
 	const error = useSelector(getRegisterError);
+	const {
+		register,
+		handleSubmit,
+		setError,
+		formState: { errors },
+	} = useForm<RegisterFormValues>({
+		defaultValues: {
+			username: "",
+			email: "",
+			password: "",
+		},
+	});
 
-	const onSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
-		e.preventDefault();
-
+	const onSubmit = handleSubmit(async (formData) => {
 		if (isLoading) {
 			return;
 		}
 
-		const result = await dispatch(registerByCredentials({ username, email, password }));
+		const result = await dispatch(registerByCredentials(formData));
 
 		if (registerByCredentials.fulfilled.match(result)) {
 			redirectAfterAuth(RoutePaths.main);
+			return;
 		}
-	};
 
-	const onUsernameChange = useCallback(
-		(value: string) => {
-			dispatch(registerActions.setUsername(value));
-		},
-		[dispatch],
-	);
-
-	const onEmailChange = useCallback(
-		(value: string) => {
-			dispatch(registerActions.setEmail(value));
-		},
-		[dispatch],
-	);
-
-	const onPasswordChange = useCallback(
-		(value: string) => {
-			dispatch(registerActions.setPassword(value));
-		},
-		[dispatch],
-	);
+		if (registerByCredentials.rejected.match(result) && isServerErrorPayload(result.payload)) {
+			Object.entries(result.payload.issues).forEach(([key, message]) => {
+				const fieldName = normalizeIssueKey(key);
+				if (fieldName) {
+					setError(fieldName, { type: "server", message });
+				}
+			});
+		}
+	});
 
 	return (
 		<DynamicModuleLoader reducers={reducers}>
@@ -88,25 +108,48 @@ export const RegisterForm = memo(({ className }: RegisterFormProps) => {
 				>
 					<TextField
 						name="username"
-						value={username}
-						onChange={onUsernameChange}
+						registration={register("username", {
+							required: "Требуется имя пользователя",
+							minLength: {
+								value: 2,
+								message: "Минимум 2 символа",
+							},
+							maxLength: {
+								value: 80,
+								message: "Максимум 80 символов",
+							},
+						})}
 						placeholder="Введите имя"
-						error={error && typeof error !== "string" ? error.issues?.username : undefined}
+						error={errors.username?.message}
 					/>
 					<TextField
 						name="email"
-						value={email}
-						onChange={onEmailChange}
+						registration={register("email", {
+							required: "Поле обязательно для заполнения",
+							pattern: {
+								value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+								message: "Неверный формат email",
+							},
+						})}
 						placeholder="Введите email"
-						error={error && typeof error !== "string" ? error.issues?.email : undefined}
+						error={errors.email?.message}
 					/>
 					<TextField
 						name="password"
 						type="password"
-						value={password}
-						onChange={onPasswordChange}
+						registration={register("password", {
+							required: "Поле обязательно для заполнения",
+							minLength: {
+								value: 6,
+								message: "Минимум 6 символов",
+							},
+							maxLength: {
+								value: 100,
+								message: "Максимум 100 символов",
+							},
+						})}
 						placeholder="Введите пароль"
-						error={error && typeof error !== "string" ? error.issues?.password : undefined}
+						error={errors.password?.message}
 					/>
 					<Button
 						type="submit"
