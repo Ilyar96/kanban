@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Button } from "./Button";
-import { createHiddenDarkStory } from "@/shared/config/storybook/helper/hiddenDarkStory";
 import { Theme } from "@/app/providers/ThemeProvider";
 import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 
@@ -40,7 +39,10 @@ export const Primary: Story = {
 	},
 };
 
-export const PrimaryDark: Story = createHiddenDarkStory(Primary);
+export const PrimaryDark: Story = {
+	args: Primary.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const Clear: Story = {
 	args: {
@@ -49,7 +51,10 @@ export const Clear: Story = {
 	},
 };
 
-export const ClearDark: Story = createHiddenDarkStory(Clear);
+export const ClearDark: Story = {
+	args: Clear.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const Inverted: Story = {
 	args: {
@@ -58,7 +63,10 @@ export const Inverted: Story = {
 	},
 };
 
-export const InvertedDark: Story = createHiddenDarkStory(Inverted);
+export const InvertedDark: Story = {
+	args: Inverted.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const Outline: Story = {
 	args: {
@@ -67,7 +75,10 @@ export const Outline: Story = {
 	},
 };
 
-export const OutlineDark: Story = createHiddenDarkStory(Outline);
+export const OutlineDark: Story = {
+	args: Outline.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const SizeS: Story = {
 	args: {
@@ -77,7 +88,10 @@ export const SizeS: Story = {
 	},
 };
 
-export const SizeSDark: Story = createHiddenDarkStory(SizeS);
+export const SizeSDark: Story = {
+	args: SizeS.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const SizeM: Story = {
 	args: {
@@ -87,7 +101,10 @@ export const SizeM: Story = {
 	},
 };
 
-export const SizeMDark: Story = createHiddenDarkStory(SizeM);
+export const SizeMDark: Story = {
+	args: SizeM.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const SizeL: Story = {
 	args: {
@@ -97,7 +114,10 @@ export const SizeL: Story = {
 	},
 };
 
-export const SizeLDark: Story = createHiddenDarkStory(SizeL);
+export const SizeLDark: Story = {
+	args: SizeL.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const SizeXL: Story = {
 	args: {
@@ -107,7 +127,10 @@ export const SizeXL: Story = {
 	},
 };
 
-export const SizeXLDark: Story = createHiddenDarkStory(SizeXL);
+export const SizeXLDark: Story = {
+	args: SizeXL.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const BackgroundTheme: Story = {
 	args: {
@@ -116,7 +139,10 @@ export const BackgroundTheme: Story = {
 	},
 };
 
-export const BackgroundThemeDark: Story = createHiddenDarkStory(BackgroundTheme);
+export const BackgroundThemeDark: Story = {
+	args: BackgroundTheme.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const BackgroundInvertedTheme: Story = {
 	args: {
@@ -125,7 +151,10 @@ export const BackgroundInvertedTheme: Story = {
 	},
 };
 
-export const BackgroundInvertedThemeDark: Story = createHiddenDarkStory(BackgroundInvertedTheme);
+export const BackgroundInvertedThemeDark: Story = {
+	args: BackgroundInvertedTheme.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const SquareSizeM: Story = {
 	args: {
@@ -136,7 +165,10 @@ export const SquareSizeM: Story = {
 	},
 };
 
-export const SquareSizeMDark: Story = createHiddenDarkStory(SquareSizeM);
+export const SquareSizeMDark: Story = {
+	args: SquareSizeM.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const SquareSizeL: Story = {
 	args: {
@@ -147,7 +179,10 @@ export const SquareSizeL: Story = {
 	},
 };
 
-export const SquareSizeLDark: Story = createHiddenDarkStory(SquareSizeL);
+export const SquareSizeLDark: Story = {
+	args: SquareSizeL.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const Disabled: Story = {
 	args: {
@@ -157,4 +192,7 @@ export const Disabled: Story = {
 	},
 };
 
-export const DisabledDark: Story = createHiddenDarkStory(Disabled);
+export const DisabledDark: Story = {
+	args: Disabled.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};

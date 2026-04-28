@@ -1,0 +1,37 @@
+.avatar {
+	flex: 0 0 var(--size);
+	width: var(--size);
+	height: var(--size);
+	background: var(--bg-avatar);
+	color: var(--text-avatar);
+	border-radius: 50%;
+	transition:
+		background var(--transition-base),
+		color var(--transition-base);
+
+	button &,
+	a & {
+		&:hover {
+			background: var(--bg-avatar-hover);
+		}
+
+		&:active {
+			background: var(--bg-avatar-active);
+		}
+	}
+
+	&.s {
+		--size: 24px;
+		font: var(--font-xs);
+	}
+
+	&.m {
+		--size: 36px;
+		font: var(--font-s);
+	}
+
+	&.l {
+		--size: 50px;
+		font: var(--font-m);
+	}
+}

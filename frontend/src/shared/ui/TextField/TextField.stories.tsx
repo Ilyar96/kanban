@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { TextField, type TextFieldProps } from "./TextField";
-import { createHiddenDarkStory } from "@/shared/config/storybook/helper/hiddenDarkStory";
 import { Theme } from "@/app/providers/ThemeProvider";
 import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 
@@ -24,7 +23,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {};
 
-export const PrimaryDark: Story = createHiddenDarkStory(Primary);
+export const PrimaryDark: Story = {
+	args: Primary.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const SizeS: Story = {
 	args: {
@@ -32,7 +34,10 @@ export const SizeS: Story = {
 	},
 };
 
-export const SizeSDark: Story = createHiddenDarkStory(SizeS);
+export const SizeSDark: Story = {
+	args: SizeS.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const SizeM: Story = {
 	args: {
@@ -40,7 +45,10 @@ export const SizeM: Story = {
 	},
 };
 
-export const SizeMDark: Story = createHiddenDarkStory(SizeM);
+export const SizeMDark: Story = {
+	args: SizeM.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const SizeL: Story = {
 	args: {
@@ -48,4 +56,7 @@ export const SizeL: Story = {
 	},
 };
 
-export const SizeLDark: Story = createHiddenDarkStory(SizeL);
+export const SizeLDark: Story = {
+	args: SizeL.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};

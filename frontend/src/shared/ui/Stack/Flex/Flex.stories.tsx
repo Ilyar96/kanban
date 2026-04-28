@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Flex } from "./Flex";
-import { createHiddenDarkStory } from "@/shared/config/storybook/helper/hiddenDarkStory";
 import { Theme } from "@/app/providers/ThemeProvider";
 import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 
@@ -48,7 +47,10 @@ export const Row: Story = {
 	},
 };
 
-export const RowDark: Story = createHiddenDarkStory(Row);
+export const RowDark: Story = {
+	args: Row.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const RowGap16: Story = {
 	args: {
@@ -57,7 +59,10 @@ export const RowGap16: Story = {
 	},
 };
 
-export const RowGap16Dark: Story = createHiddenDarkStory(RowGap16);
+export const RowGap16Dark: Story = {
+	args: RowGap16.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const RowCenter: Story = {
 	args: {
@@ -66,7 +71,10 @@ export const RowCenter: Story = {
 	},
 };
 
-export const RowCenterDark: Story = createHiddenDarkStory(RowCenter);
+export const RowCenterDark: Story = {
+	args: RowCenter.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const RowEnd: Story = {
 	args: {
@@ -75,7 +83,10 @@ export const RowEnd: Story = {
 	},
 };
 
-export const RowEndDark: Story = createHiddenDarkStory(RowEnd);
+export const RowEndDark: Story = {
+	args: RowEnd.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const Column: Story = {
 	args: {
@@ -84,7 +95,10 @@ export const Column: Story = {
 	},
 };
 
-export const ColumnDark: Story = createHiddenDarkStory(Column);
+export const ColumnDark: Story = {
+	args: Column.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const ColumnGap16: Story = {
 	args: {
@@ -94,7 +108,10 @@ export const ColumnGap16: Story = {
 	},
 };
 
-export const ColumnGap16Dark: Story = createHiddenDarkStory(ColumnGap16);
+export const ColumnGap16Dark: Story = {
+	args: ColumnGap16.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const ColumnCenter: Story = {
 	args: {
@@ -104,7 +121,10 @@ export const ColumnCenter: Story = {
 	},
 };
 
-export const ColumnCenterDark: Story = createHiddenDarkStory(ColumnCenter);
+export const ColumnCenterDark: Story = {
+	args: ColumnCenter.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const ColumnEnd: Story = {
 	args: {
@@ -114,4 +134,7 @@ export const ColumnEnd: Story = {
 	},
 };
 
-export const ColumnEndDark: Story = createHiddenDarkStory(ColumnEnd);
+export const ColumnEndDark: Story = {
+	args: ColumnEnd.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};

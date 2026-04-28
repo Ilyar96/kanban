@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { AppRouter } from "./providers/router";
 import { getUserInited, initAuthData } from "@/entities/User";
 import { useAppDispatch } from "@/shared/lib/hooks/useAppDispatch/useAppDispatch";
+import { Navbar } from "@/widgets/Navbar";
 
 const App = () => {
 	const dispatch = useAppDispatch();
@@ -20,6 +21,7 @@ const App = () => {
 	return (
 		<div className={"app"}>
 			<Suspense>
+				<Navbar />
 				<main className="content-page">
 					<AppRouter />
 				</main>

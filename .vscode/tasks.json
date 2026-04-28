@@ -3,12 +3,12 @@
 	"tasks": [
 		{
 			"label": "backend: dev",
-			"type": "shell",
-			"command": "npm run dev",
+			"type": "process",
+			"command": "npm",
+			"args": ["run", "dev"],
 			"options": {
 				"cwd": "${workspaceFolder}/backend"
 			},
-			"isBackground": true,
 			"problemMatcher": [],
 			"presentation": {
 				"reveal": "always",
@@ -75,7 +75,6 @@
 		{
 			"label": "dev: all",
 			"dependsOn": ["backend: dev", "frontend: dev", "Start Storybook"],
-			"dependsOrder": "parallel",
 			"problemMatcher": [],
 			"runOptions": {
 				"runOn": "folderOpen"

@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { {{pascalCase featureName}} } from './{{pascalCase featureName}}';
+import { Theme } from '@/app/providers/ThemeProvider';
+import { ThemeDecorator } from '@/shared/config/storybook/ThemeDecorator/ThemeDecorator';
 
 const meta: Meta<typeof {{pascalCase featureName}}> = {
   title: 'features/{{pascalCase featureName}}',
@@ -8,6 +10,7 @@ const meta: Meta<typeof {{pascalCase featureName}}> = {
     layout: 'fullscreen',
   },
   tags: [],
+  decorators: [ThemeDecorator(Theme.LIGHT)],
   argTypes: {},
 };
 
@@ -16,4 +19,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {},
+};
+
+export const PrimaryDark: Story = {
+  decorators: [ThemeDecorator(Theme.DARK)],
 };

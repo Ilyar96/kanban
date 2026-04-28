@@ -1,4 +1,3 @@
-import { createHiddenDarkStory } from "@/shared/config/storybook/helper/hiddenDarkStory";
 import { RoutePaths } from "@/shared/const/router";
 import type { Meta, StoryObj } from "@storybook/react";
 import { AppLink } from "./AppLink";
@@ -24,7 +23,9 @@ type Story = StoryObj<typeof AppLink>;
 
 export const Primary: Story = {};
 
-export const PrimaryDark: Story = createHiddenDarkStory(Primary);
+export const PrimaryDark: Story = {
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const Secondary: Story = {
 	args: {
@@ -32,4 +33,6 @@ export const Secondary: Story = {
 	},
 };
 
-export const SecondaryDark: Story = createHiddenDarkStory(Secondary);
+export const SecondaryDark: Story = {
+	decorators: [ThemeDecorator(Theme.DARK)],
+};

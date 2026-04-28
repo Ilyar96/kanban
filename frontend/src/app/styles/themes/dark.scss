@@ -1,5 +1,7 @@
 .app_dark_theme {
 	--accent-color: #4f8cff;
+	--accent-color-hover: #8ab4ff;
+	--accent-color-active: #6ea1ff;
 
 	/* Background */
 	--bg-app: #0f1720;
@@ -7,15 +9,22 @@
 	--bg-card: #1b2838;
 	--bg-card-hover: #223244;
 	--bg-card-muted: #223041;
+	--bg-navbar: #151f2c;
+
+	// Avatar
+	--bg-avatar: #c11515;
+	--bg-avatar-hover: #ac1414;
+	--bg-avatar-active: #a51313;
+	--text-avatar: #fff;
 
 	/* Text */
 	--text-primary: #f8fbff;
 	--text-secondary: #c8d2de;
 	--text-muted: #9cadbf;
 	--text-inverse: #0f1720;
-	--text-accent: #8ab4ff;
-	--text-accent-hover: #6ea1ff;
-	--text-accent-active: #4f8cff;
+	--text-accent: #4f8cff;
+	--text-accent-hover: #8ab4ff;
+	--text-accent-active: #6ea1ff;
 	--text-danger: #bd1e24;
 	--text-danger-dark: #7b1e1e;
 	--text-success: #7fe3a1;

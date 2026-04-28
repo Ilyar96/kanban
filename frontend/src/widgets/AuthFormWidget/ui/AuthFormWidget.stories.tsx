@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { AuthFormWidget } from "./AuthFormWidget";
-import { createHiddenDarkStory } from "@/shared/config/storybook/helper/hiddenDarkStory";
 import { Theme } from "@/app/providers/ThemeProvider";
 import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 
@@ -18,7 +17,10 @@ type Story = StoryObj<typeof meta>;
 
 export const RegisterWidget: Story = {};
 
-export const RegisterWidgetDark: Story = createHiddenDarkStory(RegisterWidget);
+export const RegisterWidgetDark: Story = {
+	args: RegisterWidget.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const LoginWidget: Story = {
 	args: {
@@ -26,4 +28,7 @@ export const LoginWidget: Story = {
 	},
 };
 
-export const LoginWidgetDark: Story = createHiddenDarkStory(LoginWidget);
+export const LoginWidgetDark: Story = {
+	args: LoginWidget.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};

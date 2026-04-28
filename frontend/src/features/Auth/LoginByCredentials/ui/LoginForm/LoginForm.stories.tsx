@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { LoginForm } from "./LoginForm";
-import { createHiddenDarkStory } from "@/shared/config/storybook/helper/hiddenDarkStory";
 import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 import { Theme } from "@/app/providers/ThemeProvider";
 
@@ -19,4 +18,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {};
 
-export const PrimaryDark: Story = createHiddenDarkStory(Primary);
+export const PrimaryDark: Story = {
+	args: Primary.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};

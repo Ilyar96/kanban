@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Text } from "./Text";
-import { createHiddenDarkStory } from "@/shared/config/storybook/helper/hiddenDarkStory";
 import { Theme } from "@/app/providers/ThemeProvider";
 import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 
@@ -26,7 +25,10 @@ export const Primary: Story = {
 	},
 };
 
-export const PrimaryDark: Story = createHiddenDarkStory(Primary);
+export const PrimaryDark: Story = {
+	args: Primary.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const OnlyTitle: Story = {
 	args: {
@@ -34,7 +36,10 @@ export const OnlyTitle: Story = {
 	},
 };
 
-export const OnlyTitleDark: Story = createHiddenDarkStory(OnlyTitle);
+export const OnlyTitleDark: Story = {
+	args: OnlyTitle.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const OnlyText: Story = {
 	args: {
@@ -42,7 +47,10 @@ export const OnlyText: Story = {
 	},
 };
 
-export const OnlyTextDark: Story = createHiddenDarkStory(OnlyText);
+export const OnlyTextDark: Story = {
+	args: OnlyText.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const Error: Story = {
 	args: {
@@ -52,7 +60,10 @@ export const Error: Story = {
 	},
 };
 
-export const ErrorDark: Story = createHiddenDarkStory(Error);
+export const ErrorDark: Story = {
+	args: Error.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const SizeL: Story = {
 	args: {
@@ -62,7 +73,10 @@ export const SizeL: Story = {
 	},
 };
 
-export const SizeLDark: Story = createHiddenDarkStory(SizeL);
+export const SizeLDark: Story = {
+	args: SizeL.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const SizeM: Story = {
 	args: {
@@ -72,7 +86,10 @@ export const SizeM: Story = {
 	},
 };
 
-export const SizeMDark: Story = createHiddenDarkStory(SizeM);
+export const SizeMDark: Story = {
+	args: SizeM.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const SizeS: Story = {
 	args: {
@@ -81,7 +98,10 @@ export const SizeS: Story = {
 		size: "s",
 	},
 };
-export const SizeSDark: Story = createHiddenDarkStory(SizeS);
+export const SizeSDark: Story = {
+	args: SizeS.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 export const SizeXS: Story = {
 	args: {
 		title,
@@ -89,4 +109,7 @@ export const SizeXS: Story = {
 		size: "xs",
 	},
 };
-export const SizeXSDark: Story = createHiddenDarkStory(SizeXS);
+export const SizeXSDark: Story = {
+	args: SizeXS.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};

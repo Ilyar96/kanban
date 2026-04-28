@@ -1,6 +1,8 @@
 :root,
 .app_light_theme {
 	--accent-color: #4f8cff;
+	--accent-color-hover: #8ab4ff;
+	--accent-color-active: #6ea1ff;
 
 	/* Background */
 	--bg-app: #f8fbff;
@@ -8,6 +10,13 @@
 	--bg-card: #fff;
 	--bg-card-hover: #f2f6fb;
 	--bg-card-muted: #eef3f9;
+	--bg-navbar: #2c3137;
+
+	// Avatar
+	--bg-avatar: #c11515;
+	--bg-avatar-hover: #ac1414;
+	--bg-avatar-active: #a51313;
+	--text-avatar: #fff;
 
 	/* Text */
 	--text-primary: #0f1720;

@@ -1,0 +1,12 @@
+.logoWrapper.logoWrapper.logoWrapper {
+	color: var(--accent-color);
+
+	&:hover {
+		color: var(--accent-color-hover);
+	}
+}
+
+.logo {
+	font: var(--font-l);
+	font-weight: 700;
+}

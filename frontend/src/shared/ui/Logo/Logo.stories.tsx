@@ -1,18 +1,25 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { PageError } from "./PageError";
+import type { Meta, StoryObj } from "@storybook/react";
+import { Logo } from "./Logo";
 import { Theme } from "@/app/providers/ThemeProvider";
 import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 
-const meta = {
-	title: "widgets/PageError",
-	component: PageError,
+const meta: Meta<typeof Logo> = {
+	title: "shared/Logo",
+	component: Logo,
+	parameters: {
+		layout: "fullscreen",
+	},
+	tags: [],
 	decorators: [ThemeDecorator(Theme.LIGHT)],
-} satisfies Meta<typeof PageError>;
+	argTypes: {},
+};
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Primary: Story = {};
+export const Primary: Story = {
+	args: {},
+};
 
 export const PrimaryDark: Story = {
 	args: Primary.args,

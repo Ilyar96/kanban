@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Loader } from "./Loader";
-import { createHiddenDarkStory } from "@/shared/config/storybook/helper/hiddenDarkStory";
 import { Theme } from "@/app/providers/ThemeProvider";
 import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 
@@ -18,7 +17,10 @@ type Story = StoryObj<typeof Loader>;
 
 export const Primary: Story = {};
 
-export const PrimaryDark: Story = createHiddenDarkStory(Primary);
+export const PrimaryDark: Story = {
+	args: Primary.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const Secondary: Story = {
 	args: {
@@ -26,7 +28,10 @@ export const Secondary: Story = {
 	},
 };
 
-export const SecondaryDark: Story = createHiddenDarkStory(Secondary);
+export const SecondaryDark: Story = {
+	args: Secondary.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const Accent: Story = {
 	args: {
@@ -34,7 +39,10 @@ export const Accent: Story = {
 	},
 };
 
-export const AccentDark: Story = createHiddenDarkStory(Accent);
+export const AccentDark: Story = {
+	args: Accent.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const SizeS: Story = {
 	args: {

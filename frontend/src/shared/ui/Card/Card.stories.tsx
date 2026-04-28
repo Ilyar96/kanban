@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Card } from "./Card";
 import { Text } from "../Text/Text";
-import { createHiddenDarkStory } from "@/shared/config/storybook/helper/hiddenDarkStory";
 import { Theme } from "@/app/providers/ThemeProvider";
 import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 
@@ -27,7 +26,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {};
 
-export const PrimaryDark: Story = createHiddenDarkStory(Primary);
+export const PrimaryDark: Story = {
+	args: Primary.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
 
 export const Outlined: Story = {
 	args: {
@@ -35,4 +37,7 @@ export const Outlined: Story = {
 	},
 };
 
-export const OutlinedDark: Story = createHiddenDarkStory(Outlined);
+export const OutlinedDark: Story = {
+	args: Outlined.args,
+	decorators: [ThemeDecorator(Theme.DARK)],
+};
