@@ -19,6 +19,7 @@ import {
 	DynamicModuleLoader,
 	type ReducersList,
 } from "@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader";
+import { classNames } from "@/shared/lib/classNames/classNames";
 
 interface RegisterFormProps {
 	className?: string;
@@ -98,7 +99,7 @@ export const RegisterForm = memo(({ className }: RegisterFormProps) => {
 			<VStack
 				as={Card}
 				gap="16"
-				className={className}
+				className={classNames("", {}, [className])}
 			>
 				<VStack
 					as="form"
