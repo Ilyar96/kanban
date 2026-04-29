@@ -1,5 +1,6 @@
 import { LoginPage } from "@/pages/LoginPage";
 import { RegisterPage } from "@/pages/RegisterPage";
+import { WorkspacePage } from "@/pages/WorkspacePage";
 import { RoutePaths } from "@/shared/const/router";
 import type { AppRoutes } from "@/shared/const/router";
 import type { AppRoutesProps } from "@/shared/types/router";
@@ -7,7 +8,7 @@ import type { AppRoutesProps } from "@/shared/types/router";
 export const routeConfig: Record<AppRoutes, AppRoutesProps> = {
 	main: {
 		path: RoutePaths.main,
-		element: <div>Main page</div>,
+		element: <WorkspacePage />,
 		authOnly: true,
 	},
 	register: {

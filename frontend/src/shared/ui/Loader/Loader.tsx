@@ -3,7 +3,7 @@ import cls from "./Loader.module.scss";
 
 interface LoaderProps {
 	className?: string;
-	size?: "s" | "m" | "l";
+	size?: "xs" | "s" | "m" | "l";
 	type?: "accent" | "primary" | "secondary";
 }
 

@@ -1,11 +1,9 @@
-import { memo, type ComponentProps, type ReactNode } from "react";
+import { memo, type ReactNode } from "react";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { classNames } from "@/shared/lib/classNames/classNames";
 import { Button } from "../Button/Button";
 import cls from "./Dropdown.module.scss";
-
-type MenuItemsProps = ComponentProps<typeof MenuItems>;
-export type AnchorProps = MenuItemsProps["anchor"];
+import type { AnchorTo } from "@/shared/types/anchor";
 
 export interface DropdownItem {
 	content: string;
@@ -19,12 +17,12 @@ interface DropdownProps {
 	className?: string;
 	trigger: ReactNode;
 	items: DropdownItem[];
-	anchorTo?: Extract<AnchorProps, { to?: unknown }>["to"];
-	offset?: number;
+	anchorTo?: AnchorTo;
+	gap?: number;
 }
 
 export const Dropdown = memo((props: DropdownProps) => {
-	const { className, items, trigger, anchorTo = "bottom", offset = 8 } = props;
+	const { className, items, trigger, anchorTo = "bottom", gap = 8 } = props;
 	return (
 		<Menu
 			as="div"
@@ -34,7 +32,7 @@ export const Dropdown = memo((props: DropdownProps) => {
 			<MenuItems
 				anchor={{
 					to: anchorTo,
-					gap: offset, // отступ в пикселях
+					gap,
 				}}
 				className={cls.menu}
 			>

@@ -29,6 +29,10 @@ const options = {
 					type: "string",
 					enum: ["USER", "ADMIN"],
 				},
+				BoardVisibility: {
+					type: "string",
+					enum: ["PRIVATE", "WORKSPACE", "PUBLIC"],
+				},
 				BoardRole: {
 					type: "string",
 					enum: ["OWNER", "EDITOR", "MOVER"],
@@ -97,13 +101,25 @@ const options = {
 				},
 				Board: {
 					type: "object",
-					required: ["id", "title", "ownerId", "createdAt", "updatedAt"],
+					required: ["id", "title", "visibility", "ownerId", "createdAt", "updatedAt"],
 					properties: {
 						id: { type: "string" },
 						title: { type: "string" },
 						description: {
 							type: "string",
 							nullable: true,
+						},
+						visibility: {
+							$ref: "#/components/schemas/BoardVisibility",
+						},
+						backgroundColor: {
+							type: "string",
+							nullable: true,
+							description: "Hex color or background URL",
+						},
+						isFavorite: {
+							type: "boolean",
+							description: "Is board in current user's favorites",
 						},
 						ownerId: { type: "string" },
 						createdAt: {
@@ -331,6 +347,12 @@ const options = {
 					required: true,
 					schema: { type: "string" },
 				},
+				UserId: {
+					name: "userId",
+					in: "path",
+					required: true,
+					schema: { type: "string" },
+				},
 				ColumnId: {
 					name: "columnId",
 					in: "path",
@@ -433,20 +455,11 @@ const options = {
 							"application/json": {
 								schema: {
 									type: "object",
-									required: ["login", "password"],
+									required: ["usernameOrEmail", "password"],
 									properties: {
-										login: {
+										usernameOrEmail: {
 											type: "string",
 											description: "Email or username",
-										},
-										email: {
-											type: "string",
-											format: "email",
-											description: "Optional legacy field",
-										},
-										username: {
-											type: "string",
-											description: "Optional legacy field",
 										},
 										password: { type: "string", minLength: 6, maxLength: 100 },
 									},
@@ -568,6 +581,18 @@ const options = {
 									properties: {
 										title: { type: "string", minLength: 1, maxLength: 120 },
 										description: { type: "string", maxLength: 500 },
+										visibility: {
+											$ref: "#/components/schemas/BoardVisibility",
+										},
+										backgroundColor: {
+											type: "string",
+											maxLength: 2048,
+											description: "Hex color or background URL",
+										},
+										isFavorite: {
+											type: "boolean",
+											description: "Add board to favorites for current user",
+										},
 									},
 								},
 							},
@@ -594,6 +619,45 @@ const options = {
 								"application/json": {
 									schema: {
 										$ref: "#/components/schemas/ValidationErrorResponse",
+									},
+								},
+							},
+						},
+						401: {
+							description: "Unauthorized",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+					},
+				},
+			},
+			"/api/boards/by-owner/{userId}": {
+				get: {
+					tags: ["Boards"],
+					summary: "Get all boards by owner id",
+					description:
+						"Returns boards of a specific owner. Owner and ADMIN see all owner's boards. Other users see only WORKSPACE/PUBLIC boards or boards where they are members.",
+					security: [{ bearerAuth: [] }],
+					parameters: [{ $ref: "#/components/parameters/UserId" }],
+					responses: {
+						200: {
+							description: "Boards list by owner id",
+							content: {
+								"application/json": {
+									schema: {
+										type: "object",
+										required: ["boards"],
+										properties: {
+											boards: {
+												type: "array",
+												items: {
+													$ref: "#/components/schemas/BoardListItem",
+												},
+											},
+										},
 									},
 								},
 							},
@@ -676,6 +740,15 @@ const options = {
 											maxLength: 500,
 											nullable: true,
 										},
+										visibility: {
+											$ref: "#/components/schemas/BoardVisibility",
+										},
+										backgroundColor: {
+											type: "string",
+											maxLength: 2048,
+											nullable: true,
+											description: "Hex color or background URL",
+										},
 									},
 								},
 							},
@@ -751,6 +824,82 @@ const options = {
 						},
 						403: {
 							description: "Forbidden",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+						404: {
+							description: "Board not found",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+					},
+				},
+			},
+			"/api/boards/{boardId}/favorite": {
+				post: {
+					tags: ["Boards"],
+					summary: "Add board to favorites",
+					security: [{ bearerAuth: [] }],
+					parameters: [{ $ref: "#/components/parameters/BoardId" }],
+					responses: {
+						201: {
+							description: "Board added to favorites",
+							content: {
+								"application/json": {
+									schema: {
+										type: "object",
+										required: ["favorite"],
+										properties: {
+											favorite: {
+												type: "object",
+												required: ["id", "boardId", "userId", "createdAt"],
+												properties: {
+													id: { type: "string" },
+													boardId: { type: "string" },
+													userId: { type: "string" },
+													createdAt: { type: "string", format: "date-time" },
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+						401: {
+							description: "Unauthorized",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+						404: {
+							description: "Board not found",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+					},
+				},
+				delete: {
+					tags: ["Boards"],
+					summary: "Remove board from favorites",
+					security: [{ bearerAuth: [] }],
+					parameters: [{ $ref: "#/components/parameters/BoardId" }],
+					responses: {
+						204: {
+							description: "Board removed from favorites",
+						},
+						401: {
+							description: "Unauthorized",
 							content: {
 								"application/json": {
 									schema: { $ref: "#/components/schemas/ErrorResponse" },

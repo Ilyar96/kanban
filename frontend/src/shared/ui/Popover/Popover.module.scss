@@ -1,0 +1,19 @@
+.popover {
+	display: inline-block;
+}
+
+.trigger {
+	display: inline-flex;
+	align-items: center;
+}
+
+.panel {
+	min-width: var(--button-width, 180px);
+	padding: var(--spacing-l) var(--spacing-m);
+	border: 1px solid var(--border-primary);
+	border-radius: var(--border-radius-m);
+	background: var(--bg-card);
+	box-shadow: var(--shadow-card);
+	backdrop-filter: blur(8px);
+	z-index: 4;
+}

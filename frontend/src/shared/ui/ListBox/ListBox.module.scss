@@ -1,0 +1,114 @@
+.listBox {
+	position: relative;
+	width: 100%;
+}
+
+.label {
+	display: inline-block;
+	margin-bottom: var(--spacing-s);
+	font: var(--font-s);
+	color: var(--text-primary);
+}
+
+.trigger.trigger {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--spacing-s) var(--spacing-m);
+	border-radius: var(--border-radius-m);
+	border: 1px solid var(--border-primary);
+	background: var(--bg-card);
+	box-shadow: var(--shadow-card);
+	font: var(--font-s);
+	color: var(--text-primary);
+	cursor: pointer;
+	transition:
+		border-color var(--transition-base),
+		box-shadow var(--transition-base),
+		background-color var(--transition-base);
+
+	&:hover {
+		border-color: var(--border-hover);
+	}
+
+	&:focus-visible,
+	&[data-focus] {
+		outline: none;
+		border-color: var(--text-accent);
+		box-shadow: 0 0 0 2px color-mix(in srgb, var(--text-accent) 25%, transparent);
+	}
+
+	&[data-open] .arrowIcon {
+		transform: rotate(180deg);
+	}
+}
+
+.triggerText {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	text-align: left;
+}
+
+.arrowIcon {
+	flex-shrink: 0;
+	width: 20px;
+	height: 20px;
+	fill: var(--icon-primary);
+	transition: transform var(--transition-base);
+}
+
+.options {
+	min-width: var(--button-width, 220px);
+	padding: var(--spacing-xs);
+	border: 1px solid var(--border-primary);
+	border-radius: var(--border-radius-m);
+	background: var(--bg-card);
+	box-shadow: var(--shadow-card);
+	backdrop-filter: blur(8px);
+	z-index: 4;
+	transition:
+		opacity var(--transition-base),
+		transform var(--transition-base);
+
+	&[data-closed] {
+		opacity: 0;
+		transform: translateY(-4px);
+	}
+}
+
+.option {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	padding: var(--spacing-s) var(--spacing-m);
+	border-radius: var(--border-radius-s);
+	font: var(--font-s);
+	color: var(--text-primary);
+	cursor: pointer;
+	transition:
+		background-color var(--transition-base),
+		color var(--transition-base),
+		opacity var(--transition-base);
+}
+
+.optionActive {
+	background: var(--bg-card-hover);
+}
+
+.optionSelected {
+	font-weight: 600;
+}
+
+.optionDisabled {
+	color: var(--text-muted);
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.content {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

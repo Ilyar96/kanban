@@ -25,6 +25,7 @@
 .field {
 	--outline-size: 2px;
 	--outline-size-negative: calc(var(--outline-size) * -1);
+	display: block;
 	width: 100%;
 	background: var(--bg-card);
 	border: 1px solid var(--border-primary);

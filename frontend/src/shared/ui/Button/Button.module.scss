@@ -1,6 +1,10 @@
 .Button {
 	--outline-size: 2px;
 	--outline-size-negative: calc(var(--outline-size) * -1);
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	gap: var(--spacing-s);
 	padding: var(--spacing-xs) var(--spacing-s);
 	color: var(--text-primary);
 	cursor: pointer;

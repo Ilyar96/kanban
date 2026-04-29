@@ -36,7 +36,7 @@ export const AvatarDropdown = memo(({ className }: AvatarDropdownProps) => {
 			trigger={trigger}
 			items={items}
 			anchorTo="bottom end"
-			offset={16}
+			gap={16}
 		/>
 	);
 });

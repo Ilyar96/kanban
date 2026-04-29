@@ -16,6 +16,11 @@
 		--loader-color: var(--text-primary);
 	}
 
+	&.xs {
+		--size: 14px;
+		--border-size: 1px;
+	}
+
 	&.s {
 		--size: 20px;
 		--border-size: 2px;

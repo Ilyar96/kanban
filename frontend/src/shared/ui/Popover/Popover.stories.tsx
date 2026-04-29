@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Dropdown } from "./Dropdown";
+import { Popover } from "./Popover";
 import { Theme } from "@/app/providers/ThemeProvider";
 import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 import { Button } from "../Button/Button";
@@ -21,23 +21,20 @@ const anchors: AnchorTo[] = [
 	"top",
 ];
 
-const meta: Meta<typeof Dropdown> = {
-	title: "shared/Dropdown",
-	component: Dropdown,
+const meta: Meta<typeof Popover> = {
+	title: "shared/Popover",
+	component: Popover,
 	parameters: {
 		layout: "fullscreen",
 	},
+	tags: [],
+	decorators: [CenteredDecorator, ThemeDecorator(Theme.LIGHT)],
 	argTypes: {
 		anchorTo: { control: "select", options: anchors },
 	},
-	decorators: [CenteredDecorator, ThemeDecorator(Theme.LIGHT)],
 	args: {
-		trigger: <Button theme="background">Open Dropdown</Button>,
-		items: [
-			{ content: "Item 1", onClick: () => alert("Clicked Item 1") },
-			{ content: "Item 2", onClick: () => alert("Clicked Item 2") },
-			{ content: "Item 3", onClick: () => alert("Clicked Item 3"), disabled: true },
-		],
+		trigger: <Button theme="background">Open Popover</Button>,
+		children: <div>Popover Content</div>,
 	},
 };
 
@@ -47,6 +44,5 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {};
 
 export const PrimaryDark: Story = {
-	args: Primary.args,
 	decorators: [CenteredDecorator, ThemeDecorator(Theme.DARK)],
 };

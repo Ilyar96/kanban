@@ -23,6 +23,12 @@ enum BoardRole {
   MOVER
 }
 
+enum BoardVisibility {
+  PRIVATE
+  WORKSPACE
+  PUBLIC
+}
+
 enum InvitationStatus {
   PENDING
   ACCEPTED
@@ -40,21 +46,36 @@ model User {
   updatedAt      DateTime          @updatedAt
   ownedBoards    Board[]           @relation("BoardOwner")
   boardMembers   BoardMember[]
+  favoriteBoards BoardFavorite[]
   createdTasks   Task[]            @relation("TaskCreator")
   sentInvites    BoardInvitation[] @relation("InviteSender")
 }
 
 model Board {
-  id          String            @id @default(cuid())
-  title       String
-  description String?
-  ownerId     String
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-  owner       User              @relation("BoardOwner", fields: [ownerId], references: [id], onDelete: Cascade)
-  members     BoardMember[]
-  columns     Column[]
-  invitations BoardInvitation[]
+  id              String            @id @default(cuid())
+  title           String
+  description     String?
+  visibility      BoardVisibility   @default(PRIVATE)
+  backgroundColor String?
+  ownerId         String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  owner           User              @relation("BoardOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members         BoardMember[]
+  columns         Column[]
+  invitations     BoardInvitation[]
+  favorites       BoardFavorite[]
+}
+
+model BoardFavorite {
+  id        String   @id @default(cuid())
+  boardId   String
+  userId    String
+  createdAt DateTime @default(now())
+  board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([boardId, userId])
 }
 
 model BoardMember {
