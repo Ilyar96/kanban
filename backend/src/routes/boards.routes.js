@@ -18,10 +18,24 @@ const boardIdParamsSchema = z.object({
 	query: z.object({}).optional(),
 });
 
-const ownerIdParamsSchema = z.object({
+const ownerBoardsListSchema = z.object({
 	body: z.object({}).optional(),
 	params: z.object({ userId: z.string().min(1) }),
-	query: z.object({}).optional(),
+	query: z.object({
+		favoritesOnly: z
+			.union([z.boolean(), z.string()])
+			.optional()
+			.transform((value) => {
+				if (value === undefined) return false;
+				if (typeof value === "boolean") return value;
+
+				const normalizedValue = value.trim().toLowerCase();
+				if (normalizedValue === "true" || normalizedValue === "1") return true;
+				if (normalizedValue === "false" || normalizedValue === "0") return false;
+
+				return false;
+			}),
+	}),
 });
 
 const createBoardSchema = z.object({
@@ -83,6 +97,28 @@ const removeMemberSchema = z.object({
 	query: z.object({}).optional(),
 });
 
+const boardsListSchema = z.object({
+	body: z.object({}).optional(),
+	params: z.object({}).optional(),
+	query: z.object({
+		page: z.coerce.number().int().min(1).default(1),
+		limit: z.coerce.number().int().min(1).max(100).default(10),
+		favoritesOnly: z
+			.union([z.boolean(), z.string()])
+			.optional()
+			.transform((value) => {
+				if (value === undefined) return false;
+				if (typeof value === "boolean") return value;
+
+				const normalizedValue = value.trim().toLowerCase();
+				if (normalizedValue === "true" || normalizedValue === "1") return true;
+				if (normalizedValue === "false" || normalizedValue === "0") return false;
+
+				return false;
+			}),
+	}),
+});
+
 function isAdmin(user) {
 	return user.globalRole === "ADMIN";
 }
@@ -112,22 +148,44 @@ async function ensureBoardPermission(req, res, boardId, permission) {
 
 router.use(requireAuth);
 
-router.get("/", async (req, res) => {
-	const boards = await prisma.board.findMany({
-		where: {
-			OR: [
-				{ ownerId: req.user.id },
+router.get("/", validate(boardsListSchema), async (req, res) => {
+	const { page, limit, favoritesOnly } = req.validated.query;
+	const skip = (page - 1) * limit;
+
+	const boardVisibilityWhere = {
+		OR: [
+			{ ownerId: req.user.id },
+			{
+				members: {
+					some: {
+						userId: req.user.id,
+					},
+				},
+			},
+			{ visibility: "WORKSPACE" },
+			{ visibility: "PUBLIC" },
+		],
+	};
+
+	const where = favoritesOnly
+		? {
+			AND: [
+				boardVisibilityWhere,
 				{
-					members: {
+					favorites: {
 						some: {
 							userId: req.user.id,
 						},
 					},
 				},
-				{ visibility: "WORKSPACE" },
-				{ visibility: "PUBLIC" },
 			],
-		},
+		}
+		: boardVisibilityWhere;
+
+	const totalItems = await prisma.board.count({ where });
+
+	const boards = await prisma.board.findMany({
+		where,
 		include: {
 			owner: {
 				select: { id: true, name: true, email: true },
@@ -142,8 +200,13 @@ router.get("/", async (req, res) => {
 				select: { columns: true, members: true },
 			},
 		},
+		skip,
+		take: limit,
 		orderBy: { updatedAt: "desc" },
 	});
+
+	const totalPages = totalItems === 0 ? 0 : Math.ceil(totalItems / limit);
+	const isLastPage = totalPages === 0 || page >= totalPages;
 
 	const mappedBoards = boards.map((board) => ({
 		...board,
@@ -151,11 +214,20 @@ router.get("/", async (req, res) => {
 		favorites: undefined,
 	}));
 
-	return res.json({ boards: mappedBoards });
+	return res.json({
+		boards: mappedBoards,
+		page,
+		limit,
+		totalItems,
+		totalPages,
+		isLastPage,
+	});
 });
 
-router.get("/by-owner/:userId", validate(ownerIdParamsSchema), async (req, res) => {
+
+router.get("/by-owner/:userId", validate(ownerBoardsListSchema), async (req, res) => {
 	const { userId } = req.validated.params;
+	const { favoritesOnly } = req.validated.query;
 	const canViewAllOwnerBoards = isAdmin(req.user) || req.user.id === userId;
 
 	const visibilityWhere = canViewAllOwnerBoards
@@ -178,6 +250,15 @@ router.get("/by-owner/:userId", validate(ownerIdParamsSchema), async (req, res) 
 		where: {
 			ownerId: userId,
 			...visibilityWhere,
+			...(favoritesOnly
+				? {
+					favorites: {
+						some: {
+							userId: req.user.id,
+						},
+					},
+				}
+				: {}),
 		},
 		include: {
 			owner: {

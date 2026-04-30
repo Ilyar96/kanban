@@ -44,14 +44,14 @@ export const BoardCardActions = memo((props: BoardCardActionsProps) => {
 				disabled: isRemoving,
 			},
 		],
-		[],
+		[isRemoving],
 	);
 
 	const onToggleFavorite = useCallback(() => {
 		if (isFavorite) {
 			removeBoardFromFavorite(boardId);
 		} else {
-			addBoardToFavorite({ boardId, favorite: true });
+			addBoardToFavorite(boardId);
 		}
 	}, [addBoardToFavorite, removeBoardFromFavorite, boardId, isFavorite]);
 

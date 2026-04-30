@@ -1,7 +1,8 @@
 import { classNames } from "@/shared/lib/classNames/classNames";
 import { memo } from "react";
-import { WorkspaceGrid } from "@/widgets/WorkspaceGrid";
+import { BoardGrid } from "@/widgets/BoardGrid";
 import { Container } from "@/shared/ui/Container/Container";
+import { VStack } from "@/shared/ui/Stack";
 
 interface WorkspacePageProps {
 	className?: string;
@@ -10,9 +11,13 @@ interface WorkspacePageProps {
 const WorkspacePage = memo(({ className }: WorkspacePageProps) => {
 	return (
 		<section className={classNames("", {}, [className])}>
-			<Container>
-				<WorkspaceGrid />
-			</Container>
+			<VStack
+				as={Container}
+				gap="32"
+			>
+				<BoardGrid title="Избранное" favoritesOnly />
+				<BoardGrid title="Ваши рабочие пространства" />
+			</VStack>
 		</section>
 	);
 });

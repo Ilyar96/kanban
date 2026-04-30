@@ -6,11 +6,24 @@ import { skipToken } from "@reduxjs/toolkit/query";
 import { BoardCard } from "../BoardCard/BoardCard";
 import { BoardCardSkeleton } from "../BoardCardSkeleton/BoardCardSkeleton";
 
-export const BoardList = memo(() => {
+interface BoardListProps {
+	favoritesOnly?: boolean;
+}
+
+export const BoardList = memo((props: BoardListProps) => {
+	const { favoritesOnly } = props;
 	const userId = useSelector(getUserId);
-	const { data, error, isLoading } = useGetBoardsByUserIdQuery(userId ?? skipToken);
-	console.log("data: ", data);
-	console.log("error, isLoading: ", error, isLoading);
+	const { data, isLoading } = useGetBoardsByUserIdQuery(
+		userId
+			? {
+					userId,
+					params: {
+						favoritesOnly,
+						limit: 4,
+					},
+				}
+			: skipToken,
+	);
 
 	const Skeletons = Array.from({ length: 3 }, (_, index) => <BoardCardSkeleton key={index} />);
 

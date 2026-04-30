@@ -154,6 +154,38 @@ const options = {
 						},
 					],
 				},
+				BoardListResponse: {
+					type: "object",
+					required: ["boards", "page", "limit", "totalItems", "totalPages", "isLastPage"],
+					properties: {
+						boards: {
+							type: "array",
+							items: {
+								$ref: "#/components/schemas/BoardListItem",
+							},
+						},
+						page: {
+							type: "integer",
+							minimum: 1,
+						},
+						limit: {
+							type: "integer",
+							minimum: 1,
+							maximum: 100,
+						},
+						totalItems: {
+							type: "integer",
+							minimum: 0,
+						},
+						totalPages: {
+							type: "integer",
+							minimum: 0,
+						},
+						isLastPage: {
+							type: "boolean",
+						},
+					},
+				},
 				Column: {
 					type: "object",
 					required: ["id", "title", "position", "boardId", "createdAt", "updatedAt"],
@@ -535,24 +567,62 @@ const options = {
 			"/api/boards": {
 				get: {
 					tags: ["Boards"],
-					summary: "Get user boards",
+					summary: "Get user boards with pagination",
+					description:
+						"Returns boards available for current user. Supports pagination and filtering only favorite boards.",
 					security: [{ bearerAuth: [] }],
+					parameters: [
+						{
+							name: "page",
+							in: "query",
+							required: false,
+							schema: {
+								type: "integer",
+								minimum: 1,
+								default: 1,
+							},
+							description: "Page number (starts from 1)",
+						},
+						{
+							name: "limit",
+							in: "query",
+							required: false,
+							schema: {
+								type: "integer",
+								minimum: 1,
+								maximum: 100,
+								default: 10,
+							},
+							description: "Number of items per page",
+						},
+						{
+							name: "favoritesOnly",
+							in: "query",
+							required: false,
+							schema: {
+								type: "boolean",
+								default: false,
+							},
+							description: "When true returns only boards that are in current user's favorites",
+						},
+					],
 					responses: {
 						200: {
 							description: "Boards list",
 							content: {
 								"application/json": {
 									schema: {
-										type: "object",
-										required: ["boards"],
-										properties: {
-											boards: {
-												type: "array",
-												items: {
-													$ref: "#/components/schemas/BoardListItem",
-												},
-											},
-										},
+										$ref: "#/components/schemas/BoardListResponse",
+									},
+								},
+							},
+						},
+						400: {
+							description: "Validation error",
+							content: {
+								"application/json": {
+									schema: {
+										$ref: "#/components/schemas/ValidationErrorResponse",
 									},
 								},
 							},
@@ -639,9 +709,21 @@ const options = {
 					tags: ["Boards"],
 					summary: "Get all boards by owner id",
 					description:
-						"Returns boards of a specific owner. Owner and ADMIN see all owner's boards. Other users see only WORKSPACE/PUBLIC boards or boards where they are members.",
+						"Returns boards of a specific owner. Owner and ADMIN see all owner's boards. Other users see only WORKSPACE/PUBLIC boards or boards where they are members. Supports filtering only favorite boards for current user.",
 					security: [{ bearerAuth: [] }],
-					parameters: [{ $ref: "#/components/parameters/UserId" }],
+					parameters: [
+						{ $ref: "#/components/parameters/UserId" },
+						{
+							name: "favoritesOnly",
+							in: "query",
+							required: false,
+							schema: {
+								type: "boolean",
+								default: false,
+							},
+							description: "When true returns only boards that are in current user's favorites",
+						},
+					],
 					responses: {
 						200: {
 							description: "Boards list by owner id",
@@ -667,6 +749,16 @@ const options = {
 							content: {
 								"application/json": {
 									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+						400: {
+							description: "Validation error",
+							content: {
+								"application/json": {
+									schema: {
+										$ref: "#/components/schemas/ValidationErrorResponse",
+									},
 								},
 							},
 						},
