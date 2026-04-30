@@ -10,6 +10,7 @@ import {
 import { memo, useMemo, type ReactNode } from "react";
 import type { ListBoxAnchorTo } from "@/shared/types/anchor";
 import cls from "./ListBox.module.scss";
+import { SpriteIcon } from "../SpriteIcon/SpriteIcon";
 
 export interface ListBoxItem {
 	value: string;
@@ -60,9 +61,10 @@ export const ListBox = memo((props: ListBoxProps) => {
 				>
 					<ListboxButton className={cls.trigger}>
 						<div className={cls.triggerText}>{triggerContent}</div>
-						<svg className={cls.arrowIcon}>
-							<use href="/icons.svg#chevron-down-icon"></use>
-						</svg>
+						<SpriteIcon
+							className={cls.arrowIcon}
+							spriteId="chevron-down-icon"
+						/>
 					</ListboxButton>
 					<ListboxOptions
 						anchor={{

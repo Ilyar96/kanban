@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { useSelector } from "react-redux";
-import { useGetBoardsByUserIdQuery } from "../../model/api/getBoardsByUserIdApi";
+import { useGetBoardsByUserIdQuery } from "../../model/api/boardsApi";
 import { getUserId } from "@/entities/User";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { BoardCard } from "../BoardCard/BoardCard";
@@ -20,11 +20,13 @@ export const BoardList = memo(() => {
 
 	return (
 		<>
-			{data?.boards?.map(({ id, backgroundColor, title }) => (
+			{data?.boards?.map(({ id, backgroundColor, title, isFavorite }) => (
 				<BoardCard
 					key={id}
 					background={backgroundColor}
 					title={title}
+					id={id}
+					isFavorite={isFavorite ?? false}
 					// TODO to - add real link
 					// to="/"
 				/>

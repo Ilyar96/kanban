@@ -2,6 +2,7 @@ import { classNames } from "@/shared/lib/classNames/classNames";
 import { memo, useState } from "react";
 import { Field, Checkbox as HCheckbox, Label } from "@headlessui/react";
 import cls from "./Checkbox.module.scss";
+import { SpriteIcon } from "../SpriteIcon/SpriteIcon";
 
 interface CheckboxProps {
 	label?: string;
@@ -32,9 +33,10 @@ export const Checkbox = memo((props: CheckboxProps) => {
 				checked={currentChecked}
 				onChange={handleChange}
 			>
-				<svg className={cls.checkedIcon}>
-					<use href="/icons.svg#checked-icon"></use>
-				</svg>
+				<SpriteIcon
+					className={cls.checkedIcon}
+					spriteId="checked-icon"
+				/>
 			</HCheckbox>
 			{label && <Label className={cls.label}>{label}</Label>}
 		</Field>

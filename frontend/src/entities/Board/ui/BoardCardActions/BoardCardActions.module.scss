@@ -1,0 +1,26 @@
+.boardCardActions {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 3;
+	padding: var(--spacing-s) var(--spacing-m);
+	transition:
+		opacity var(--transition-base),
+		visibility var(--transition-base);
+}
+
+.settingsBtn.settingsBtn {
+	padding: var(--spacing-xs);
+}
+
+.boardSettingsIcon {
+	--icon-size: 14px;
+	width: var(--icon-size);
+	height: var(--icon-size);
+	color: #fff;
+}
+
+.deleteItem.deleteItem {
+	color: var(--text-danger);
+}

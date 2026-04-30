@@ -2,6 +2,7 @@ import { memo, useEffect, useState } from "react";
 import { classNames } from "@/shared/lib/classNames/classNames";
 import cls from "./BackgroundList.module.scss";
 import { Button } from "../Button/Button";
+import { SpriteIcon } from "../SpriteIcon/SpriteIcon";
 
 interface BackgroundListProps {
 	backgroundList: string[];
@@ -35,9 +36,10 @@ export const BackgroundList = memo((props: BackgroundListProps) => {
 					style={{ background: bg }}
 				>
 					{selected === bg && (
-						<svg className={cls.checkedIcon}>
-							<use href={`/icons.svg#checked-icon`} />
-						</svg>
+						<SpriteIcon
+							className={cls.checkedIcon}
+							spriteId="checked-icon"
+						/>
 					)}
 				</Button>
 			))}
