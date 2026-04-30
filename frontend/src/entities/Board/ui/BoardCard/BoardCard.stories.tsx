@@ -1,17 +1,20 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { CreateWorkspace } from "./CreateWorkspace";
+import { BoardCard } from "./BoardCard";
 import { Theme } from "@/app/providers/ThemeProvider";
 import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 
-const meta: Meta<typeof CreateWorkspace> = {
-	title: "features/CreateWorkspace/CreateWorkspace",
-	component: CreateWorkspace,
+const meta: Meta<typeof BoardCard> = {
+	title: "entities/Board/BoardCard",
+	component: BoardCard,
 	parameters: {
 		layout: "fullscreen",
 	},
-	tags: [],
 	decorators: [ThemeDecorator(Theme.LIGHT)],
-	argTypes: {},
+	args: {
+		title: "Доска 1",
+		background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+		to: "main",
+	},
 };
 
 export default meta;

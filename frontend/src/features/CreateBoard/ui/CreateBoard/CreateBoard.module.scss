@@ -1,4 +1,4 @@
-.createWorkspace {
+.createBoard {
 	display: inline-flex;
 }
 
@@ -44,4 +44,13 @@
 
 .checkbox {
 	margin: var(--spacing-m) 0;
+}
+
+.popover {
+	display: block;
+	width: 100%;
+
+	> button {
+		height: 100%;
+	}
 }

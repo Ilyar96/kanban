@@ -2,11 +2,6 @@
 	display: inline-block;
 }
 
-.trigger {
-	display: inline-flex;
-	align-items: center;
-}
-
 .panel {
 	min-width: var(--button-width, 180px);
 	padding: var(--spacing-l) var(--spacing-m);

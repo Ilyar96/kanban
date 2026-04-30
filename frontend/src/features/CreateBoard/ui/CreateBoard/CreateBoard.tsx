@@ -3,38 +3,40 @@ import { memo, useCallback, useMemo, useState } from "react";
 import { Button } from "@/shared/ui/Button/Button";
 import { Popover } from "@/shared/ui/Popover/Popover";
 import { TextField } from "@/shared/ui/TextField/TextField";
-import { useCreateWorkspaceMutation } from "../../model/api/createWorkspaceApi";
+import { useCreateBoardMutation } from "../../model/api/createBoardApi";
 import { Text } from "@/shared/ui/Text/Text";
 import { Checkbox } from "@/shared/ui/Checkbox/Checkbox";
 import { ListBox, type ListBoxItem } from "@/shared/ui/ListBox/ListBox";
-import type { WorkspacePrivacy } from "../../model/types";
+import type { BoardPrivacy } from "../../model/types";
 import { Loader } from "@/shared/ui/Loader/Loader";
 import { BackgroundList } from "@/shared/ui/BackgroundList/BackgroundList";
 import { Controller, useForm } from "react-hook-form";
 import { BackgroundPreview } from "../BackgroundPreview/BackgroundPreview";
 import { gradients } from "@/shared/const/gradients";
-import cls from "./CreateWorkspace.module.scss";
+import cls from "./CreateBoard.module.scss";
 
-interface CreateWorkspaceProps {
+interface CreateBoardProps {
 	className?: string;
+	triggerClassName?: string;
 }
 
-const workspacePrivacyItems: ListBoxItem[] = [
+const boardPrivacyItems: ListBoxItem[] = [
 	{ value: "PRIVATE", content: "Приватная" },
 	{ value: "WORKSPACE", content: "Видимая для участников" },
 	{ value: "PUBLIC", content: "Публичная" },
 ];
 
-interface CreateWorkspaceFormValues {
+interface CreateBoardFormValues {
 	title: string;
 }
 
-export const CreateWorkspace = memo(({ className }: CreateWorkspaceProps) => {
+export const CreateBoard = memo((props: CreateBoardProps) => {
+	const { className, triggerClassName } = props;
 	const [description, setDescription] = useState("");
-	const [visibility, setVisibility] = useState<WorkspacePrivacy>("PRIVATE");
+	const [visibility, setVisibility] = useState<BoardPrivacy>("PRIVATE");
 	const [backgroundColor, setBackgroundColor] = useState(gradients[0]);
 	const [isFavorite, setIsFavorite] = useState(false);
-	const [createWorkspace, { isLoading, error }] = useCreateWorkspaceMutation();
+	const [createBoard, { isLoading, error }] = useCreateBoardMutation();
 
 	const {
 		control,
@@ -42,7 +44,7 @@ export const CreateWorkspace = memo(({ className }: CreateWorkspaceProps) => {
 		reset,
 		watch,
 		formState: { errors },
-	} = useForm<CreateWorkspaceFormValues>({
+	} = useForm<CreateBoardFormValues>({
 		defaultValues: {
 			title: "",
 		},
@@ -56,14 +58,14 @@ export const CreateWorkspace = memo(({ className }: CreateWorkspaceProps) => {
 		return payload?.message ?? "Не удалось создать доску";
 	}, [error]);
 
-	const onSubmit = async (values: CreateWorkspaceFormValues, close: () => void) => {
+	const onSubmit = async (values: CreateBoardFormValues, close: () => void) => {
 		const normalizedTitle = values.title.trim();
 		if (!normalizedTitle) {
 			return;
 		}
 
 		try {
-			await createWorkspace({
+			await createBoard({
 				title: normalizedTitle,
 				description: description.trim() || undefined,
 				visibility,
@@ -88,16 +90,25 @@ export const CreateWorkspace = memo(({ className }: CreateWorkspaceProps) => {
 		setBackgroundColor(bg);
 	}, []);
 
-	const onWorkspacePrivacyChange = useCallback((value: string) => {
+	const onBoardPrivacyChange = useCallback((value: string) => {
 		if (value === "PRIVATE" || value === "WORKSPACE" || value === "PUBLIC") {
-			setVisibility(value as WorkspacePrivacy);
+			setVisibility(value as BoardPrivacy);
 		}
 	}, []);
 
-	const trigger = <Button theme="background">Создать доску</Button>;
+	const trigger = (
+		<Button
+			className={triggerClassName}
+			theme="background"
+			size="l"
+		>
+			Создать доску
+		</Button>
+	);
 	return (
-		<div className={classNames(cls.createWorkspace, {}, [className])}>
+		<div className={classNames(cls.createBoard, {}, [className])}>
 			<Popover
+				className={cls.popover}
 				trigger={trigger}
 				anchorTo="right"
 			>
@@ -145,9 +156,9 @@ export const CreateWorkspace = memo(({ className }: CreateWorkspaceProps) => {
 						/>
 
 						<ListBox
-							items={workspacePrivacyItems}
+							items={boardPrivacyItems}
 							value={visibility}
-							onChange={onWorkspacePrivacyChange}
+							onChange={onBoardPrivacyChange}
 							label="Видимость"
 						/>
 

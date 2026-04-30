@@ -2,7 +2,7 @@ import { rtkApi } from "@/shared/api/rtkApi";
 
 type BoardVisibility = "PRIVATE" | "WORKSPACE" | "PUBLIC";
 
-interface CreateWorkspaceRequest {
+interface CreateBoardRequest {
 	title: string;
 	description?: string;
 	visibility?: BoardVisibility;
@@ -21,9 +21,9 @@ interface BoardResponse {
 	};
 }
 
-const createWorkspaceApi = rtkApi.injectEndpoints({
+const createBoardApi = rtkApi.injectEndpoints({
 	endpoints: (build) => ({
-		createWorkspace: build.mutation<BoardResponse, CreateWorkspaceRequest>({
+		createBoard: build.mutation<BoardResponse, CreateBoardRequest>({
 			query: (body) => ({
 				url: "/boards",
 				method: "POST",
@@ -33,4 +33,4 @@ const createWorkspaceApi = rtkApi.injectEndpoints({
 	}),
 });
 
-export const { useCreateWorkspaceMutation } = createWorkspaceApi;
+export const { useCreateBoardMutation } = createBoardApi;

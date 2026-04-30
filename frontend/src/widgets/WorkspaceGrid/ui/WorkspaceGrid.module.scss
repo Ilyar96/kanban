@@ -1,4 +1,10 @@
-// TODO: Add styles for WorkspaceGrid
-/* stylelint-disable-next-line block-no-empty */
-.workspaceGrid {
+.createWorkspace {
+	width: 100%;
+	align-items: stretch;
+	justify-content: stretch;
+}
+
+.createWorkspaceTrigger {
+	width: 100%;
+	min-height: 116px;
 }

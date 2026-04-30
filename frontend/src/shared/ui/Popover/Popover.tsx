@@ -1,5 +1,5 @@
 import { classNames } from "@/shared/lib/classNames/classNames";
-import { memo, type ComponentProps, type ReactNode } from "react";
+import { Fragment, memo, type ComponentProps, type ReactNode } from "react";
 import cls from "./Popover.module.scss";
 import { Popover as HPopover, PopoverButton, PopoverPanel } from "@headlessui/react";
 
@@ -21,8 +21,7 @@ export const Popover = memo((props: PopoverProps) => {
 			{({ close }) => (
 				<>
 					<PopoverButton
-						className={cls.trigger}
-						as="div"
+						as={Fragment}
 					>
 						{trigger}
 					</PopoverButton>

@@ -1,0 +1,47 @@
+.Grid {
+	display: grid;
+}
+
+.alignStart {
+	align-items: start;
+}
+
+.alignCenter {
+	align-items: center;
+}
+
+.alignEnd {
+	align-items: end;
+}
+
+.alignStretch {
+	align-items: stretch;
+}
+
+.gap4 {
+	gap: 4px;
+}
+
+.gap8 {
+	gap: 8px;
+}
+
+.gap12 {
+	gap: 12px;
+}
+
+.gap16 {
+	gap: 16px;
+}
+
+.gap24 {
+	gap: 24px;
+}
+
+.gap32 {
+	gap: 32px;
+}
+
+.max {
+	width: 100%;
+}

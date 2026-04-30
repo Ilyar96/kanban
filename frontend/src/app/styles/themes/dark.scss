@@ -56,8 +56,14 @@
 	--status-danger-bg: #3b1a1b;
 	--status-danger-text: #ff9ea1;
 
+	/* Overlay */
+	--overlay-bg: rgb(0 0 0 / 0.5);
+	--card-overlay-bg: rgb(0 0 0 / 0.3);
+
 	/* Effects */
 	--shadow-card: 0 12px 28px rgb(0 0 0 / 35%);
+	--skeleton-shadow: rgb(0 0 0 / 60%);
+	--skeleton-color: rgb(248 251 255 / 24%);
 
 	/* Legacy aliases */
 }

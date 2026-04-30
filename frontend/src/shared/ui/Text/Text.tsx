@@ -53,7 +53,7 @@ export const Text = memo((props: TextProps) => {
 		<div className={classNames(cls.textWrapper, mods, [className])}>
 			{title && (
 				<HeaderTag
-					className={cls.title}
+					className={classNames(cls.title, { [cls.onlyTitle]: !text }, [])}
 					data-testid={`${dataTestId}.Title`}
 				>
 					{title}
