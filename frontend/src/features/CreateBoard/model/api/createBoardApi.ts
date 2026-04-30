@@ -1,25 +1,5 @@
 import { rtkApi } from "@/shared/api/rtkApi";
-
-type BoardVisibility = "PRIVATE" | "WORKSPACE" | "PUBLIC";
-
-interface CreateBoardRequest {
-	title: string;
-	description?: string;
-	visibility?: BoardVisibility;
-	backgroundColor?: string;
-	isFavorite?: boolean;
-}
-
-interface BoardResponse {
-	board: {
-		id: string;
-		title: string;
-		description: string | null;
-		visibility: BoardVisibility;
-		backgroundColor: string | null;
-		isFavorite: boolean;
-	};
-}
+import type { BoardResponse, CreateBoardRequest } from "../types";
 
 const createBoardApi = rtkApi.injectEndpoints({
 	endpoints: (build) => ({
@@ -29,6 +9,7 @@ const createBoardApi = rtkApi.injectEndpoints({
 				method: "POST",
 				body,
 			}),
+			invalidatesTags: [{ type: "Board", id: "LIST" }],
 		}),
 	}),
 });

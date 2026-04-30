@@ -207,10 +207,29 @@ router.get("/by-owner/:userId", validate(ownerIdParamsSchema), async (req, res) 
 
 router.post("/", validate(createBoardSchema), async (req, res) => {
 	const { title, description, visibility, backgroundColor, isFavorite } = req.validated.body;
+	const normalizedTitle = title.trim();
+
+	if (!normalizedTitle) {
+		return res.status(400).json({ message: "Название доски не может быть пустым" });
+	}
+
+	const ownerBoards = await prisma.board.findMany({
+		where: { ownerId: req.user.id },
+		select: { title: true },
+	});
+
+	const normalizedTitleLower = normalizedTitle.toLocaleLowerCase();
+	const hasBoardWithSameTitle = ownerBoards.some(
+		(boardItem) => boardItem.title.trim().toLocaleLowerCase() === normalizedTitleLower,
+	);
+
+	if (hasBoardWithSameTitle) {
+		return res.status(409).json({ message: "Доска с таким названием уже существует" });
+	}
 
 	const board = await prisma.board.create({
 		data: {
-			title,
+			title: normalizedTitle,
 			description,
 			visibility,
 			backgroundColor,

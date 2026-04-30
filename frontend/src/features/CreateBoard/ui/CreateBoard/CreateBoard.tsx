@@ -1,5 +1,5 @@
 import { classNames } from "@/shared/lib/classNames/classNames";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/shared/ui/Button/Button";
 import { Popover } from "@/shared/ui/Popover/Popover";
 import { TextField } from "@/shared/ui/TextField/TextField";
@@ -7,13 +7,14 @@ import { useCreateBoardMutation } from "../../model/api/createBoardApi";
 import { Text } from "@/shared/ui/Text/Text";
 import { Checkbox } from "@/shared/ui/Checkbox/Checkbox";
 import { ListBox, type ListBoxItem } from "@/shared/ui/ListBox/ListBox";
-import type { BoardPrivacy } from "../../model/types";
 import { Loader } from "@/shared/ui/Loader/Loader";
 import { BackgroundList } from "@/shared/ui/BackgroundList/BackgroundList";
 import { Controller, useForm } from "react-hook-form";
 import { BackgroundPreview } from "../BackgroundPreview/BackgroundPreview";
 import { gradients } from "@/shared/const/gradients";
 import cls from "./CreateBoard.module.scss";
+import { appToast } from "@/shared/lib/toast";
+import type { BoardVisibility } from "@/shared/types/board";
 
 interface CreateBoardProps {
 	className?: string;
@@ -33,7 +34,7 @@ interface CreateBoardFormValues {
 export const CreateBoard = memo((props: CreateBoardProps) => {
 	const { className, triggerClassName } = props;
 	const [description, setDescription] = useState("");
-	const [visibility, setVisibility] = useState<BoardPrivacy>("PRIVATE");
+	const [visibility, setVisibility] = useState<BoardVisibility>("PRIVATE");
 	const [backgroundColor, setBackgroundColor] = useState(gradients[0]);
 	const [isFavorite, setIsFavorite] = useState(false);
 	const [createBoard, { isLoading, error }] = useCreateBoardMutation();
@@ -81,6 +82,7 @@ export const CreateBoard = memo((props: CreateBoardProps) => {
 			close();
 
 			// TODO add success notification
+			appToast.success("Доска успешно создана");
 		} catch {
 			// Error text is handled by RTK Query `error` state.
 		}
@@ -91,10 +93,14 @@ export const CreateBoard = memo((props: CreateBoardProps) => {
 	}, []);
 
 	const onBoardPrivacyChange = useCallback((value: string) => {
-		if (value === "PRIVATE" || value === "WORKSPACE" || value === "PUBLIC") {
-			setVisibility(value as BoardPrivacy);
-		}
+		setVisibility(value as BoardVisibility);
 	}, []);
+
+	useEffect(() => {
+		if (error) {
+			appToast.error(errorMessage);
+		}
+	}, [error, errorMessage]);
 
 	const trigger = (
 		<Button

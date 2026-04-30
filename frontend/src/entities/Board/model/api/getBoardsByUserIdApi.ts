@@ -7,6 +7,13 @@ const getBoardsByUserIdApi = rtkApi.injectEndpoints({
 			query: (userId) => ({
 				url: `/boards/by-owner/${userId}`,
 			}),
+			providesTags: (result) =>
+				result?.boards
+					? [
+							...result.boards.map(({ id }) => ({ type: "Board" as const, id })),
+							{ type: "Board", id: "LIST" },
+						]
+					: [{ type: "Board", id: "LIST" }],
 		}),
 	}),
 });

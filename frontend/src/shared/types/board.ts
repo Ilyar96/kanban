@@ -1,8 +1,10 @@
+export type BoardVisibility = "PRIVATE" | "WORKSPACE" | "PUBLIC";
+
 export interface Board {
 	id: string;
 	title: string;
 	description: string;
-	visibility: string;
+	visibility: BoardVisibility;
 	backgroundColor: string;
 	isFavorite?: boolean;
 	ownerId: string;
