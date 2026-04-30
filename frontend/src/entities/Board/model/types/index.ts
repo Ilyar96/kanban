@@ -8,6 +8,8 @@ export interface GetBoardsParams {
 	page?: number;
 	limit?: number;
 	favoritesOnly?: boolean;
+	sortBy?: "updatedAt" | "createdAt" | "title";
+	sortOrder?: "asc" | "desc";
 }
 
 export interface BoardsPageResponse extends BoardsResponse {
@@ -17,3 +19,10 @@ export interface BoardsPageResponse extends BoardsResponse {
 	totalPages: number;
 	isLastPage: boolean;
 }
+
+export type GetBoardsByUserIdArgs =
+	| string
+	| {
+			userId: string;
+			params?: GetBoardsParams;
+	  };

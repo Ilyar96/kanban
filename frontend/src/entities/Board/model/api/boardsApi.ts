@@ -1,12 +1,5 @@
 import { rtkApi } from "@/shared/api/rtkApi";
-import type { BoardsResponse, GetBoardsParams } from "../types";
-
-type GetBoardsByUserIdArgs =
-	| string
-	| {
-			userId: string;
-			params?: GetBoardsParams;
-	  };
+import type { BoardsResponse, GetBoardsByUserIdArgs } from "../types";
 
 const boardsApi = rtkApi.injectEndpoints({
 	endpoints: (build) => ({

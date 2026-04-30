@@ -11,6 +11,27 @@ const router = express.Router();
 
 const visibilitySchema = z.enum(["PRIVATE", "WORKSPACE", "PUBLIC"]);
 const backgroundColorSchema = z.string().min(1).max(2048);
+const sortBySchema = z.enum(["updatedAt", "createdAt", "title"]);
+const sortOrderSchema = z.enum(["asc", "desc"]);
+
+function parseFavoritesOnly(value) {
+	if (value === undefined) return false;
+	if (typeof value === "boolean") return value;
+
+	const normalizedValue = value.trim().toLowerCase();
+	if (normalizedValue === "true" || normalizedValue === "1") return true;
+	if (normalizedValue === "false" || normalizedValue === "0") return false;
+
+	return false;
+}
+
+function buildBoardOrderBy(sortBy, sortOrder) {
+	if (sortBy === "title") {
+		return { title: sortOrder };
+	}
+
+	return { [sortBy]: sortOrder };
+}
 
 const boardIdParamsSchema = z.object({
 	body: z.object({}).optional(),
@@ -18,23 +39,33 @@ const boardIdParamsSchema = z.object({
 	query: z.object({}).optional(),
 });
 
+const boardDetailsQuerySchema = z.object({
+	body: z.object({}).optional(),
+	params: z.object({ boardId: z.string().min(1) }),
+	query: z.object({
+		page: z.coerce.number().int().min(1).default(1),
+		limit: z.coerce.number().int().min(1).max(100).default(10),
+		favoritesOnly: z
+			.union([z.boolean(), z.string()])
+			.optional()
+			.transform(parseFavoritesOnly),
+		sortBy: sortBySchema.default("updatedAt"),
+		sortOrder: sortOrderSchema.default("desc"),
+	}),
+});
+
 const ownerBoardsListSchema = z.object({
 	body: z.object({}).optional(),
 	params: z.object({ userId: z.string().min(1) }),
 	query: z.object({
+		page: z.coerce.number().int().min(1).default(1),
+		limit: z.coerce.number().int().min(1).max(100).default(10),
 		favoritesOnly: z
 			.union([z.boolean(), z.string()])
 			.optional()
-			.transform((value) => {
-				if (value === undefined) return false;
-				if (typeof value === "boolean") return value;
-
-				const normalizedValue = value.trim().toLowerCase();
-				if (normalizedValue === "true" || normalizedValue === "1") return true;
-				if (normalizedValue === "false" || normalizedValue === "0") return false;
-
-				return false;
-			}),
+			.transform(parseFavoritesOnly),
+		sortBy: sortBySchema.default("updatedAt"),
+		sortOrder: sortOrderSchema.default("desc"),
 	}),
 });
 
@@ -106,16 +137,9 @@ const boardsListSchema = z.object({
 		favoritesOnly: z
 			.union([z.boolean(), z.string()])
 			.optional()
-			.transform((value) => {
-				if (value === undefined) return false;
-				if (typeof value === "boolean") return value;
-
-				const normalizedValue = value.trim().toLowerCase();
-				if (normalizedValue === "true" || normalizedValue === "1") return true;
-				if (normalizedValue === "false" || normalizedValue === "0") return false;
-
-				return false;
-			}),
+			.transform(parseFavoritesOnly),
+		sortBy: sortBySchema.default("updatedAt"),
+		sortOrder: sortOrderSchema.default("desc"),
 	}),
 });
 
@@ -149,7 +173,7 @@ async function ensureBoardPermission(req, res, boardId, permission) {
 router.use(requireAuth);
 
 router.get("/", validate(boardsListSchema), async (req, res) => {
-	const { page, limit, favoritesOnly } = req.validated.query;
+	const { page, limit, favoritesOnly, sortBy, sortOrder } = req.validated.query;
 	const skip = (page - 1) * limit;
 
 	const boardVisibilityWhere = {
@@ -202,7 +226,7 @@ router.get("/", validate(boardsListSchema), async (req, res) => {
 		},
 		skip,
 		take: limit,
-		orderBy: { updatedAt: "desc" },
+		orderBy: buildBoardOrderBy(sortBy, sortOrder),
 	});
 
 	const totalPages = totalItems === 0 ? 0 : Math.ceil(totalItems / limit);
@@ -227,7 +251,8 @@ router.get("/", validate(boardsListSchema), async (req, res) => {
 
 router.get("/by-owner/:userId", validate(ownerBoardsListSchema), async (req, res) => {
 	const { userId } = req.validated.params;
-	const { favoritesOnly } = req.validated.query;
+	const { page, limit, favoritesOnly, sortBy, sortOrder } = req.validated.query;
+	const skip = (page - 1) * limit;
 	const canViewAllOwnerBoards = isAdmin(req.user) || req.user.id === userId;
 
 	const visibilityWhere = canViewAllOwnerBoards
@@ -246,19 +271,25 @@ router.get("/by-owner/:userId", validate(ownerBoardsListSchema), async (req, res
 			],
 		};
 
+	const where = {
+		ownerId: userId,
+		...visibilityWhere,
+		...(favoritesOnly
+			? {
+				favorites: {
+					some: {
+						userId: req.user.id,
+					},
+				},
+			}
+			: {}),
+	};
+
+	const totalItems = await prisma.board.count({ where });
+
 	const boards = await prisma.board.findMany({
 		where: {
-			ownerId: userId,
-			...visibilityWhere,
-			...(favoritesOnly
-				? {
-					favorites: {
-						some: {
-							userId: req.user.id,
-						},
-					},
-				}
-				: {}),
+			...where,
 		},
 		include: {
 			owner: {
@@ -274,8 +305,13 @@ router.get("/by-owner/:userId", validate(ownerBoardsListSchema), async (req, res
 				select: { columns: true, members: true },
 			},
 		},
-		orderBy: { updatedAt: "desc" },
+		skip,
+		take: limit,
+		orderBy: buildBoardOrderBy(sortBy, sortOrder),
 	});
+
+	const totalPages = totalItems === 0 ? 0 : Math.ceil(totalItems / limit);
+	const isLastPage = totalPages === 0 || page >= totalPages;
 
 	const mappedBoards = boards.map((board) => ({
 		...board,
@@ -283,7 +319,14 @@ router.get("/by-owner/:userId", validate(ownerBoardsListSchema), async (req, res
 		favorites: undefined,
 	}));
 
-	return res.json({ boards: mappedBoards });
+	return res.json({
+		boards: mappedBoards,
+		page,
+		limit,
+		totalItems,
+		totalPages,
+		isLastPage,
+	});
 });
 
 router.post("/", validate(createBoardSchema), async (req, res) => {
@@ -344,13 +387,22 @@ router.post("/", validate(createBoardSchema), async (req, res) => {
 	});
 });
 
-router.get("/:boardId", validate(boardIdParamsSchema), async (req, res) => {
+router.get("/:boardId", validate(boardDetailsQuerySchema), async (req, res) => {
 	const { boardId } = req.validated.params;
+	const { page, limit, favoritesOnly, sortBy, sortOrder } = req.validated.query;
+	const columnsSkip = (page - 1) * limit;
 
 	const { board: boardAccess, role } = await getBoardWithRole(boardId, req.user.id);
 	if (!canViewBoard(boardAccess, role, req.user)) {
 		return res.status(404).json({ message: "Board not found" });
 	}
+
+	const columnsOrderBy = buildBoardOrderBy(sortBy, sortOrder);
+	const tasksOrderBy = sortBy === "title" ? { title: sortOrder } : { [sortBy]: sortOrder };
+
+	const totalColumns = await prisma.column.count({
+		where: { boardId },
+	});
 
 	const board = await prisma.board.findUnique({
 		where: { id: boardId },
@@ -366,10 +418,12 @@ router.get("/:boardId", validate(boardIdParamsSchema), async (req, res) => {
 				},
 			},
 			columns: {
-				orderBy: { position: "asc" },
+				orderBy: columnsOrderBy,
+				skip: columnsSkip,
+				take: limit,
 				include: {
 					tasks: {
-						orderBy: { position: "asc" },
+						orderBy: tasksOrderBy,
 						include: {
 							createdBy: {
 								select: { id: true, name: true, email: true },
@@ -391,12 +445,25 @@ router.get("/:boardId", validate(boardIdParamsSchema), async (req, res) => {
 		return res.status(404).json({ message: "Board not found" });
 	}
 
+	const isFavorite = board.favorites.length > 0;
+	if (favoritesOnly && !isFavorite) {
+		return res.status(404).json({ message: "Board not found" });
+	}
+
+	const totalPages = totalColumns === 0 ? 0 : Math.ceil(totalColumns / limit);
+	const isLastPage = totalPages === 0 || page >= totalPages;
+
 	return res.json({
 		board: {
 			...board,
-			isFavorite: board.favorites.length > 0,
+			isFavorite,
 			favorites: undefined,
 		},
+		page,
+		limit,
+		totalItems: totalColumns,
+		totalPages,
+		isLastPage,
 	});
 });
 

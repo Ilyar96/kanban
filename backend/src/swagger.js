@@ -324,6 +324,36 @@ const options = {
 						},
 					],
 				},
+				BoardDetailsResponse: {
+					type: "object",
+					required: ["board", "page", "limit", "totalItems", "totalPages", "isLastPage"],
+					properties: {
+						board: {
+							$ref: "#/components/schemas/BoardDetails",
+						},
+						page: {
+							type: "integer",
+							minimum: 1,
+						},
+						limit: {
+							type: "integer",
+							minimum: 1,
+							maximum: 100,
+						},
+						totalItems: {
+							type: "integer",
+							minimum: 0,
+							description: "Total columns count in board",
+						},
+						totalPages: {
+							type: "integer",
+							minimum: 0,
+						},
+						isLastPage: {
+							type: "boolean",
+						},
+					},
+				},
 				Invitation: {
 					type: "object",
 					required: [
@@ -569,7 +599,7 @@ const options = {
 					tags: ["Boards"],
 					summary: "Get user boards with pagination",
 					description:
-						"Returns boards available for current user. Supports pagination and filtering only favorite boards.",
+						"Returns boards available for current user. Supports pagination, filtering only favorite boards and sorting.",
 					security: [{ bearerAuth: [] }],
 					parameters: [
 						{
@@ -604,6 +634,28 @@ const options = {
 								default: false,
 							},
 							description: "When true returns only boards that are in current user's favorites",
+						},
+						{
+							name: "sortBy",
+							in: "query",
+							required: false,
+							schema: {
+								type: "string",
+								enum: ["updatedAt", "createdAt", "title"],
+								default: "updatedAt",
+							},
+							description: "Field for sorting boards",
+						},
+						{
+							name: "sortOrder",
+							in: "query",
+							required: false,
+							schema: {
+								type: "string",
+								enum: ["asc", "desc"],
+								default: "desc",
+							},
+							description: "Sort order. Default desc means newer first",
 						},
 					],
 					responses: {
@@ -707,12 +759,35 @@ const options = {
 			"/api/boards/by-owner/{userId}": {
 				get: {
 					tags: ["Boards"],
-					summary: "Get all boards by owner id",
+					summary: "Get owner boards with pagination",
 					description:
-						"Returns boards of a specific owner. Owner and ADMIN see all owner's boards. Other users see only WORKSPACE/PUBLIC boards or boards where they are members. Supports filtering only favorite boards for current user.",
+						"Returns boards of a specific owner. Owner and ADMIN see all owner's boards. Other users see only WORKSPACE/PUBLIC boards or boards where they are members. Supports pagination, filtering only favorite boards and sorting.",
 					security: [{ bearerAuth: [] }],
 					parameters: [
 						{ $ref: "#/components/parameters/UserId" },
+						{
+							name: "page",
+							in: "query",
+							required: false,
+							schema: {
+								type: "integer",
+								minimum: 1,
+								default: 1,
+							},
+							description: "Page number (starts from 1)",
+						},
+						{
+							name: "limit",
+							in: "query",
+							required: false,
+							schema: {
+								type: "integer",
+								minimum: 1,
+								maximum: 100,
+								default: 10,
+							},
+							description: "Number of items per page",
+						},
 						{
 							name: "favoritesOnly",
 							in: "query",
@@ -723,6 +798,28 @@ const options = {
 							},
 							description: "When true returns only boards that are in current user's favorites",
 						},
+						{
+							name: "sortBy",
+							in: "query",
+							required: false,
+							schema: {
+								type: "string",
+								enum: ["updatedAt", "createdAt", "title"],
+								default: "updatedAt",
+							},
+							description: "Field for sorting boards",
+						},
+						{
+							name: "sortOrder",
+							in: "query",
+							required: false,
+							schema: {
+								type: "string",
+								enum: ["asc", "desc"],
+								default: "desc",
+							},
+							description: "Sort order. Default desc means newer first",
+						},
 					],
 					responses: {
 						200: {
@@ -730,16 +827,7 @@ const options = {
 							content: {
 								"application/json": {
 									schema: {
-										type: "object",
-										required: ["boards"],
-										properties: {
-											boards: {
-												type: "array",
-												items: {
-													$ref: "#/components/schemas/BoardListItem",
-												},
-											},
-										},
+										$ref: "#/components/schemas/BoardListResponse",
 									},
 								},
 							},
@@ -768,21 +856,84 @@ const options = {
 			"/api/boards/{boardId}": {
 				get: {
 					tags: ["Boards"],
-					summary: "Get board details",
+					summary: "Get board details with columns pagination",
+					description:
+						"Returns board details. Supports columns pagination, sorting and optional filtering by favoritesOnly for current user.",
 					security: [{ bearerAuth: [] }],
-					parameters: [{ $ref: "#/components/parameters/BoardId" }],
+					parameters: [
+						{ $ref: "#/components/parameters/BoardId" },
+						{
+							name: "page",
+							in: "query",
+							required: false,
+							schema: {
+								type: "integer",
+								minimum: 1,
+								default: 1,
+							},
+							description: "Columns page number (starts from 1)",
+						},
+						{
+							name: "limit",
+							in: "query",
+							required: false,
+							schema: {
+								type: "integer",
+								minimum: 1,
+								maximum: 100,
+								default: 10,
+							},
+							description: "Columns per page",
+						},
+						{
+							name: "favoritesOnly",
+							in: "query",
+							required: false,
+							schema: {
+								type: "boolean",
+								default: false,
+							},
+							description: "When true returns board only if it is in current user's favorites",
+						},
+						{
+							name: "sortBy",
+							in: "query",
+							required: false,
+							schema: {
+								type: "string",
+								enum: ["updatedAt", "createdAt", "title"],
+								default: "updatedAt",
+							},
+							description: "Field for sorting columns and tasks",
+						},
+						{
+							name: "sortOrder",
+							in: "query",
+							required: false,
+							schema: {
+								type: "string",
+								enum: ["asc", "desc"],
+								default: "desc",
+							},
+							description: "Sort order. Default desc means newer first",
+						},
+					],
 					responses: {
 						200: {
 							description: "Board details",
 							content: {
 								"application/json": {
 									schema: {
-										type: "object",
-										required: ["board"],
-										properties: {
-											board: {
-												$ref: "#/components/schemas/BoardDetails",
-											},
+										$ref: "#/components/schemas/BoardDetailsResponse",
+									},
+								},
+							},
+							400: {
+								description: "Validation error",
+								content: {
+									"application/json": {
+										schema: {
+											$ref: "#/components/schemas/ValidationErrorResponse",
 										},
 									},
 								},

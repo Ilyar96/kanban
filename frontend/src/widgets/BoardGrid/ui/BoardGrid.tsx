@@ -5,6 +5,11 @@ import { CreateBoard } from "@/features/CreateBoard";
 import { BoardList } from "@/entities/Board";
 import { Grid } from "@/shared/ui/Grid";
 import { Text } from "@/shared/ui/Text/Text";
+import { useSelector } from "react-redux";
+import { getUserId } from "@/entities/User";
+import { useGetBoardsByUserIdQuery } from "@/entities/Board";
+import { skipToken } from "@reduxjs/toolkit/query";
+
 // TODO все workspace на boards заменить!!!
 interface BoardGridProps {
 	className?: string;
@@ -14,6 +19,23 @@ interface BoardGridProps {
 
 export const BoardGrid = memo((props: BoardGridProps) => {
 	const { className, favoritesOnly, title } = props;
+	const userId = useSelector(getUserId);
+	const { data, isLoading } = useGetBoardsByUserIdQuery(
+		userId
+			? {
+					userId,
+					params: {
+						favoritesOnly,
+						limit: favoritesOnly ? 12 : undefined,
+					},
+				}
+			: skipToken,
+	);
+
+	if (data?.boards.length === 0) {
+		return null;
+	}
+
 	return (
 		<Grid
 			className={cls.grid}
@@ -31,7 +53,10 @@ export const BoardGrid = memo((props: BoardGridProps) => {
 				minColumnWidth="280px"
 				gap="16"
 			>
-				<BoardList favoritesOnly={favoritesOnly} />
+				<BoardList
+					data={data?.boards ?? []}
+					isLoading={isLoading}
+				/>
 				{!favoritesOnly && (
 					<CreateBoard
 						className={cls.createWorkspace}
