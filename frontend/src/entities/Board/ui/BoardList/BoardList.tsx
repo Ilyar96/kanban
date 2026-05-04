@@ -2,6 +2,7 @@ import { memo } from "react";
 import { BoardCard } from "../BoardCard/BoardCard";
 import { BoardCardSkeleton } from "../BoardCardSkeleton/BoardCardSkeleton";
 import type { Board } from "@/shared/types/board";
+import { RoutePaths } from "@/shared/const/router";
 
 interface BoardListProps {
 	data?: Board[];
@@ -28,8 +29,7 @@ export const BoardList = memo((props: BoardListProps) => {
 					id={board.id}
 					isFavorite={board.isFavorite ?? false}
 					onEditClick={onEditBoard ? () => onEditBoard(board) : undefined}
-					// TODO to - add real link
-					// to="/"
+					to={RoutePaths.board + "/" + board.id}
 				/>
 			))}
 		</>

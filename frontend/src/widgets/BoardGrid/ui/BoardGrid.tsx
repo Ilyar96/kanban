@@ -50,6 +50,7 @@ export const BoardGrid = memo((props: BoardGridProps) => {
 		<Grid
 			className={cls.grid}
 			gap="16"
+			as="section"
 		>
 			{title && (
 				<Text

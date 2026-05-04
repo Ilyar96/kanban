@@ -5,6 +5,7 @@ import { Navigate } from "react-router-dom";
 import { getUserAuthData, getUserInited } from "@/entities/User";
 import { RoutePaths } from "@/shared/const/router";
 import { useAuthRedirect } from "@/shared/lib/hooks/useAuthRedirect/useAuthRedirect";
+import { Page } from "@/shared/ui/Page/Page";
 
 const RegisterPage = memo(() => {
 	const authData = useSelector(getUserAuthData);
@@ -24,7 +25,11 @@ const RegisterPage = memo(() => {
 		);
 	}
 
-	return <AuthFormWidget type="register" />;
+	return (
+		<Page>
+			<AuthFormWidget type="register" />
+		</Page>
+	);
 });
 
 export default RegisterPage;

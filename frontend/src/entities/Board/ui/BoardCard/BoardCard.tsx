@@ -1,9 +1,8 @@
 import { classNames } from "@/shared/lib/classNames/classNames";
-import { memo, useEffect } from "react";
+import { memo, useCallback, type KeyboardEvent, type MouseEvent } from "react";
 import cls from "./BoardCard.module.scss";
 import { Card } from "@/shared/ui/Card/Card";
 import { Text } from "@/shared/ui/Text/Text";
-import type { AppRoutes } from "@/shared/const/router";
 import { useNavigate } from "react-router-dom";
 import { BoardCardActions } from "../BoardCardActions/BoardCardActions";
 
@@ -11,7 +10,7 @@ interface BoardCardProps {
 	className?: string;
 	title?: string;
 	background?: string;
-	to?: AppRoutes;
+	to?: string;
 	id: string;
 	isFavorite: boolean;
 	onEditClick?: () => void;
@@ -21,14 +20,44 @@ export const BoardCard = memo((props: BoardCardProps) => {
 	const { className, title, background, to, id, isFavorite, onEditClick } = props;
 	const navigate = useNavigate();
 
-	useEffect(() => {
-		if (to) {
+	const onCardClick = useCallback(
+		(event: MouseEvent<HTMLElement>) => {
+			if (!to) {
+				return;
+			}
+
+			const target = event.target as HTMLElement;
+			if (target.closest(`.${cls.boardCardActions}`)) {
+				return;
+			}
+
 			navigate(to);
-		}
-	}, [to, navigate]);
+		},
+		[navigate, to],
+	);
+
+	const onCardKeyDown = useCallback(
+		(event: KeyboardEvent<HTMLElement>) => {
+			if (!to) {
+				return;
+			}
+
+			if (event.key === "Enter" || event.key === " ") {
+				event.preventDefault();
+				navigate(to);
+			}
+		},
+		[navigate, to],
+	);
 
 	return (
-		<Card className={classNames(cls.boardCard, { [cls.link]: to }, [className])}>
+		<Card
+			className={classNames(cls.boardCard, { [cls.link]: to }, [className])}
+			onClick={onCardClick}
+			onKeyDown={onCardKeyDown}
+			role={to ? "button" : undefined}
+			tabIndex={to ? 0 : undefined}
+		>
 			<BoardCardActions
 				className={cls.boardCardActions}
 				boardId={id}
