@@ -1,0 +1,124 @@
+.modal {
+	position: fixed;
+	inset: 0;
+	z-index: var(--modal-z-index);
+	background: color-mix(in srgb, var(--overlay-bg) 75%, transparent);
+	backdrop-filter: blur(2px);
+	padding: var(--spacing-l);
+}
+
+.wrapper {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.inner {
+	width: min(560px, 100%);
+}
+
+.panel {
+	position: relative;
+	width: 100%;
+	border-radius: var(--border-radius-l);
+	padding: var(--spacing-xl);
+	background:
+		linear-gradient(
+			145deg,
+			color-mix(in srgb, var(--bg-surface) 92%, white 8%),
+			color-mix(in srgb, var(--bg-card) 94%, black 6%)
+		),
+		var(--bg-surface);
+	border: 1px solid color-mix(in srgb, var(--border-primary) 82%, transparent);
+	box-shadow:
+		0 18px 42px rgb(15 23 32 / 22%),
+		0 2px 8px rgb(15 23 32 / 10%);
+	color: var(--text-primary);
+	transform-origin: center;
+	transition:
+		opacity var(--transition-base),
+		transform var(--transition-base);
+
+	&[data-closed] {
+		opacity: 0;
+		transform: scale(0.96) translateY(8px);
+	}
+}
+
+.title {
+	margin: 0 0 var(--spacing-m);
+	font: var(--font-l);
+	font-weight: 700;
+	line-height: 1.3;
+}
+
+.content {
+	color: var(--text-secondary);
+	font: var(--font-m);
+	line-height: 1.45;
+}
+
+.actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--spacing-s);
+	margin-top: var(--spacing-xl);
+}
+
+.actionBtn {
+	min-width: 120px;
+	font-weight: 600;
+	color: var(--button-primary-text);
+	background: var(--button-primary-bg);
+	border: 1px solid var(--button-primary-bg);
+
+	&:hover {
+		opacity: 1;
+		background: var(--button-primary-bg-hover);
+		border-color: var(--button-primary-bg-hover);
+	}
+
+	&:active {
+		background: var(--button-primary-bg-active);
+		border-color: var(--button-primary-bg-active);
+	}
+}
+
+.cancelBtn {
+	min-width: 120px;
+	font-weight: 600;
+	color: var(--button-secondary-text);
+	background: var(--button-secondary-bg);
+	border: 1px solid color-mix(in srgb, var(--border-primary) 85%, transparent);
+
+	&:hover {
+		opacity: 1;
+		background: var(--button-secondary-bg-hover);
+	}
+
+	&:active {
+		background: var(--button-secondary-bg-active);
+	}
+}
+
+@media (width <= 640px) {
+	.modal {
+		padding: var(--spacing-s);
+	}
+
+	.panel {
+		padding: var(--spacing-l);
+		border-radius: var(--border-radius-m);
+	}
+
+	.actions {
+		flex-direction: column;
+	}
+
+	.actionBtn,
+	.cancelBtn {
+		width: 100%;
+	}
+}
