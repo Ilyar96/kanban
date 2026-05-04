@@ -33,7 +33,7 @@ export const EditBoard = memo((props: EditBoardProps) => {
 	const initialValues = useMemo<BoardFormInitialValues>(
 		() => ({
 			title: board.title,
-			description: board.description,
+			description: board.description ?? "",
 			visibility: board.visibility,
 			backgroundColor: board.backgroundColor,
 			isFavorite: board.isFavorite,

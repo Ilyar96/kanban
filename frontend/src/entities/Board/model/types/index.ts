@@ -2,6 +2,11 @@ import type { Board } from "@/shared/types/board";
 
 export interface BoardsResponse {
 	boards: Board[];
+	page: number;
+	limit: number;
+	totalItems: number;
+	totalPages: number;
+	isLastPage: boolean;
 }
 
 export interface GetBoardsParams {

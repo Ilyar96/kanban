@@ -3,7 +3,7 @@ export type BoardVisibility = "PRIVATE" | "WORKSPACE" | "PUBLIC";
 export interface Board {
 	id: string;
 	title: string;
-	description: string;
+	description: string | null;
 	visibility: BoardVisibility;
 	backgroundColor: string;
 	isFavorite?: boolean;
@@ -23,4 +23,13 @@ export interface Owner {
 export interface Count {
 	columns: number;
 	members: number;
+}
+
+export interface BoardColumn {
+	id: string;
+	title: string;
+	position: number;
+	boardId: string;
+	createdAt: string;
+	updatedAt: string;
 }
