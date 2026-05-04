@@ -12,7 +12,6 @@ import { useGetBoardsByUserIdQuery } from "@/entities/Board";
 import { skipToken } from "@reduxjs/toolkit/query";
 import type { Board } from "@/shared/types/board";
 
-// TODO все workspace на boards заменить!!!
 interface BoardGridProps {
 	className?: string;
 	title?: string;
@@ -71,8 +70,8 @@ export const BoardGrid = memo((props: BoardGridProps) => {
 				/>
 				{!favoritesOnly && (
 					<CreateBoard
-						className={cls.createWorkspace}
-						triggerClassName={cls.createWorkspaceTrigger}
+						className={cls.createBoard}
+						triggerClassName={cls.createBoardTrigger}
 					/>
 				)}
 			</Grid>
