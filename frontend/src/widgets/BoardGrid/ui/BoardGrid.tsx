@@ -1,7 +1,8 @@
 import { classNames } from "@/shared/lib/classNames/classNames";
-import { memo } from "react";
+import { memo, useCallback, useState } from "react";
 import cls from "./BoardGrid.module.scss";
 import { CreateBoard } from "@/features/CreateBoard";
+import { EditBoard } from "@/features/EditBoard";
 import { BoardList } from "@/entities/Board";
 import { Grid } from "@/shared/ui/Grid";
 import { Text } from "@/shared/ui/Text/Text";
@@ -9,6 +10,7 @@ import { useSelector } from "react-redux";
 import { getUserId } from "@/entities/User";
 import { useGetBoardsByUserIdQuery } from "@/entities/Board";
 import { skipToken } from "@reduxjs/toolkit/query";
+import type { Board } from "@/shared/types/board";
 
 // TODO все workspace на boards заменить!!!
 interface BoardGridProps {
@@ -19,6 +21,7 @@ interface BoardGridProps {
 
 export const BoardGrid = memo((props: BoardGridProps) => {
 	const { className, favoritesOnly, title } = props;
+	const [editingBoard, setEditingBoard] = useState<Board | null>(null);
 	const userId = useSelector(getUserId);
 	const { data, isLoading } = useGetBoardsByUserIdQuery(
 		userId
@@ -31,6 +34,14 @@ export const BoardGrid = memo((props: BoardGridProps) => {
 				}
 			: skipToken,
 	);
+
+	const onEditBoard = useCallback((board: Board) => {
+		setEditingBoard(board);
+	}, []);
+
+	const closeEditBoard = useCallback(() => {
+		setEditingBoard(null);
+	}, []);
 
 	if (data?.boards.length === 0) {
 		return null;
@@ -56,6 +67,7 @@ export const BoardGrid = memo((props: BoardGridProps) => {
 				<BoardList
 					data={data?.boards ?? []}
 					isLoading={isLoading}
+					onEditBoard={onEditBoard}
 				/>
 				{!favoritesOnly && (
 					<CreateBoard
@@ -64,6 +76,13 @@ export const BoardGrid = memo((props: BoardGridProps) => {
 					/>
 				)}
 			</Grid>
+			{editingBoard && (
+				<EditBoard
+					board={editingBoard}
+					isOpen={Boolean(editingBoard)}
+					onClose={closeEditBoard}
+				/>
+			)}
 		</Grid>
 	);
 });

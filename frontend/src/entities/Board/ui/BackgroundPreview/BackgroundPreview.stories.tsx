@@ -1,17 +1,19 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { BoardCardActions } from "./BoardCardActions";
+import { BackgroundPreview } from "./BackgroundPreview";
 import { Theme } from "@/app/providers/ThemeProvider";
 import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 
-const meta: Meta<typeof BoardCardActions> = {
-	title: "entities/Board/BoardCardActions",
-	component: BoardCardActions,
+const meta: Meta<typeof BackgroundPreview> = {
+	title: "entities/Board/BackgroundPreview",
+	component: BackgroundPreview,
 	parameters: {
 		layout: "fullscreen",
 	},
 	tags: [],
 	decorators: [ThemeDecorator(Theme.LIGHT)],
-	argTypes: {},
+	argTypes: {
+		background: { control: "color" },
+	},
 };
 
 export default meta;

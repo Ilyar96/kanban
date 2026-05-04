@@ -1,56 +1,8 @@
 .createBoard {
-	display: inline-flex;
-}
-
-.form {
-	width: min(420px, 80vw);
-	display: flex;
-	flex-direction: column;
-	gap: var(--spacing-m);
-}
-
-.label {
-	display: flex;
-	flex-direction: column;
-	gap: var(--spacing-xs);
-	font: var(--font-s);
-	color: var(--text-primary);
-}
-
-.select {
-	min-height: 40px;
-	padding: var(--spacing-s) var(--spacing-m);
-	border: 1px solid var(--border-primary);
-	border-radius: var(--border-radius-m);
-	background: var(--bg-card);
-	color: var(--text-primary);
-	font: var(--font-s);
-
-	&:focus {
-		outline: none;
-		border-color: var(--accent-primary);
-		box-shadow: 0 0 0 2px var(--accent-secondary);
-	}
+	// min-width: 420px;
 }
 
 .submitBtn.submitBtn {
 	padding-top: var(--spacing-m);
 	padding-bottom: var(--spacing-m);
-}
-
-.backgroundList {
-	margin: var(--spacing-l) 0 0;
-}
-
-.checkbox {
-	margin: var(--spacing-m) 0;
-}
-
-.popover {
-	display: block;
-	width: 100%;
-
-	> button {
-		height: 100%;
-	}
 }

@@ -28,7 +28,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) 
 		theme = "background",
 		type = "button",
 		square,
-		size = "m",
+		size = "l",
 		disabled = false,
 		fullWidth,
 		...otherProps

@@ -14,10 +14,11 @@ interface BoardCardProps {
 	to?: AppRoutes;
 	id: string;
 	isFavorite: boolean;
+	onEditClick?: () => void;
 }
 
 export const BoardCard = memo((props: BoardCardProps) => {
-	const { className, title, background, to, id, isFavorite } = props;
+	const { className, title, background, to, id, isFavorite, onEditClick } = props;
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -32,6 +33,7 @@ export const BoardCard = memo((props: BoardCardProps) => {
 				className={cls.boardCardActions}
 				boardId={id}
 				isFavorite={isFavorite}
+				onEditClick={onEditClick}
 			/>
 			<div
 				className={cls.boardBackground}

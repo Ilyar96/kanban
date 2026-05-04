@@ -19,10 +19,11 @@ interface BoardCardActionsProps {
 	className?: string;
 	boardId: string;
 	isFavorite: boolean;
+	onEditClick?: () => void;
 }
 
 export const BoardCardActions = memo((props: BoardCardActionsProps) => {
-	const { className, boardId, isFavorite } = props;
+	const { className, boardId, isFavorite, onEditClick } = props;
 	const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 	const [addBoardToFavorite, { isLoading: isAdding, error: addError }] =
 		useAddBoardToFavoriteMutation();
@@ -71,7 +72,7 @@ export const BoardCardActions = memo((props: BoardCardActionsProps) => {
 
 	const items: DropdownItem[] = useMemo(
 		() => [
-			{ content: "Редактировать" },
+			{ content: "Редактировать", onClick: onEditClick },
 			{
 				content: "Удалить",
 				className: cls.deleteItem,
@@ -79,7 +80,7 @@ export const BoardCardActions = memo((props: BoardCardActionsProps) => {
 				onClick: openDeleteModal,
 			},
 		],
-		[isRemoving, openDeleteModal],
+		[isRemoving, onEditClick, openDeleteModal],
 	);
 
 	useEffect(() => {

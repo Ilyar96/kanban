@@ -1,19 +1,17 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { BackgroundPreview } from "./BackgroundPreview";
+import { BoardForm } from "./BoardForm";
 import { Theme } from "@/app/providers/ThemeProvider";
 import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 
-const meta: Meta<typeof BackgroundPreview> = {
-	title: "features/CreateBoard/BackgroundPreview",
-	component: BackgroundPreview,
+const meta: Meta<typeof BoardForm> = {
+	title: "entities/Board/BoardForm",
+	component: BoardForm,
 	parameters: {
 		layout: "fullscreen",
 	},
 	tags: [],
 	decorators: [ThemeDecorator(Theme.LIGHT)],
-	argTypes: {
-		background: { control: "color" },
-	},
+	argTypes: {},
 };
 
 export default meta;

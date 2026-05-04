@@ -1,57 +1,18 @@
 import { classNames } from "@/shared/lib/classNames/classNames";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo } from "react";
 import { Button } from "@/shared/ui/Button/Button";
-import { Popover } from "@/shared/ui/Popover/Popover";
-import { TextField } from "@/shared/ui/TextField/TextField";
 import { useCreateBoardMutation } from "../../model/api/createBoardApi";
-import { Text } from "@/shared/ui/Text/Text";
-import { Checkbox } from "@/shared/ui/Checkbox/Checkbox";
-import { ListBox, type ListBoxItem } from "@/shared/ui/ListBox/ListBox";
-import { Loader } from "@/shared/ui/Loader/Loader";
-import { BackgroundList } from "@/shared/ui/BackgroundList/BackgroundList";
-import { Controller, useForm } from "react-hook-form";
-import { BackgroundPreview } from "../BackgroundPreview/BackgroundPreview";
-import { gradients } from "@/shared/const/gradients";
 import cls from "./CreateBoard.module.scss";
 import { appToast } from "@/shared/lib/toast";
-import type { BoardVisibility } from "@/shared/types/board";
+import { BoardForm, type BoardFormSubmitValues } from "@/entities/Board";
 
 interface CreateBoardProps {
 	className?: string;
 	triggerClassName?: string;
 }
-
-const boardPrivacyItems: ListBoxItem[] = [
-	{ value: "PRIVATE", content: "Приватная" },
-	{ value: "WORKSPACE", content: "Видимая для участников" },
-	{ value: "PUBLIC", content: "Публичная" },
-];
-
-interface CreateBoardFormValues {
-	title: string;
-}
-
 export const CreateBoard = memo((props: CreateBoardProps) => {
 	const { className, triggerClassName } = props;
-	const [description, setDescription] = useState("");
-	const [visibility, setVisibility] = useState<BoardVisibility>("PRIVATE");
-	const [backgroundColor, setBackgroundColor] = useState(gradients[0]);
-	const [isFavorite, setIsFavorite] = useState(false);
 	const [createBoard, { isLoading, error }] = useCreateBoardMutation();
-
-	const {
-		control,
-		handleSubmit,
-		reset,
-		watch,
-		formState: { errors },
-	} = useForm<CreateBoardFormValues>({
-		defaultValues: {
-			title: "",
-		},
-	});
-
-	const titleValue = watch("title", "");
 
 	const errorMessage = useMemo(() => {
 		if (!error || !("data" in error)) return "";
@@ -59,42 +20,24 @@ export const CreateBoard = memo((props: CreateBoardProps) => {
 		return payload?.message ?? "Не удалось создать доску";
 	}, [error]);
 
-	const onSubmit = async (values: CreateBoardFormValues, close: () => void) => {
-		const normalizedTitle = values.title.trim();
-		if (!normalizedTitle) {
-			return;
-		}
+	const onSubmit = useCallback(
+		async (values: BoardFormSubmitValues) => {
+			try {
+				await createBoard({
+					title: values.title,
+					description: values.description,
+					visibility: values.visibility,
+					backgroundColor: values.backgroundColor,
+					isFavorite: values.isFavorite,
+				}).unwrap();
 
-		try {
-			await createBoard({
-				title: normalizedTitle,
-				description: description.trim() || undefined,
-				visibility,
-				backgroundColor: backgroundColor.trim() || undefined,
-				isFavorite,
-			}).unwrap();
-
-			reset({ title: "" });
-			setDescription("");
-			setVisibility("PRIVATE");
-			setBackgroundColor("");
-			setIsFavorite(false);
-			close();
-
-			// TODO add success notification
-			appToast.success("Доска успешно создана");
-		} catch {
-			// Error text is handled by RTK Query `error` state.
-		}
-	};
-
-	const onBackgroundChange = useCallback((bg: string) => {
-		setBackgroundColor(bg);
-	}, []);
-
-	const onBoardPrivacyChange = useCallback((value: string) => {
-		setVisibility(value as BoardVisibility);
-	}, []);
+				appToast.success("Доска успешно создана");
+			} catch {
+				// Error text is handled by RTK Query `error` state.
+			}
+		},
+		[createBoard],
+	);
 
 	useEffect(() => {
 		if (error) {
@@ -111,89 +54,15 @@ export const CreateBoard = memo((props: CreateBoardProps) => {
 			Создать доску
 		</Button>
 	);
+
 	return (
-		<div className={classNames(cls.createBoard, {}, [className])}>
-			<Popover
-				className={cls.popover}
-				trigger={trigger}
-				anchorTo="right"
-			>
-				{({ close }) => (
-					<form
-						onSubmit={handleSubmit((values) => onSubmit(values, close))}
-						className={cls.form}
-					>
-						<BackgroundPreview background={backgroundColor} />
-
-						<BackgroundList
-							className={cls.backgroundList}
-							backgroundList={gradients}
-							onChange={onBackgroundChange}
-						/>
-
-						<Controller
-							name="title"
-							control={control}
-							rules={{
-								required: "Введите название доски",
-								validate: (value) =>
-									value.trim().length > 0 || "Название доски не может быть пустым",
-							}}
-							render={({ field }) => (
-								<TextField
-									label="Название доски"
-									value={field.value}
-									onChange={field.onChange}
-									onBlur={field.onBlur}
-									name={field.name}
-									placeholder="Например, Маркетинг"
-									error={errors.title?.message}
-								/>
-							)}
-						/>
-
-						<TextField
-							as="textarea"
-							label="Описание"
-							value={description}
-							onChange={setDescription}
-							placeholder="Коротко о цели этой доски"
-							rows={3}
-						/>
-
-						<ListBox
-							items={boardPrivacyItems}
-							value={visibility}
-							onChange={onBoardPrivacyChange}
-							label="Видимость"
-						/>
-
-						<Checkbox
-							className={cls.checkbox}
-							label="Добавить в избранное"
-							checked={isFavorite}
-							onChange={setIsFavorite}
-						/>
-
-						{errorMessage && (
-							<Text
-								theme="error"
-								text={errorMessage}
-								size="s"
-							/>
-						)}
-
-						<Button
-							className={cls.submitBtn}
-							type="submit"
-							theme="backgroundInverted"
-							disabled={isLoading || !titleValue.trim()}
-						>
-							{isLoading ? <Loader size="s" /> : "Создать"}
-						</Button>
-					</form>
-				)}
-			</Popover>
-		</div>
+		<BoardForm
+			className={classNames(cls.createBoard, {}, [className])}
+			trigger={trigger}
+			onSubmit={onSubmit}
+			isLoading={isLoading}
+			errorMessage={errorMessage}
+			submitText="Создать доску"
+		/>
 	);
 });

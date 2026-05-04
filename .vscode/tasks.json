@@ -74,7 +74,7 @@
 		},
 		{
 			"label": "dev: all",
-			"dependsOn": ["backend: dev", "frontend: dev", "Start Storybook"],
+			"dependsOn": ["frontend: dev", "Start Storybook"],
 			"problemMatcher": [],
 			"runOptions": {
 				"runOn": "folderOpen",

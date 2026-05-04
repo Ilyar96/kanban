@@ -17,6 +17,7 @@ interface ModalProps {
 	cancelBtnText?: string;
 	onConfirm?: () => void;
 	onCancel?: () => void;
+	actionsClassName?: string;
 }
 
 export const Modal = memo((props: ModalProps) => {
@@ -65,7 +66,7 @@ export const Modal = memo((props: ModalProps) => {
 						)}
 						{children && <div className={cls.content}>{children}</div>}
 						{isActionButtons && (
-							<div className={cls.actions}>
+							<div className={classNames(cls.actions, {}, [props.actionsClassName])}>
 								{onConfirm && (
 									<Button
 										className={cls.actionBtn}
