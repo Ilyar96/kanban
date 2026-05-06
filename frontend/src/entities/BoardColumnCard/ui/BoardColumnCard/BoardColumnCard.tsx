@@ -11,10 +11,11 @@ interface BoardColumnCardProps {
 	className?: string;
 	columnData: BoardColumn;
 	createTaskSlot?: ReactNode;
+	titleSlot?: ReactNode;
 }
 
 export const BoardColumnCard = memo((props: BoardColumnCardProps) => {
-	const { columnData, className, createTaskSlot } = props;
+	const { columnData, className, createTaskSlot, titleSlot } = props;
 	const { title, tasks } = columnData;
 	console.log("tasks: ", tasks);
 
@@ -27,12 +28,17 @@ export const BoardColumnCard = memo((props: BoardColumnCardProps) => {
 					align="center"
 					gap="4"
 				>
-					<TextField
-						className={cls.clearTextField}
-						size="s"
-						value={title}
-						theme="clear"
-					/>
+					{titleSlot ? (
+						titleSlot
+					) : (
+						<TextField
+							className={cls.clearTextField}
+							size="s"
+							value={title}
+							theme="clear"
+							readonly
+						/>
+					)}
 
 					<div className={cls.actions}>{/* TODO */}</div>
 				</HStack>

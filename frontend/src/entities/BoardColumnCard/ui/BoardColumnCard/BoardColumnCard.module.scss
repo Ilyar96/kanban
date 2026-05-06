@@ -3,3 +3,9 @@
 	flex: 0 0 var(--card-width);
 	width: var(--card-width);
 }
+
+.clearTextField input[readonly] {
+	pointer-events: none;
+	border: none;
+	outline: 0 !important;
+}

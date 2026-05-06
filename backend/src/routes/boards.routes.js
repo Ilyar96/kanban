@@ -397,7 +397,7 @@ router.get("/:boardId", validate(boardDetailsQuerySchema), async (req, res) => {
 		return res.status(404).json({ message: "Board not found" });
 	}
 
-	const columnsOrderBy = buildBoardOrderBy(sortBy, sortOrder);
+	const columnsOrderBy = { position: "asc" };
 	const tasksOrderBy = sortBy === "title" ? { title: sortOrder } : { [sortBy]: sortOrder };
 
 	const totalColumns = await prisma.column.count({

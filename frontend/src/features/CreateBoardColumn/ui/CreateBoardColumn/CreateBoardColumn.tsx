@@ -11,10 +11,11 @@ import { appToast } from "@/shared/lib/toast";
 interface CreateBoardColumnProps {
 	className?: string;
 	boardId: string;
+	noColumns?: boolean;
 }
 
 export const CreateBoardColumn = memo((props: CreateBoardColumnProps) => {
-	const { boardId, className } = props;
+	const { boardId, className, noColumns } = props;
 	const [value, setValue] = useState("");
 	const [isFormVisible, setIsFormVisible] = useState(false);
 	const ref = useRef(null);
@@ -57,7 +58,7 @@ export const CreateBoardColumn = memo((props: CreateBoardColumnProps) => {
 						className={cls.plusIcon}
 						spriteId="icon-plus"
 					/>
-					<span>Добавьте еще одну колонку</span>
+					<span>{noColumns ? "Добавьте первую колонку" : "Добавьте еще одну колонку"}</span>
 				</Button>
 			) : (
 				<CreateItemForm

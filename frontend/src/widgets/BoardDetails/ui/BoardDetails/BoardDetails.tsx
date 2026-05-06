@@ -7,6 +7,7 @@ import { BoardColumnCard } from "@/entities/BoardColumnCard";
 import { CreateBoardColumn } from "@/features/CreateBoardColumn";
 import { useParams } from "react-router-dom";
 import { CreateTask } from "@/features/CreateTask";
+import { BoardColumnTitle } from "@/features/UpdateBoardColumn";
 
 interface BoardDetailsProps {
 	className?: string;
@@ -41,34 +42,42 @@ export const BoardDetails = memo((props: BoardDetailsProps) => {
 		);
 	}
 
-	if (columns.length === 0) {
-		return null;
-	}
-
 	return (
 		<>
 			<HStack
 				gap="16"
 				className={classNames(cls.boardDetails, {}, [className])}
 			>
-				<HStack
-					gap="16"
-					className={classNames(cls.boardDetails, {}, [className])}
-				>
-					{columns?.map((column) => (
-						<BoardColumnCard
-							key={column.id}
-							columnData={column}
-							createTaskSlot={
-								<CreateTask
-									boardId={boardId}
-									columnId={column.id}
-								/>
-							}
-						/>
-					))}
-				</HStack>
-				<CreateBoardColumn boardId={boardId} />
+				{columns.length > 0 && (
+					<HStack
+						gap="16"
+						className={classNames(cls.boardDetails, {}, [className])}
+					>
+						{columns?.map((column) => (
+							<BoardColumnCard
+								key={column.id}
+								columnData={column}
+								createTaskSlot={
+									<CreateTask
+										boardId={boardId}
+										columnId={column.id}
+									/>
+								}
+								titleSlot={
+									<BoardColumnTitle
+										title={column.title}
+										boardId={boardId}
+										columnId={column.id}
+									/>
+								}
+							/>
+						))}
+					</HStack>
+				)}
+				<CreateBoardColumn
+					boardId={boardId}
+					noColumns={columns.length === 0}
+				/>
 			</HStack>
 		</>
 	);
