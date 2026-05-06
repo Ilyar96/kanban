@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { BoardColumnGrid } from './BoardColumnGrid';
+import { BoardColumnCard } from './BoardColumnCard';
 import { Theme } from '@/app/providers/ThemeProvider';
 import { ThemeDecorator } from '@/shared/config/storybook/ThemeDecorator/ThemeDecorator';
 
-const meta: Meta<typeof BoardColumnGrid> = {
-  title: 'widgets/BoardColumnGrid',
-  component: BoardColumnGrid,
+const meta: Meta<typeof BoardColumnCard> = {
+  title: 'entities/BoardColumnCard',
+  component: BoardColumnCard,
   parameters: {
     layout: 'fullscreen',
   },

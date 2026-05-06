@@ -1,0 +1,5 @@
+.boardColumnCard {
+	--card-width: 272px;
+	flex: 0 0 var(--card-width);
+	width: var(--card-width);
+}

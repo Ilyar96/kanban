@@ -1,4 +1,4 @@
-import { memo, type ReactNode } from "react";
+import { memo, type ReactNode, type SyntheticEvent } from "react";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react";
 import { classNames } from "@/shared/lib/classNames/classNames";
 import { Button } from "../Button/Button";
@@ -23,18 +23,31 @@ interface DropdownProps {
 
 export const Dropdown = memo((props: DropdownProps) => {
 	const { className, items, trigger, anchorTo = "bottom", gap = 8 } = props;
+
+	const stopPropagation = (event: SyntheticEvent) => {
+		event.stopPropagation();
+	};
+
 	return (
 		<Menu
 			as="div"
 			className={classNames(cls.dropdown, {}, [className])}
 		>
-			<MenuButton as="div">{trigger}</MenuButton>
+			<MenuButton
+				as="div"
+				onClick={stopPropagation}
+				onKeyDown={stopPropagation}
+			>
+				{trigger}
+			</MenuButton>
 			<MenuItems
 				anchor={{
 					to: anchorTo,
 					gap,
 				}}
 				className={cls.menu}
+				onClick={stopPropagation}
+				onKeyDown={stopPropagation}
 			>
 				{items.map((item, index) => (
 					<MenuItem
@@ -45,7 +58,10 @@ export const Dropdown = memo((props: DropdownProps) => {
 							<Button
 								className={classNames(cls.item, { [cls.itemActive]: active }, [item.className])}
 								theme="clear"
-								onClick={item.onClick}
+								onClick={(event) => {
+									event.stopPropagation();
+									item.onClick?.();
+								}}
 							>
 								{item.content}
 							</Button>

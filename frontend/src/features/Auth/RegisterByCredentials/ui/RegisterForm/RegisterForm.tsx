@@ -14,7 +14,7 @@ import { AppLink } from "@/shared/ui/AppLink/AppLink";
 import { RoutePaths } from "@/shared/const/router";
 import { getRegisterIsLoading } from "../../model/selectors/getRegisterIsLoading/getRegisterIsLoading";
 import { getRegisterError } from "../../model/selectors/getRegisterError/getRegisterError";
-import type { ServerErrorPayload } from "@/shared/types/serverError";
+import { applyServerFieldErrors, getServerErrorIssues } from "@/shared/lib/serverError/serverError";
 import {
 	DynamicModuleLoader,
 	type ReducersList,
@@ -34,15 +34,6 @@ interface RegisterFormValues {
 	email: string;
 	password: string;
 }
-
-const isServerErrorPayload = (error: unknown): error is ServerErrorPayload => {
-	if (!error || typeof error !== "object") {
-		return false;
-	}
-
-	const candidate = error as Partial<ServerErrorPayload>;
-	return Boolean(candidate.issues && typeof candidate.issues === "object");
-};
 
 const normalizeIssueKey = (key: string): keyof RegisterFormValues | null => {
 	const cleanKey = key.includes(".") ? (key.split(".").at(-1) ?? key) : key;
@@ -84,13 +75,11 @@ export const RegisterForm = memo(({ className }: RegisterFormProps) => {
 			return;
 		}
 
-		if (registerByCredentials.rejected.match(result) && isServerErrorPayload(result.payload)) {
-			Object.entries(result.payload.issues).forEach(([key, message]) => {
-				const fieldName = normalizeIssueKey(key);
-				if (fieldName) {
-					setError(fieldName, { type: "server", message });
-				}
-			});
+		if (registerByCredentials.rejected.match(result)) {
+			const issues = getServerErrorIssues(result.payload);
+			if (issues) {
+				applyServerFieldErrors<RegisterFormValues>(issues, normalizeIssueKey, setError);
+			}
 		}
 	});
 

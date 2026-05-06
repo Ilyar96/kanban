@@ -14,7 +14,7 @@ import { loginReducer } from "../../model/slice/loginByCredentialsSlice";
 import { RoutePaths } from "@/shared/const/router";
 import { getLoginError } from "../../model/selectors/getLoginError/getLoginError";
 import { getLoginIsLoading } from "../../model/selectors/getLoginIsLoading/getLoginIsLoading";
-import type { ServerErrorPayload } from "@/shared/types/serverError";
+import { applyServerFieldErrors, getServerErrorIssues } from "@/shared/lib/serverError/serverError";
 import {
 	DynamicModuleLoader,
 	type ReducersList,
@@ -32,15 +32,6 @@ interface LoginFormValues {
 	usernameOrEmail: string;
 	password: string;
 }
-
-const isServerErrorPayload = (error: unknown): error is ServerErrorPayload => {
-	if (!error || typeof error !== "object") {
-		return false;
-	}
-
-	const candidate = error as Partial<ServerErrorPayload>;
-	return Boolean(candidate.issues && typeof candidate.issues === "object");
-};
 
 const normalizeIssueKey = (key: string): keyof LoginFormValues | null => {
 	const cleanKey = key.includes(".") ? (key.split(".").at(-1) ?? key) : key;
@@ -81,13 +72,11 @@ export const LoginForm = memo(({ className }: LoginFormProps) => {
 			return;
 		}
 
-		if (loginByUsername.rejected.match(result) && isServerErrorPayload(result.payload)) {
-			Object.entries(result.payload.issues).forEach(([key, message]) => {
-				const fieldName = normalizeIssueKey(key);
-				if (fieldName) {
-					setError(fieldName, { type: "server", message });
-				}
-			});
+		if (loginByUsername.rejected.match(result)) {
+			const issues = getServerErrorIssues(result.payload);
+			if (issues) {
+				applyServerFieldErrors<LoginFormValues>(issues, normalizeIssueKey, setError);
+			}
 		}
 	});
 

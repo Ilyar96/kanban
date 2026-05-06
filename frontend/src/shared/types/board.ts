@@ -10,6 +10,7 @@ export interface Board {
 	ownerId: string;
 	createdAt: string;
 	updatedAt: string;
+	columns?: BoardColumn[];
 	owner?: Owner;
 	_count?: Count;
 }
@@ -30,6 +31,19 @@ export interface BoardColumn {
 	title: string;
 	position: number;
 	boardId: string;
+	createdAt: string;
+	updatedAt: string;
+	tasks: Task[];
+}
+
+export interface Task {
+	id: string;
+	title: string;
+	description: string;
+	completed: boolean;
+	position: number;
+	columnId: string;
+	createdById: string;
 	createdAt: string;
 	updatedAt: string;
 }

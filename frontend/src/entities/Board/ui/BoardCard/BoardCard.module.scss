@@ -29,11 +29,11 @@
 			opacity var(--transition-base),
 			visibility var(--transition-base);
 	}
+}
 
-	&:hover::before {
-		opacity: 1;
-		visibility: visible;
-	}
+.link.boardCard:hover .boardBackground::before {
+	opacity: 1;
+	visibility: visible;
 }
 
 .footer {
@@ -42,10 +42,10 @@
 
 .boardCardActions {
 	opacity: 0;
-	visibility: hidden;
 }
 
+.boardCard:focus-within .boardCardActions,
 .boardCard:hover .boardCardActions {
 	opacity: 1;
-	visibility: visible;
+	background: var(--card-overlay-bg);
 }

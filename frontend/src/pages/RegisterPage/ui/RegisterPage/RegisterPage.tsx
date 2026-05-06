@@ -26,7 +26,7 @@ const RegisterPage = memo(() => {
 	}
 
 	return (
-		<Page>
+		<Page centered>
 			<AuthFormWidget type="register" />
 		</Page>
 	);

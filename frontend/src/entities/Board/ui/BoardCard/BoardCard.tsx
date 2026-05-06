@@ -42,6 +42,11 @@ export const BoardCard = memo((props: BoardCardProps) => {
 				return;
 			}
 
+			const target = event.target as HTMLElement;
+			if (target.closest(`.${cls.boardCardActions}`)) {
+				return;
+			}
+
 			if (event.key === "Enter" || event.key === " ") {
 				event.preventDefault();
 				navigate(to);

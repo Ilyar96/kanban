@@ -26,7 +26,7 @@ const LoginPage = memo(() => {
 	}
 
 	return (
-		<Page>
+		<Page centered>
 			<AuthFormWidget type="login" />
 		</Page>
 	);

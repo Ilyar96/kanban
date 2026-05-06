@@ -1,0 +1,15 @@
+.createTask,
+.btn {
+	width: 100%;
+}
+
+.btn {
+	justify-content: start;
+}
+
+.plusIcon {
+	--icon-size: 14px;
+	flex: 0 0 var(--icon-size);
+	width: var(--icon-size);
+	height: var(--icon-size);
+}

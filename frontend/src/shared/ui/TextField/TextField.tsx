@@ -31,6 +31,7 @@ interface CommonTextFieldProps {
 	autoFocus?: boolean;
 	readonly?: boolean;
 	size?: "s" | "m" | "l";
+	theme?: "primary" | "clear";
 	error?: string;
 }
 
@@ -51,10 +52,13 @@ export const TextField = memo(
 	forwardRef<HTMLInputElement | HTMLTextAreaElement, TextFieldProps>(
 		(props: TextFieldProps, ref) => {
 			const reactId = useId();
-			const { size, id, error } = props;
+			const { size, id, error, theme = "primary" } = props;
 			const fieldId = id ?? reactId;
 			const fieldSize = size ?? "m";
-			const fieldClass = classNames(cls.field, { [cls.error]: error }, [cls[fieldSize]]);
+			const fieldClass = classNames(cls.field, { [cls.error]: error }, [
+				cls[fieldSize],
+				cls[theme],
+			]);
 
 			const assignRef = <TElement extends HTMLInputElement | HTMLTextAreaElement>(
 				element: TElement | null,

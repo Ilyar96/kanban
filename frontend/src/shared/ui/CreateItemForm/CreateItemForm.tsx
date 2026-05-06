@@ -36,7 +36,7 @@ export const CreateItemForm = memo((props: CreateItemFormProps) => {
 		isBtnDisabled,
 	} = props;
 
-	const Wrapper = isCard ? Card : "form";
+	const Wrapper = isCard ? Card : "div";
 
 	const submitHandler = useCallback(
 		(e: FormEvent<HTMLFormElement>) => {

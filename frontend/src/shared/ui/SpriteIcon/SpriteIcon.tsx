@@ -1,5 +1,6 @@
 import { classNames } from "@/shared/lib/classNames/classNames";
 import { memo } from "react";
+import cls from "./SpriteIcon.module.scss";
 
 interface SpriteIconProps {
 	className?: string;
@@ -12,7 +13,7 @@ export const SpriteIcon = memo((props: SpriteIconProps) => {
 
 	return (
 		<svg
-			className={classNames("", {}, [className])}
+			className={classNames(cls.icon, {}, [className])}
 			aria-hidden="true"
 			focusable="false"
 		>

@@ -3,7 +3,7 @@ import { memo } from "react";
 import { useParams } from "react-router-dom";
 import { Page } from "@/shared/ui/Page/Page";
 import { Container } from "@/shared/ui/Container/Container";
-import { BoardColumnGrid } from "@/widgets/BoardColumnGrid";
+import { BoardDetails } from "@/widgets/BoardDetails";
 
 interface BoardDetailPageProps {
 	className?: string;
@@ -16,7 +16,7 @@ const BoardDetailPage = memo(({ className }: BoardDetailPageProps) => {
 		<Page className={classNames("", {}, [className])}>
 			<Container>
 				<h1>Моя доска</h1>
-				<BoardColumnGrid />
+				<BoardDetails />
 			</Container>
 		</Page>
 	);
