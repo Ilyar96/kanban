@@ -1,9 +1,9 @@
 import { rtkApi } from "@/shared/api/rtkApi";
-import type { UpdateBoardRequest, UpdateBoardResponse } from "../types";
+import type { UpdateBoardRequest, BoardResponse } from "../types";
 
 const editBoardApi = rtkApi.injectEndpoints({
 	endpoints: (build) => ({
-		updateBoard: build.mutation<UpdateBoardResponse, UpdateBoardRequest>({
+		updateBoard: build.mutation<BoardResponse, UpdateBoardRequest>({
 			query: ({ boardId, ...body }) => ({
 				url: `/boards/${boardId}`,
 				method: "PATCH",

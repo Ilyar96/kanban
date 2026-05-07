@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { UpdateTask } from "./UpdateTask";
+import { CreateTask } from "./CreateTask";
 import { Theme } from "@/app/providers/ThemeProvider";
 import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 
-const meta: Meta<typeof UpdateTask> = {
-	title: "features/Task/UpdateTask",
-	component: UpdateTask,
+const meta: Meta<typeof CreateTask> = {
+	title: "features/Task/CreateTask",
+	component: CreateTask,
 	parameters: {
 		layout: "fullscreen",
 	},

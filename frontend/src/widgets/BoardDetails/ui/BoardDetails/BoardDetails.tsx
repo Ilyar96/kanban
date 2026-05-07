@@ -5,7 +5,7 @@ import { HStack } from "@/shared/ui/Stack";
 import { BoardColumnCard } from "@/entities/BoardColumnCard";
 import { CreateBoardColumn } from "@/features/CreateBoardColumn";
 import { useParams } from "react-router-dom";
-import { CreateTask } from "@/features/CreateTask";
+import { CreateTask } from "@/features/Task";
 import { Task } from "@/shared/ui/Task/Task";
 import { useToggleTaskCompletedMutation } from "@/features/Task";
 import { ColumnHeader } from "./ColumnHeader/ColumnHeader";

@@ -1,8 +1,7 @@
 import { classNames } from "@/shared/lib/classNames/classNames";
 import { memo, useCallback, useState } from "react";
 import cls from "./BoardGrid.module.scss";
-import { CreateBoard } from "@/features/CreateBoard";
-import { EditBoard } from "@/features/EditBoard";
+import { EditBoard, CreateBoard } from "@/features/Board";
 import { BoardList } from "@/entities/Board";
 import { Grid } from "@/shared/ui/Grid";
 import { Text } from "@/shared/ui/Text/Text";
