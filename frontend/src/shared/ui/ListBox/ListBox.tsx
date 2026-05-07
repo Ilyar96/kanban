@@ -16,6 +16,7 @@ export interface ListBoxItem {
 	value: string;
 	content?: ReactNode;
 	disabled?: boolean;
+	className?: string;
 }
 
 interface ListBoxProps {
@@ -74,20 +75,25 @@ export const ListBox = memo((props: ListBoxProps) => {
 						transition
 						className={cls.options}
 					>
-						{items?.map((item) => (
+						{items?.map(({ value, className = "", disabled, content }) => (
 							<ListboxOption
-								key={item.value}
-								value={item.value}
-								disabled={item.disabled}
+								key={value}
+								value={value}
+								content=""
+								disabled={disabled}
 								className={({ active, selected }) =>
-									classNames(cls.option, {
-										[cls.optionActive]: active,
-										[cls.optionSelected]: selected,
-										[cls.optionDisabled]: !!item.disabled,
-									})
+									classNames(
+										cls.option,
+										{
+											[cls.optionActive]: active,
+											[cls.optionSelected]: selected,
+											[cls.optionDisabled]: !!disabled,
+										},
+										[className],
+									)
 								}
 							>
-								<div className={cls.content}>{item.content}</div>
+								<div className={cls.content}>{content}</div>
 							</ListboxOption>
 						))}
 					</ListboxOptions>

@@ -2,10 +2,8 @@ import { classNames } from "@/shared/lib/classNames/classNames";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import cls from "./BoardCardActions.module.scss";
 import { HStack } from "@/shared/ui/Stack";
-import { Button } from "@/shared/ui/Button/Button";
 import { Dropdown, type DropdownItem } from "@/shared/ui/Dropdown/Dropdown";
 import { FavoriteButton } from "../FavoriteButton/FavoriteButton";
-import { SpriteIcon } from "@/shared/ui/SpriteIcon/SpriteIcon";
 import {
 	useAddBoardToFavoriteMutation,
 	useDeleteBoardMutation,
@@ -14,6 +12,7 @@ import {
 import { appToast } from "@/shared/lib/toast";
 import { Modal } from "@/shared/ui/Modal/Modal";
 import { Text } from "@/shared/ui/Text/Text";
+import { MoreActionsButton } from "@/shared/ui/MoreActionsButton/MoreActionsButton";
 
 interface BoardCardActionsProps {
 	className?: string;
@@ -30,16 +29,6 @@ export const BoardCardActions = memo((props: BoardCardActionsProps) => {
 	const [removeBoardFromFavorite, { isLoading: isRemoving, error: removeError }] =
 		useRemoveBoardFromFavoriteMutation();
 	const [deleteBoard, { isLoading: isDeleting }] = useDeleteBoardMutation();
-
-	const trigger = (
-		<Button className={cls.settingsBtn}>
-			<SpriteIcon
-				className={cls.boardSettingsIcon}
-				spriteId="three-dots-vertical"
-			/>
-			<span className="visually-hidden">Настройки доски</span>
-		</Button>
-	);
 
 	const onToggleFavorite = useCallback(() => {
 		if (isFavorite) {
@@ -108,7 +97,7 @@ export const BoardCardActions = memo((props: BoardCardActionsProps) => {
 
 				<Dropdown
 					className={cls.settings}
-					trigger={trigger}
+					trigger={<MoreActionsButton />}
 					items={items}
 					anchorTo="bottom end"
 				/>

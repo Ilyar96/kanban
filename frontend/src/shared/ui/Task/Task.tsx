@@ -1,30 +1,34 @@
 import { classNames } from "@/shared/lib/classNames/classNames";
-import { memo, useState } from "react";
+import { memo } from "react";
 import cls from "./Task.module.scss";
 import { Button } from "../Button/Button";
 import { SpriteIcon } from "../SpriteIcon/SpriteIcon";
 import { HStack } from "../Stack";
+import { Text } from "../Text/Text";
 
 interface TaskProps {
 	className?: string;
-	checked?: boolean;
+	completed?: boolean;
 	text: string;
+	onClickTask?: () => void;
+	onClickComplete?: () => void;
 }
 
 export const Task = memo((props: TaskProps) => {
-	const { className, checked: checkedProp, text } = props;
-	const [checked, setChecked] = useState(checkedProp ?? true);
+	const { className, completed, text, onClickTask, onClickComplete } = props;
+
 	return (
 		<HStack
 			align="center"
 			max
-			className={classNames(cls.task, {}, [className])}
+			className={classNames(cls.taskWrapper, {}, [className])}
 		>
 			<Button
-				className={cls.btn}
-				fullWidth
+				className={cls.completeBtn}
+				theme="clear"
+				onClick={onClickComplete}
 			>
-				{checked ? (
+				{completed ? (
 					<>
 						<SpriteIcon
 							className={cls.icon}
@@ -41,7 +45,13 @@ export const Task = memo((props: TaskProps) => {
 						<span className="visually-hidden">Отметить как выполненное</span>
 					</>
 				)}
-				{text}
+			</Button>
+			<Button
+				className={cls.taskBtn}
+				fullWidth
+				onClick={onClickTask}
+			>
+				<Text className={classNames("", { [cls.completedText]: completed }, [])}>{text}</Text>
 			</Button>
 		</HStack>
 	);

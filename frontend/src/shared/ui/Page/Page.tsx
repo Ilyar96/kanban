@@ -11,7 +11,7 @@ interface PageProps {
 
 export const Page = memo((props: PageProps) => {
 	const { className, children, centered } = props;
-	const pageClassName = classNames(cls.page, {}, [className]);
+	const pageClassName = classNames(cls.page, { [cls.pageCentered]: centered }, [className]);
 
 	return centered ? (
 		<HStack

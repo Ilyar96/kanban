@@ -100,7 +100,7 @@ model Column {
   board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
   tasks     Task[]
 
-  @@index([boardId, position])
+  @@unique([boardId, position])
 }
 
 model Task {
@@ -116,7 +116,7 @@ model Task {
   column      Column   @relation(fields: [columnId], references: [id], onDelete: Cascade)
   createdBy   User     @relation("TaskCreator", fields: [createdById], references: [id], onDelete: Cascade)
 
-  @@index([columnId, position])
+  @@unique([columnId, position])
 }
 
 model BoardInvitation {

@@ -1,7 +1,28 @@
-.btn {
+$icon-size: 16px;
+
+.taskWrapper {
+	position: relative;
+}
+
+.completeBtn {
+	position: absolute;
+	top: 50%;
+	left: var(--spacing-m);
+	z-index: 2;
 	justify-content: start;
+	transform: translate(0, -50%);
+}
+
+.taskBtn {
+	justify-content: start;
+	padding-left: calc(#{$icon-size} + var(--spacing-l));
 }
 
 .icon {
-	--icon-size: 16px;
+	--icon-size: #{$icon-size};
+}
+
+.completedText.completedText {
+	color: var(--text-secondary);
+	text-decoration: line-through;
 }

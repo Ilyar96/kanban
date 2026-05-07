@@ -389,7 +389,7 @@ router.post("/", validate(createBoardSchema), async (req, res) => {
 
 router.get("/:boardId", validate(boardDetailsQuerySchema), async (req, res) => {
 	const { boardId } = req.validated.params;
-	const { page, limit, favoritesOnly, sortBy, sortOrder } = req.validated.query;
+	const { page, limit, favoritesOnly } = req.validated.query;
 	const columnsSkip = (page - 1) * limit;
 
 	const { board: boardAccess, role } = await getBoardWithRole(boardId, req.user.id);
@@ -398,7 +398,7 @@ router.get("/:boardId", validate(boardDetailsQuerySchema), async (req, res) => {
 	}
 
 	const columnsOrderBy = { position: "asc" };
-	const tasksOrderBy = sortBy === "title" ? { title: sortOrder } : { [sortBy]: sortOrder };
+	const tasksOrderBy = { position: "asc" };
 
 	const totalColumns = await prisma.column.count({
 		where: { boardId },

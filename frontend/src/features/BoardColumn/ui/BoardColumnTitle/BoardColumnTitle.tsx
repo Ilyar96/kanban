@@ -1,6 +1,6 @@
 import { memo, useCallback, useState } from "react";
 import { TextField } from "@/shared/ui/TextField/TextField";
-import { useUpdateBoardColumnMutation } from "../model/api/updateBoardColumnApi";
+import { useUpdateBoardColumnMutation } from "../../model/api/updateBoardColumnApi";
 import { useDebouncedCallback } from "use-debounce";
 
 interface BoardColumnTitleProps {

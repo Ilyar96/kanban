@@ -1490,7 +1490,7 @@ const options = {
 			"/api/columns/{columnId}": {
 				patch: {
 					tags: ["Columns"],
-					summary: "Update column (EDITOR+/ADMIN)",
+					summary: "Update or move column (EDITOR+/ADMIN)",
 					security: [{ bearerAuth: [] }],
 					parameters: [{ $ref: "#/components/parameters/ColumnId" }],
 					requestBody: {
@@ -1499,9 +1499,10 @@ const options = {
 							"application/json": {
 								schema: {
 									type: "object",
-									required: ["title"],
+									anyOf: [{ required: ["title"] }, { required: ["targetPosition"] }],
 									properties: {
 										title: { type: "string", minLength: 1, maxLength: 120 },
+										targetPosition: { type: "integer", minimum: 0 },
 									},
 								},
 							},
@@ -1566,6 +1567,78 @@ const options = {
 					responses: {
 						204: {
 							description: "Column deleted",
+						},
+						401: {
+							description: "Unauthorized",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+						403: {
+							description: "Forbidden",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+						404: {
+							description: "Column not found",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+					},
+				},
+			},
+			"/api/columns/{columnId}/move": {
+				patch: {
+					tags: ["Columns"],
+					summary: "Move column by position (EDITOR+/ADMIN)",
+					security: [{ bearerAuth: [] }],
+					parameters: [{ $ref: "#/components/parameters/ColumnId" }],
+					requestBody: {
+						required: true,
+						content: {
+							"application/json": {
+								schema: {
+									type: "object",
+									required: ["targetPosition"],
+									properties: {
+										targetPosition: { type: "integer", minimum: 0 },
+									},
+								},
+							},
+						},
+					},
+					responses: {
+						200: {
+							description: "Column moved",
+							content: {
+								"application/json": {
+									schema: {
+										type: "object",
+										required: ["column"],
+										properties: {
+											column: { $ref: "#/components/schemas/Column" },
+										},
+									},
+								},
+							},
+						},
+						400: {
+							description: "Validation error",
+							content: {
+								"application/json": {
+									schema: {
+										$ref: "#/components/schemas/ValidationErrorResponse",
+									},
+								},
+							},
 						},
 						401: {
 							description: "Unauthorized",

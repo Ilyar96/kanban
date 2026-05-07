@@ -10,15 +10,6 @@
 		visibility var(--transition-base);
 }
 
-.settingsBtn.settingsBtn {
-	padding: var(--spacing-xs);
-}
-
-.boardSettingsIcon {
-	--icon-size: 14px;
-	color: #fff;
-}
-
 .deleteItem.deleteItem {
 	color: var(--text-danger);
 }
