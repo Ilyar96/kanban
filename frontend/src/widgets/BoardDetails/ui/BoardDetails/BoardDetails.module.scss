@@ -1,3 +1,8 @@
-/* stylelint-disable-next-line block-no-empty */
 .boardDetails {
+	// overflow-x: auto;
+}
+
+.dragOverlayColumn {
+	--card-width: 272px;
+	width: var(--card-width);
 }

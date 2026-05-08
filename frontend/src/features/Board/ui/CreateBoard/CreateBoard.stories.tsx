@@ -4,7 +4,7 @@ import { Theme } from "@/app/providers/ThemeProvider";
 import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 
 const meta: Meta<typeof CreateBoard> = {
-	title: "features/CreateBoard/CreateBoard",
+	title: "features/Board/CreateBoard",
 	component: CreateBoard,
 	parameters: {
 		layout: "fullscreen",

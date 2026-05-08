@@ -14,7 +14,7 @@ import { Modal } from "@/shared/ui/Modal/Modal";
 import { Text } from "@/shared/ui/Text/Text";
 import { appToast } from "@/shared/lib/toast";
 import { ListBox } from "@/shared/ui/ListBox/ListBox";
-import { useGetBoardsDetailsQuery } from "../../../model/api/boardsDetailsApi";
+import { useGetBoardsDetailsQuery } from "../../model/api/boardsDetailsApi";
 
 interface ColumnHeaderProps {
 	className?: string;
