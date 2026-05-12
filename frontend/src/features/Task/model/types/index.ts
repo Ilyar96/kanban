@@ -10,6 +10,13 @@ export interface ToggleTaskRequest {
 	boardId: string;
 }
 
+export interface MoveTaskRequest {
+	taskId: string;
+	boardId: string;
+	targetColumnId: string;
+	targetPosition: number;
+}
+
 export interface CreateTaskResponse {
 	task: Task;
 }

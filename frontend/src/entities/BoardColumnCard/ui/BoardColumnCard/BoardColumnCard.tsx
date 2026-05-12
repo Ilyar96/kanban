@@ -5,7 +5,7 @@ import { Card } from "@/shared/ui/Card/Card";
 import cls from "./BoardColumnCard.module.scss";
 import { VStack } from "@/shared/ui/Stack";
 import { TextField } from "@/shared/ui/TextField/TextField";
-import { Task } from "@/shared/ui/Task/Task";
+import { TaskList } from "../TaskList/TaskList";
 
 interface BoardColumnCardProps {
 	className?: string;
@@ -13,12 +13,25 @@ interface BoardColumnCardProps {
 	createTaskSlot?: ReactNode;
 	headerSlot?: ReactNode;
 	renderTask?: (task: TaskType) => ReactNode;
+	onMoveTask?: (params: {
+		taskId: string;
+		targetPosition: number;
+		targetColumnId: string;
+	}) => Promise<void>;
+	onMoveTaskError?: (error: unknown) => void;
 }
 
 export const BoardColumnCard = memo((props: BoardColumnCardProps) => {
-	const { columnData, className, createTaskSlot, headerSlot, renderTask } = props;
+	const {
+		columnData,
+		className,
+		createTaskSlot,
+		headerSlot,
+		renderTask,
+		onMoveTask,
+		onMoveTaskError,
+	} = props;
 	const { title, tasks } = columnData;
-	console.log("tasks: ", tasks);
 
 	return (
 		<Card className={classNames(cls.boardColumnCard, {}, [className])}>
@@ -35,23 +48,13 @@ export const BoardColumnCard = memo((props: BoardColumnCardProps) => {
 					/>
 				)}
 
-				<VStack
-					className={cls.tasks}
-					gap="8"
-					max
-				>
-					{tasks.map((task) =>
-						renderTask ? (
-							renderTask(task)
-						) : (
-							<Task
-								key={task.id}
-								className={cls.taskCard}
-								text={task.title}
-							/>
-						),
-					)}
-				</VStack>
+				<TaskList
+					tasks={tasks}
+					columnId={columnData.id}
+					renderTask={renderTask}
+					onMoveTask={onMoveTask}
+					onMoveTaskError={onMoveTaskError}
+				/>
 
 				{createTaskSlot}
 			</VStack>

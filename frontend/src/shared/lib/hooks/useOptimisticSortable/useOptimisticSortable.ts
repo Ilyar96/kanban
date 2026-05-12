@@ -45,6 +45,7 @@ export const useOptimisticSortable = <T>(
 		items: sortedSourceItems,
 		signature: sourceSignature,
 	}));
+	const [hasOptimisticOverride, setHasOptimisticOverride] = useState(false);
 
 	const signatureFromItems = useCallback(
 		(itemsToSign: T[]) =>
@@ -52,13 +53,15 @@ export const useOptimisticSortable = <T>(
 		[getId, getPosition],
 	);
 
+	const isSyncedWithSource = optimisticState.signature === sourceSignature;
 	const items =
-		optimisticState.signature === sourceSignature ? sortedSourceItems : optimisticState.items;
+		!hasOptimisticOverride || isSyncedWithSource ? sortedSourceItems : optimisticState.items;
 
 	const setItems = useCallback<Dispatch<SetStateAction<T[]>>>(
 		(updater) => {
+			setHasOptimisticOverride(true);
 			setOptimisticState((prev) => {
-				const baseItems = prev.signature === sourceSignature ? prev.items : sortedSourceItems;
+				const baseItems = prev.signature === sourceSignature ? sortedSourceItems : prev.items;
 				const nextItems =
 					typeof updater === "function" ? (updater as (prevState: T[]) => T[])(baseItems) : updater;
 
@@ -91,6 +94,8 @@ export const useOptimisticSortable = <T>(
 			const nextItems = arrayMove(items, oldIndex, newIndex).map((item, index) =>
 				setPosition(item, index),
 			);
+
+			setHasOptimisticOverride(true);
 
 			setOptimisticState({
 				items: nextItems,
