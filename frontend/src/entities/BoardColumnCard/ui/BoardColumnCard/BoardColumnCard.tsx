@@ -41,7 +41,7 @@ export const BoardColumnCard = memo((props: BoardColumnCardProps) => {
 				) : (
 					<TextField
 						className={cls.clearTextField}
-						size="s"
+						size="m"
 						value={title}
 						theme="clear"
 						readonly

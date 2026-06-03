@@ -12,7 +12,7 @@ const meta: Meta<typeof Task> = {
 	tags: [],
 	decorators: [ThemeDecorator(Theme.LIGHT)],
 	args: {
-		text: "task",
+		title: "task",
 	},
 };
 

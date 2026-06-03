@@ -9,13 +9,17 @@ import { Card } from "../Card/Card";
 
 interface CreateItemFormProps {
 	className?: string;
-	value?: string;
-	placeholder?: string;
-	onChange?: (value: string) => void;
+	title?: string;
+	description?: string;
+	onTitleChange?: (value: string) => void;
+	onDescriptionChange?: (value: string) => void;
+	titlePlaceholder?: string;
+	descriptionPlaceholder?: string;
 	btnText?: string;
+	cancelBtnText?: string;
 	onSubmit?: () => void;
 	onCancel?: () => void;
-	fieldType?: "input" | "textarea";
+	titleFieldType?: "input" | "textarea";
 	isCard?: boolean;
 	autoFocus?: boolean;
 	isBtnDisabled?: boolean;
@@ -25,13 +29,17 @@ export const CreateItemForm = memo((props: CreateItemFormProps) => {
 	const {
 		className,
 		btnText = "Добавить",
-		fieldType = "input",
-		value,
+		cancelBtnText,
+		titleFieldType = "input",
+		title,
+		description,
 		onCancel,
-		onChange,
+		onTitleChange,
+		onDescriptionChange,
 		onSubmit,
 		isCard,
-		placeholder,
+		titlePlaceholder,
+		descriptionPlaceholder,
 		autoFocus,
 		isBtnDisabled,
 	} = props;
@@ -55,12 +63,20 @@ export const CreateItemForm = memo((props: CreateItemFormProps) => {
 				onSubmit={submitHandler}
 			>
 				<TextField
-					value={value}
-					placeholder={placeholder}
-					as={fieldType}
+					value={title}
+					placeholder={titlePlaceholder}
+					as={titleFieldType}
 					autoFocus={autoFocus}
-					onChange={onChange}
+					onChange={onTitleChange}
 				/>
+				{description !== undefined && (
+					<TextField
+						value={description}
+						placeholder={descriptionPlaceholder}
+						as="textarea"
+						onChange={onDescriptionChange}
+					/>
+				)}
 				<HStack
 					align="center"
 					gap="16"
@@ -76,11 +92,17 @@ export const CreateItemForm = memo((props: CreateItemFormProps) => {
 						className={cls.cancelBtn}
 						onClick={onCancel}
 					>
-						<SpriteIcon
-							className={cls.closeIcon}
-							spriteId="icon-close"
-						/>
-						<span className="visually-hidden">Отмена</span>
+						{cancelBtnText ? (
+							cancelBtnText
+						) : (
+							<>
+								<SpriteIcon
+									className={cls.closeIcon}
+									spriteId="icon-close"
+								/>
+								<span className="visually-hidden">Отмена</span>
+							</>
+						)}
 					</Button>
 				</HStack>
 			</VStack>

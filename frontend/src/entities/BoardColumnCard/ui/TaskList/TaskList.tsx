@@ -107,7 +107,10 @@ export const TaskList = memo((props: TaskListProps) => {
 					items={items.map((task) => task.id)}
 					strategy={verticalListSortingStrategy}
 				>
-					<VStack gap="8" max>
+					<VStack
+						gap="8"
+						max
+					>
 						{items.map((task) => (
 							<SortableColumn
 								key={task.id}
@@ -115,7 +118,15 @@ export const TaskList = memo((props: TaskListProps) => {
 								isGhost={activeTaskId === task.id}
 								className={cls.sortableTask}
 							>
-								{renderTask ? renderTask(task) : <Task text={task.title} completed={task.completed} />}
+								{renderTask ? (
+									renderTask(task)
+								) : (
+									<Task
+										title={task.title}
+										description={task.description}
+										completed={task.completed}
+									/>
+								)}
 							</SortableColumn>
 						))}
 					</VStack>
@@ -126,7 +137,11 @@ export const TaskList = memo((props: TaskListProps) => {
 							{renderTask ? (
 								renderTask(activeTask)
 							) : (
-								<Task text={activeTask.title} completed={activeTask.completed} />
+								<Task
+									title={activeTask.title}
+									description={activeTask.description}
+									completed={activeTask.completed}
+								/>
 							)}
 						</div>
 					) : null}

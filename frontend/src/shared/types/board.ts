@@ -39,7 +39,7 @@ export interface BoardColumn {
 export interface Task {
 	id: string;
 	title: string;
-	description: string;
+	description: string | null;
 	completed: boolean;
 	position: number;
 	columnId: string;

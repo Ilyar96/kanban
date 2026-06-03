@@ -109,6 +109,7 @@ export const ColumnHeader = memo((props: ColumnHeaderProps) => {
 				className={classNames("", {}, [className])}
 				gap="8"
 				justify="between"
+				align="center"
 				max
 			>
 				<BoardColumnTitle

@@ -13,7 +13,7 @@ const meta: Meta<typeof CreateItemForm> = {
 	decorators: [ThemeDecorator(Theme.LIGHT)],
 	args: {
 		isCard: true,
-		placeholder: "Введите название колонки",
+		titlePlaceholder: "Введите название колонки",
 	},
 };
 

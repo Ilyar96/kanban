@@ -1,5 +1,5 @@
 import { classNames } from "@/shared/lib/classNames/classNames";
-import { Fragment, memo, type ComponentProps, type ReactNode } from "react";
+import { memo, type ComponentProps, type MouseEvent, type ReactNode } from "react";
 import cls from "./Popover.module.scss";
 import { Popover as HPopover, PopoverButton, PopoverPanel } from "@headlessui/react";
 
@@ -12,30 +12,60 @@ interface PopoverProps {
 	children: ReactNode | ((props: { close: () => void }) => ReactNode);
 	anchorTo?: Extract<AnchorProps, { to?: unknown }>["to"];
 	offset?: number;
+	openOnHover?: boolean;
+	size?: "s" | "m" | "l";
 }
 
 export const Popover = memo((props: PopoverProps) => {
-	const { className, trigger, children, anchorTo = "bottom", offset = 8 } = props;
+	const {
+		className,
+		trigger,
+		children,
+		anchorTo = "bottom",
+		size = "m",
+		offset = 8,
+		openOnHover = false,
+	} = props;
+
 	return (
 		<HPopover className={classNames(cls.popover, {}, [className])}>
-			{({ close }) => (
-				<>
-					<PopoverButton
-						as={Fragment}
-					>
-						{trigger}
-					</PopoverButton>
-					<PopoverPanel
-						anchor={{
-							to: anchorTo,
-							gap: offset, // отступ в пикселях
-						}}
-						className={cls.panel}
-					>
-						{typeof children === "function" ? children({ close }) : children}
-					</PopoverPanel>
-				</>
-			)}
+			{({ open, close }) => {
+				const handlePopoverMouseLeave = () => {
+					if (!openOnHover) {
+						return;
+					}
+
+					close();
+				};
+
+				const handleTriggerMouseEnter = (event: MouseEvent<HTMLElement>) => {
+					if (!openOnHover || open) {
+						return;
+					}
+
+					(event.currentTarget as HTMLElement).click();
+				};
+
+				return (
+					<div onMouseLeave={handlePopoverMouseLeave}>
+						<PopoverButton
+							as="span"
+							onMouseEnter={handleTriggerMouseEnter}
+						>
+							{trigger}
+						</PopoverButton>
+						<PopoverPanel
+							anchor={{
+								to: anchorTo,
+								gap: offset,
+							}}
+							className={classNames(cls.panel, {}, [cls[size]])}
+						>
+							{typeof children === "function" ? children({ close }) : children}
+						</PopoverPanel>
+					</div>
+				);
+			}}
 		</HPopover>
 	);
 });

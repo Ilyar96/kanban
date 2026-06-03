@@ -246,6 +246,7 @@ export const BoardForm = memo((props: BoardFormProps) => {
 					className={cls.popover}
 					trigger={resolvedTrigger}
 					anchorTo="right"
+					size="l"
 				>
 					{({ close }) => (
 						<form

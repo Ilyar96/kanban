@@ -5,22 +5,27 @@ import { Button } from "../Button/Button";
 import { SpriteIcon } from "../SpriteIcon/SpriteIcon";
 import { HStack } from "../Stack";
 import { Text } from "../Text/Text";
+import { Popover } from "../Popover/Popover";
 
 interface TaskProps {
 	className?: string;
 	completed?: boolean;
-	text: string;
+	title: string;
+	description?: string | null;
 	onClickTask?: () => void;
 	onClickComplete?: () => void;
 }
 
 export const Task = memo((props: TaskProps) => {
-	const { className, completed, text, onClickTask, onClickComplete } = props;
+	const { className, completed, title, description, onClickTask, onClickComplete } = props;
+
+	const isIconWrapper = !!description;
 
 	return (
 		<HStack
 			align="center"
 			max
+			gap="4"
 			className={classNames(cls.taskWrapper, {}, [className])}
 		>
 			<Button
@@ -51,7 +56,30 @@ export const Task = memo((props: TaskProps) => {
 				fullWidth
 				onClick={onClickTask}
 			>
-				<Text className={classNames("", { [cls.completedText]: completed }, [])}>{text}</Text>
+				<Text className={classNames(cls.taskTitle, { [cls.completedText]: completed }, [])}>
+					{title}
+				</Text>
+
+				{isIconWrapper && (
+					<HStack className={cls.iconsWrapper}>
+						{description && (
+							<>
+								<Popover
+									trigger={
+										<SpriteIcon
+											spriteId="task-with-description"
+											className={cls.descriptionIcon}
+										/>
+									}
+									size="s"
+									openOnHover
+								>
+									<Text size="xs">Эта карточка с описанием</Text>
+								</Popover>
+							</>
+						)}
+					</HStack>
+				)}
 			</Button>
 		</HStack>
 	);

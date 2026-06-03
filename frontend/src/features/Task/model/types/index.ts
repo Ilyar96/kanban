@@ -1,8 +1,10 @@
 import type { Task } from "@/shared/types/board";
 
-export interface UpdateTaskRequest extends Task {
+export interface UpdateTaskRequest {
 	taskId: string;
 	boardId: string;
+	title?: string;
+	description?: string | null;
 }
 
 export interface ToggleTaskRequest {

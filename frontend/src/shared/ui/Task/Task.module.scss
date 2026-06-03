@@ -6,7 +6,7 @@ $icon-size: 16px;
 
 .completeBtn {
 	position: absolute;
-	top: 50%;
+	top: 18px;
 	left: var(--spacing-m);
 	z-index: 2;
 	justify-content: start;
@@ -14,8 +14,12 @@ $icon-size: 16px;
 }
 
 .taskBtn {
-	justify-content: start;
-	padding-left: calc(#{$icon-size} + var(--spacing-l));
+	flex-direction: column;
+	align-items: start;
+}
+
+.taskTitle {
+	padding-left: calc(#{$icon-size} + var(--spacing-s));
 }
 
 .icon {
@@ -25,4 +29,13 @@ $icon-size: 16px;
 .completedText.completedText {
 	color: var(--text-secondary);
 	text-decoration: line-through;
+}
+
+.iconsWrapper {
+	width: 100%;
+}
+
+.descriptionIcon.descriptionIcon {
+	--icon-size: 12px;
+	color: var(--text-secondary);
 }

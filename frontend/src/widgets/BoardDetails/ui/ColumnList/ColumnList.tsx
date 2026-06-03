@@ -10,7 +10,7 @@ import {
 	type DragEndEvent,
 } from "@dnd-kit/core";
 import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
-import type { BoardColumn } from "@/shared/types/board";
+import type { BoardColumn, Task as TaskType } from "@/shared/types/board";
 import { HStack } from "@/shared/ui/Stack";
 import { useOptimisticSortable } from "@/shared/lib/hooks/useOptimisticSortable/useOptimisticSortable";
 import { SortableColumn } from "@/shared/ui/SortableColumn/SortableColumn";
@@ -27,10 +27,11 @@ interface ColumnListProps {
 	boardId: string;
 	columns: BoardColumn[];
 	canEdit?: boolean;
+	onTaskClick?: (task: TaskType) => void;
 }
 
 export const ColumnList = memo((props: ColumnListProps) => {
-	const { boardId, columns: sourceColumns, canEdit = true } = props;
+	const { boardId, columns: sourceColumns, canEdit = true, onTaskClick } = props;
 	const [moveTask] = useMoveTaskMutation();
 	const [toggleTaskCompleted] = useToggleTaskCompletedMutation();
 	const [moveBoardColumn] = useMoveBoardColumnMutation();
@@ -108,6 +109,13 @@ export const ColumnList = memo((props: ColumnListProps) => {
 		setActiveColumnId(null);
 	}, []);
 
+	const handleTaskClick = useCallback(
+		(task: TaskType) => {
+			onTaskClick?.(task);
+		},
+		[onTaskClick],
+	);
+
 	const activeColumn = activeColumnId
 		? columns.find((column) => column.id === activeColumnId)
 		: undefined;
@@ -154,8 +162,10 @@ export const ColumnList = memo((props: ColumnListProps) => {
 										renderTask={(task) => (
 											<Task
 												key={task.id}
-												text={task.title}
+												title={task.title}
+												description={task.description}
 												completed={task.completed}
+												onClickTask={() => handleTaskClick(task)}
 												onClickComplete={() => toggleTaskCompleted({ taskId: task.id, boardId })}
 											/>
 										)}
@@ -186,7 +196,7 @@ export const ColumnList = memo((props: ColumnListProps) => {
 									renderTask={(task) => (
 										<Task
 											key={task.id}
-											text={task.title}
+											title={task.title}
 											completed={task.completed}
 										/>
 									)}

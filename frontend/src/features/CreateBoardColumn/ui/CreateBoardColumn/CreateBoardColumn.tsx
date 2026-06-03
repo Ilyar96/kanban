@@ -7,6 +7,7 @@ import { CreateItemForm } from "@/shared/ui/CreateItemForm/CreateItemForm";
 import { useClickOutside } from "@/shared/lib/hooks/useClickOutside/useClickOutside";
 import { useCreateBoardColumnMutation } from "../../model/api/createBoardColumnApi";
 import { appToast } from "@/shared/lib/toast";
+import { getServerErrorMessage } from "@/shared/lib/serverError/serverError";
 
 interface CreateBoardColumnProps {
 	className?: string;
@@ -22,17 +23,16 @@ export const CreateBoardColumn = memo((props: CreateBoardColumnProps) => {
 
 	const [createBoard] = useCreateBoardColumnMutation();
 
-	const onSubmit = useCallback(() => {
+	const onSubmit = useCallback(async () => {
 		if (!value.trim()) return;
 
 		try {
-			createBoard({ boardId, title: value.trim() });
+			await createBoard({ boardId, title: value.trim() }).unwrap();
 			setValue("");
 			setIsFormVisible(false);
 			appToast.success("Колонка успешно создана");
 		} catch (error) {
-			console.error("Failed to create board column", error);
-			appToast.error("Не удалось создать колонку");
+			appToast.error(getServerErrorMessage(error) ?? "Не удалось создать колонку");
 		}
 	}, [value, createBoard, boardId]);
 
@@ -63,11 +63,11 @@ export const CreateBoardColumn = memo((props: CreateBoardColumnProps) => {
 			) : (
 				<CreateItemForm
 					className={cls.createForm}
-					value={value}
-					onChange={setValue}
+					title={value}
+					onTitleChange={setValue}
 					onCancel={onCancelCreate}
 					onSubmit={onSubmit}
-					placeholder="Введите имя колонки..."
+					titlePlaceholder="Введите имя колонки..."
 					isCard
 					btnText="Добавить колонку"
 					autoFocus

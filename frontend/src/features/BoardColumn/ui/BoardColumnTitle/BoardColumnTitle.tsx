@@ -31,7 +31,7 @@ export const BoardColumnTitle = memo((props: BoardColumnTitleProps) => {
 	return (
 		<TextField
 			className={className}
-			size="s"
+			size="m"
 			value={currentTitle}
 			theme="clear"
 			onChange={onChange}

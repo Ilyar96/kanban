@@ -4,6 +4,7 @@
 		"selector-class-pattern": null,
 		"declaration-empty-line-before": "never",
 		"color-function-notation": null,
-		"alpha-value-notation": null
+		"alpha-value-notation": null,
+		"color-function-alias-notation": null
 	}
 }

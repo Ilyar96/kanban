@@ -74,9 +74,9 @@ export const CreateTask = memo((props: CreateTaskProps) => {
 				<CreateItemForm
 					btnText={btnText}
 					onCancel={onFormButtonCancel}
-					fieldType="textarea"
-					value={title}
-					onChange={onChange}
+					titleFieldType="textarea"
+					title={title}
+					onTitleChange={onChange}
 					onSubmit={onSubmit}
 					isBtnDisabled={!title.trim()}
 				/>
