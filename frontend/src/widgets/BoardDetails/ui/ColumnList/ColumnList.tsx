@@ -116,6 +116,53 @@ export const ColumnList = memo((props: ColumnListProps) => {
 		[onTaskClick],
 	);
 
+	const renderColumnTask = useCallback(
+		(task: TaskType) => (
+			<Task
+				key={task.id}
+				title={task.title}
+				description={task.description}
+				completed={task.completed}
+				onClickTask={() => handleTaskClick(task)}
+				onClickComplete={() => toggleTaskCompleted({ taskId: task.id, boardId })}
+			/>
+		),
+		[boardId, handleTaskClick, toggleTaskCompleted],
+	);
+
+	const renderOverlayTask = useCallback(
+		(task: TaskType) => (
+			<Task
+				key={task.id}
+				title={task.title}
+				description={task.description}
+				completed={task.completed}
+			/>
+		),
+		[],
+	);
+
+	const renderCreateTask = useCallback(
+		(columnId: string) => (
+			<CreateTask
+				boardId={boardId}
+				columnId={columnId}
+			/>
+		),
+		[boardId],
+	);
+
+	const renderColumnHeader = useCallback(
+		(column: BoardColumn) =>
+			canEdit ? (
+				<ColumnHeader
+					column={column}
+					boardId={boardId}
+				/>
+			) : undefined,
+		[canEdit, boardId],
+	);
+
 	const activeColumn = activeColumnId
 		? columns.find((column) => column.id === activeColumnId)
 		: undefined;
@@ -145,30 +192,9 @@ export const ColumnList = memo((props: ColumnListProps) => {
 										columnData={column}
 										onMoveTask={handleMoveTask}
 										onMoveTaskError={() => appToast.error("Не удалось переместить карточку")}
-										createTaskSlot={
-											<CreateTask
-												boardId={boardId}
-												columnId={column.id}
-											/>
-										}
-										headerSlot={
-											canEdit ? (
-												<ColumnHeader
-													column={column}
-													boardId={boardId}
-												/>
-											) : undefined
-										}
-										renderTask={(task) => (
-											<Task
-												key={task.id}
-												title={task.title}
-												description={task.description}
-												completed={task.completed}
-												onClickTask={() => handleTaskClick(task)}
-												onClickComplete={() => toggleTaskCompleted({ taskId: task.id, boardId })}
-											/>
-										)}
+										createTaskSlot={renderCreateTask(column.id)}
+										headerSlot={renderColumnHeader(column)}
+										renderTask={renderColumnTask}
 									/>
 								</SortableColumn>
 							))}
@@ -179,27 +205,9 @@ export const ColumnList = memo((props: ColumnListProps) => {
 							<div className={cls.dragOverlayColumn}>
 								<BoardColumnCard
 									columnData={activeColumn}
-									createTaskSlot={
-										<CreateTask
-											boardId={boardId}
-											columnId={activeColumn.id}
-										/>
-									}
-									headerSlot={
-										canEdit ? (
-											<ColumnHeader
-												column={activeColumn}
-												boardId={boardId}
-											/>
-										) : undefined
-									}
-									renderTask={(task) => (
-										<Task
-											key={task.id}
-											title={task.title}
-											completed={task.completed}
-										/>
-									)}
+									createTaskSlot={renderCreateTask(activeColumn.id)}
+									headerSlot={renderColumnHeader(activeColumn)}
+									renderTask={renderOverlayTask}
 								/>
 							</div>
 						) : null}

@@ -109,7 +109,6 @@ export const ColumnHeader = memo((props: ColumnHeaderProps) => {
 				className={classNames("", {}, [className])}
 				gap="8"
 				justify="between"
-				align="center"
 				max
 			>
 				<BoardColumnTitle
@@ -118,6 +117,7 @@ export const ColumnHeader = memo((props: ColumnHeaderProps) => {
 					columnId={column.id}
 				/>
 				<Dropdown
+					className={cls.actions}
 					items={actions}
 					trigger={<MoreActionsButton type="horizontal" />}
 					anchorTo="right start"

@@ -1,11 +1,12 @@
 import { classNames } from "@/shared/lib/classNames/classNames";
 import { memo } from "react";
 import { useGetBoardsDetailsQuery } from "../../model/api/boardsDetailsApi";
-import { HStack } from "@/shared/ui/Stack";
+import { HStack, VStack } from "@/shared/ui/Stack";
 import { useParams } from "react-router-dom";
 import { ColumnList } from "../ColumnList/ColumnList";
 import type { Task } from "@/shared/types/board";
 import cls from "./BoardDetails.module.scss";
+import { BoardDetailsHeader } from "../BoardDetailsHeader/BoardDetailsHeader";
 
 interface BoardDetailsProps {
 	className?: string;
@@ -42,17 +43,23 @@ export const BoardDetails = memo((props: BoardDetailsProps) => {
 	}
 
 	return (
-		<HStack
+		<VStack
+			className={cls.wrapper}
 			gap="16"
-			className={classNames(cls.boardDetails, {}, [className])}
 			style={{ background: data.board.backgroundColor }}
 		>
-			<ColumnList
-				boardId={boardId}
-				columns={data.board.columns ?? []}
-				canEdit={canEdit}
-				onTaskClick={onTaskClick}
-			/>
-		</HStack>
+			<BoardDetailsHeader />
+			<HStack
+				gap="16"
+				className={classNames(cls.boardDetails, {}, [className])}
+			>
+				<ColumnList
+					boardId={boardId}
+					columns={data.board.columns ?? []}
+					canEdit={canEdit}
+					onTaskClick={onTaskClick}
+				/>
+			</HStack>
+		</VStack>
 	);
 });

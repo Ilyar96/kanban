@@ -26,7 +26,6 @@ const BoardDetailPage = memo(({ className }: BoardDetailPageProps) => {
 	return (
 		<Page className={classNames("", {}, [className])}>
 			<Container type="max">
-				<h1>Моя доска</h1>
 				<BoardDetails onTaskClick={handleTaskClick} />
 				{boardId && (
 					<TaskDetailsModal

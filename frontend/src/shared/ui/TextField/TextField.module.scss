@@ -65,22 +65,14 @@
 	&.clear {
 		border: none;
 		background: none;
+
+		&.error {
+			outline: 1px solid var(--text-danger);
+		}
 	}
 }
 
 .errorText {
 	--offset: var(--spacing-xs);
 	margin: var(--offset) 0 0;
-
-	&.s {
-		padding-left: var(--border-radius-s);
-	}
-
-	&.m {
-		padding-left: var(--border-radius-m);
-	}
-
-	&.l {
-		padding-left: var(--border-radius-l);
-	}
 }

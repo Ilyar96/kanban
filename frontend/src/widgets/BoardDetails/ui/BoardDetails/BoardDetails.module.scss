@@ -1,7 +1,13 @@
-.boardDetails {
-	overflow: auto hidden;
-	padding: var(--spacing-xl) var(--spacing-xl);
+.wrapper {
+	position: relative;
+	overflow: hidden;
 	border-radius: var(--border-radius-l);
+}
+
+.boardDetails {
+	width: 100%;
+	padding: 0 var(--spacing-xl) var(--spacing-xl);
+	overflow: auto hidden;
 	user-select: none;
 	scrollbar-color: rgba(255, 255, 255, 0.4) rgba(0, 0, 0, 0.15);
 	scrollbar-width: auto;
