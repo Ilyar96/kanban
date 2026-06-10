@@ -6,6 +6,7 @@ import { BoardDetails } from "@/widgets/BoardDetails";
 import { TaskDetailsModal } from "@/widgets/TaskDetailsModal";
 import type { Task } from "@/shared/types/board";
 import { useParams } from "react-router-dom";
+import cls from "./BoardDetailPage.module.scss";
 
 interface BoardDetailPageProps {
 	className?: string;
@@ -25,7 +26,10 @@ const BoardDetailPage = memo(({ className }: BoardDetailPageProps) => {
 
 	return (
 		<Page className={classNames("", {}, [className])}>
-			<Container type="max">
+			<Container
+				className={cls.container}
+				type="max"
+			>
 				<BoardDetails onTaskClick={handleTaskClick} />
 				{boardId && (
 					<TaskDetailsModal

@@ -1,7 +1,7 @@
 import { classNames } from "@/shared/lib/classNames/classNames";
 import { memo, type ReactNode } from "react";
 import cls from "./Page.module.scss";
-import { HStack } from "../Stack";
+import { VStack } from "../Stack";
 
 interface PageProps {
 	className?: string;
@@ -11,17 +11,17 @@ interface PageProps {
 
 export const Page = memo((props: PageProps) => {
 	const { className, children, centered } = props;
-	const pageClassName = classNames(cls.page, { [cls.pageCentered]: centered }, [className]);
+	const pageClassName = classNames(cls.page, {}, [className]);
 
 	return centered ? (
-		<HStack
+		<VStack
 			className={pageClassName}
 			align="center"
 			justify="center"
 		>
 			{children}
-		</HStack>
+		</VStack>
 	) : (
-		<div className={pageClassName}>{children}</div>
+		<VStack className={pageClassName}>{children}</VStack>
 	);
 });
