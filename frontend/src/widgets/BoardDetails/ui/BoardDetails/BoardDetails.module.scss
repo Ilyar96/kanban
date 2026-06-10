@@ -13,6 +13,10 @@
 	scrollbar-width: auto;
 }
 
+.boardLoading {
+	height: calc(100vh - 42px - var(--spacing-xl) * 2);
+}
+
 .dragOverlayColumn {
 	--card-width: 272px;
 	width: var(--card-width);

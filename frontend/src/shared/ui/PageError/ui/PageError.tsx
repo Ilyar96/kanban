@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { classNames } from "@/shared/lib/classNames/classNames";
 import cls from "./PageError.module.scss";
-import { Button } from "@/shared/ui/Button/Button";
+import { Button } from "../../Button/Button";
 
 interface PageErrorProps {
 	className?: string;

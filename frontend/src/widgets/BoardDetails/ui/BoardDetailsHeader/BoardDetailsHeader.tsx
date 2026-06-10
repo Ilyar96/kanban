@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { classNames } from "@/shared/lib/classNames/classNames";
 import { useGetBoardsDetailsQuery } from "../../model/api/boardsDetailsApi";
 import { useParams } from "react-router-dom";
@@ -9,6 +9,10 @@ import { useUpdateBoardMutation } from "@/features/Board";
 import { getServerErrorIssues } from "@/shared/lib/serverError/serverError";
 import { appToast } from "@/shared/lib/toast";
 import cls from "./BoardDetailsHeader.module.scss";
+import { SpriteIcon } from "../../../../shared/ui/SpriteIcon/SpriteIcon";
+import { Button } from "@/shared/ui/Button/Button";
+import { Dropdown, type DropdownItem } from "@/shared/ui/Dropdown/Dropdown";
+import { MoreActionsButton } from "@/shared/ui/MoreActionsButton/MoreActionsButton";
 
 interface BoardDetailsHeaderProps {
 	className?: string;
@@ -53,8 +57,25 @@ export const BoardDetailsHeader = memo(({ className }: BoardDetailsHeaderProps) 
 		[debouncedTitleUpdate],
 	);
 
+	const items: DropdownItem[] = useMemo(
+		() => [
+			{ content: data?.board.isFavorite ? "Удалить из избранного" : "В избранное" },
+			{
+				content: "Удалить доску",
+				className: cls.deleteItem,
+				// disabled: isRemoving,
+				// onClick: openDeleteModal,
+			},
+		],
+		[],
+	);
+
 	return (
-		<HStack className={classNames(cls.boardDetailsHeader, {}, [className])}>
+		<HStack
+			className={classNames(cls.boardDetailsHeader, {}, [className])}
+			align="center"
+			justify="between"
+		>
 			<TextField
 				className={cls.titleField}
 				value={currentTitle}
@@ -63,6 +84,28 @@ export const BoardDetailsHeader = memo(({ className }: BoardDetailsHeaderProps) 
 				placeholder="Введите название доски"
 				theme="clear"
 			/>
+
+			<HStack
+				align="center"
+				gap="8"
+			>
+				<Button>
+					<SpriteIcon spriteId="icon-share" />
+					<span>Поделиться</span>
+				</Button>
+
+				<Dropdown
+					className={cls.options}
+					trigger={
+						<MoreActionsButton
+							className={cls.optionsTrigger}
+							type="horizontal"
+						/>
+					}
+					items={items}
+					anchorTo="bottom end"
+				/>
+			</HStack>
 		</HStack>
 	);
 });

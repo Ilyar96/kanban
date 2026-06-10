@@ -4,7 +4,7 @@ import { Theme } from "@/app/providers/ThemeProvider";
 import { ThemeDecorator } from "@/shared/config/storybook/ThemeDecorator/ThemeDecorator";
 
 const meta = {
-	title: "widgets/PageError",
+	title: "shared/PageError",
 	component: PageError,
 	decorators: [ThemeDecorator(Theme.LIGHT)],
 } satisfies Meta<typeof PageError>;

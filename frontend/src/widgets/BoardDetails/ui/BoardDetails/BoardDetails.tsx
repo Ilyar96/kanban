@@ -7,6 +7,8 @@ import { ColumnList } from "../ColumnList/ColumnList";
 import type { Task } from "@/shared/types/board";
 import cls from "./BoardDetails.module.scss";
 import { BoardDetailsHeader } from "../BoardDetailsHeader/BoardDetailsHeader";
+import { Skeleton } from "@/shared/ui/Skeleton/Skeleton";
+import { PageError } from "@/shared/ui/PageError";
 
 interface BoardDetailsProps {
 	className?: string;
@@ -16,7 +18,7 @@ interface BoardDetailsProps {
 export const BoardDetails = memo((props: BoardDetailsProps) => {
 	const { className, onTaskClick } = props;
 	const { boardId } = useParams<{ boardId: string }>();
-	const { data, error, isLoading } = useGetBoardsDetailsQuery(boardId);
+	const { data, isLoading, error } = useGetBoardsDetailsQuery(boardId);
 
 	const canEdit = true; // TODO: permissions
 
@@ -25,19 +27,17 @@ export const BoardDetails = memo((props: BoardDetailsProps) => {
 	}
 
 	if (error) {
-		return (
-			<div className={classNames(cls.boardDetails, {}, [className])}>
-				Ошибка загрузки данных
-				{/* todo */}
-			</div>
-		);
+		return <PageError title="Что-то пошло не так. Попробуй обновить страницу." />;
 	}
 
 	if (isLoading || !data) {
 		return (
-			<div className={classNames(cls.boardDetails, {}, [className])}>
-				Загрузка...
-				{/* todo */}
+			<div className={classNames(cls.boardLoading, {}, [className])}>
+				<Skeleton
+					className={cls.wrapper}
+					width="100%"
+					height="100%"
+				/>
 			</div>
 		);
 	}

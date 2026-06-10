@@ -3,11 +3,11 @@ import { Route, Routes } from "react-router-dom";
 import { RequireAuth } from "./RequireAuth";
 import type { AppRoutesProps } from "@/shared/types/router";
 import { routeConfig } from "../config/routeConfig";
+import { PageLoader } from "@/shared/ui/PageLoader/PageLoader";
 
 export const AppRouter = memo(() => {
 	const renderWithWrapper = useCallback((route: AppRoutesProps) => {
-		// TODO: вынести в отдельный компонент
-		const element = <Suspense fallback={<div>Loading...</div>}>{route.element}</Suspense>;
+		const element = <Suspense fallback={<PageLoader />}>{route.element}</Suspense>;
 
 		return (
 			<Route

@@ -7,6 +7,7 @@ import { Navbar } from "@/widgets/Navbar";
 import { Theme, useTheme } from "./providers/ThemeProvider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { PageLoader } from "@/shared/ui/PageLoader/PageLoader";
 
 const App = () => {
 	const dispatch = useAppDispatch();
@@ -18,8 +19,11 @@ const App = () => {
 	}, [dispatch]);
 
 	if (!inited) {
-		// TODO Добавить красивый спиннер
-		return <div className="app">Loading...</div>;
+		return (
+			<div className="app">
+				<PageLoader />
+			</div>
+		);
 	}
 
 	return (

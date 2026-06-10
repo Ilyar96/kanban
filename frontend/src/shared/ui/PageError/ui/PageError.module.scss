@@ -4,7 +4,8 @@
 	align-items: center;
 	justify-content: center;
 	min-height: calc(
-		var(--full-height) - var(--navbar-height, 0px) - var(--page-wrapper-padding-y, 0px) * 2
+		var(--full-height) - var(--navbar-height, 0px) -
+			(var(--page-wrapper-padding-y, 0px) * 2) - var(--spacing-xl) * 2
 	);
 
 	.PageErrorButton {
