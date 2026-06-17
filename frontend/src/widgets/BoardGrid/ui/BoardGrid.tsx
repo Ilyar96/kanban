@@ -41,7 +41,7 @@ export const BoardGrid = memo((props: BoardGridProps) => {
 		setEditingBoard(null);
 	}, []);
 
-	if (data?.boards.length === 0) {
+	if (data?.boards.length === 0 && favoritesOnly) {
 		return null;
 	}
 

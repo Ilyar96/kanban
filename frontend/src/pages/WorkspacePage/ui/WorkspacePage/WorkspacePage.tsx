@@ -11,19 +11,17 @@ interface WorkspacePageProps {
 
 const WorkspacePage = memo(({ className }: WorkspacePageProps) => {
 	return (
-		<Page>
-			<div className={classNames("", {}, [className])}>
-				<VStack
-					as={Container}
-					gap="32"
-				>
-					<BoardGrid
-						title="Избранное"
-						favoritesOnly
-					/>
-					<BoardGrid title="Ваши рабочие пространства" />
-				</VStack>
-			</div>
+		<Page className={classNames("", {}, [className])}>
+			<VStack
+				as={Container}
+				gap="32"
+			>
+				<BoardGrid
+					title="Избранное"
+					favoritesOnly
+				/>
+				<BoardGrid title="Ваши рабочие пространства" />
+			</VStack>
 		</Page>
 	);
 });

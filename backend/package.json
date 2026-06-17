@@ -4,8 +4,9 @@
 	"description": "Kanban backend API with auth, roles, boards, columns, tasks and invitations",
 	"main": "src/server.js",
 	"scripts": {
-		"dev": "nodemon src/server.js",
-		"start": "npm run prisma:deploy && node src/server.js",
+		"db:check": "node src/scripts/check-db.js",
+		"dev": "npm run db:check && nodemon src/server.js",
+		"start": "npm run db:check && npm run prisma:deploy && node src/server.js",
 		"prisma:generate": "prisma generate",
 		"prisma:deploy": "prisma migrate deploy",
 		"prisma:migrate": "prisma migrate dev",

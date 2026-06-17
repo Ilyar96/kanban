@@ -79,6 +79,7 @@ export const CreateTask = memo((props: CreateTaskProps) => {
 					onTitleChange={onChange}
 					onSubmit={onSubmit}
 					isBtnDisabled={!title.trim()}
+					autoFocus
 				/>
 			)}
 		</div>

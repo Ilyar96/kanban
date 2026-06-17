@@ -8,6 +8,7 @@ import { Theme, useTheme } from "./providers/ThemeProvider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { PageLoader } from "@/shared/ui/PageLoader/PageLoader";
+import { CookieConsent } from "@/widgets/CookieConsent";
 
 const App = () => {
 	const dispatch = useAppDispatch();
@@ -39,6 +40,7 @@ const App = () => {
 				autoClose={3000}
 				theme={theme === Theme.DARK ? "dark" : "light"}
 			/>
+			<CookieConsent />
 		</div>
 	);
 };
