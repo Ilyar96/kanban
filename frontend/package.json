@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc -b && vite build",
+		"postbuild": "node ./scripts/copy-icons-sprite.mjs",
 		"typecheck": "tsc -p tsconfig.app.json --noEmit",
 		"lint:ts": "eslint \"src/**/*.{ts,tsx}\" && npm run typecheck",
 		"lint:ts:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
