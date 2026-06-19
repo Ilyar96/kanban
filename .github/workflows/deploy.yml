@@ -1,0 +1,61 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+
+            PROJECT_PATH="${{ secrets.PROJECT_PATH || '/var/www/kanban' }}"
+            DEPLOY_BRANCH="${{ github.ref_name }}"
+
+            cd "$PROJECT_PATH"
+
+            git fetch --all --prune
+            git checkout "$DEPLOY_BRANCH"
+            git pull --ff-only origin "$DEPLOY_BRANCH"
+
+            echo "== Backend deploy =="
+            cd backend
+            npm ci
+            npm run prisma:generate
+            npm run prisma:deploy
+
+            if pm2 describe backend >/dev/null 2>&1; then
+              pm2 restart backend --update-env
+            else
+              pm2 start npm --name backend -- run start
+            fi
+            pm2 save
+
+            echo "== Frontend deploy =="
+            cd ../frontend
+            npm ci
+            VITE_ENABLE_IMAGE_OPTIMIZER=false npm run build
+
+            if command -v nginx >/dev/null 2>&1; then
+              nginx -t
+              systemctl reload nginx
+            fi
+
+            echo "Deploy completed successfully"
