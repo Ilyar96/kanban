@@ -8,6 +8,7 @@ import path from "path";
 export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd(), "");
 	const isDev = mode === "development";
+	const isImageOptimizerEnabled = !isDev && env.VITE_ENABLE_IMAGE_OPTIMIZER !== "false";
 
 	return {
 		plugins: [
@@ -17,7 +18,7 @@ export default defineConfig(({ mode }) => {
 					tsconfigPath: "./tsconfig.app.json",
 				},
 			}),
-			!isDev &&
+			isImageOptimizerEnabled &&
 				ViteImageOptimizer({
 					includePublic: true,
 					logStats: true,

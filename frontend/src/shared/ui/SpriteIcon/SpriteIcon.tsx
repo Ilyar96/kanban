@@ -9,7 +9,10 @@ interface SpriteIconProps {
 }
 
 export const SpriteIcon = memo((props: SpriteIconProps) => {
-	const { className, spriteUrl = "/icons.svg", spriteId } = props;
+	const { className, spriteUrl, spriteId } = props;
+	const defaultSpriteUrl = `${import.meta.env.BASE_URL}icons.svg`;
+	const resolvedSpriteUrl = spriteUrl ?? defaultSpriteUrl;
+	const spriteHref = `${resolvedSpriteUrl}#${spriteId}`;
 
 	return (
 		<svg
@@ -18,7 +21,8 @@ export const SpriteIcon = memo((props: SpriteIconProps) => {
 			focusable="false"
 		>
 			<use
-				href={`${spriteUrl}#${spriteId}`}
+				href={spriteHref}
+				xlinkHref={spriteHref}
 				x="0"
 				y="0"
 				width="100%"
