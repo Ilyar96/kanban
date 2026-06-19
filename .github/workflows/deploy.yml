@@ -3,6 +3,7 @@ name: Deploy to Server
 on:
   push:
     branches:
+      - main
       - master
   workflow_dispatch:
 
@@ -11,12 +12,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  deploy-backend:
+    name: Deploy backend via SSH
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy over SSH
-        uses: appleboy/ssh-action@v1.2.0
+      - name: Deploy on remote server
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
@@ -24,52 +26,31 @@ jobs:
           port: ${{ secrets.SSH_PORT || 22 }}
           script_stop: true
           script: |
-            set -euo pipefail
+            set -e
 
-            PROJECT_PATH="${{ secrets.PROJECT_PATH || '/var/www/kanban' }}"
-            DEPLOY_BRANCH="${{ github.ref_name }}"
+            PROJECT_DIR="/var/www/kanban"
+            BACKEND_DIR="$PROJECT_DIR/backend"
+            BRANCH="${{ github.ref_name }}"
 
-            pm2_exec() {
-              if command -v pm2 >/dev/null 2>&1; then
-                pm2 "$@"
-              else
-                npx --yes pm2 "$@"
-              fi
-            }
+            if [ ! -d "$PROJECT_DIR/.git" ]; then
+              echo "Repository not found at $PROJECT_DIR"
+              exit 1
+            fi
 
-            cd "$PROJECT_PATH"
-
+            cd "$PROJECT_DIR"
             git fetch --all --prune
-            git checkout -B "$DEPLOY_BRANCH" "origin/$DEPLOY_BRANCH"
-            git reset --hard "origin/$DEPLOY_BRANCH"
+            git checkout "$BRANCH"
+            git pull --ff-only origin "$BRANCH"
 
-            echo "== Backend deploy =="
-            cd backend
-            npm ci
-            npm run prisma:generate
-            npm run prisma:deploy
+            cd "$BACKEND_DIR"
+            npm ci --omit=dev
+            npx prisma generate
+            npx prisma migrate deploy
 
-            echo "== PM2 deploy =="
-            if pm2_exec describe backend >/dev/null 2>&1; then
-              pm2_exec restart backend --update-env
+            if pm2 describe kanban > /dev/null 2>&1; then
+              pm2 restart kanban --update-env
             else
-              pm2_exec start npm --name backend -- run start
-            fi
-            pm2_exec save
-
-            echo "== Frontend deploy =="
-            cd ../frontend
-            npm ci
-            VITE_ENABLE_IMAGE_OPTIMIZER=false npm run build
-
-            if command -v nginx >/dev/null 2>&1; then
-              if command -v sudo >/dev/null 2>&1; then
-                sudo nginx -t
-                sudo systemctl reload nginx
-              else
-                nginx -t
-                systemctl reload nginx
-              fi
+              pm2 start npm --name kanban -- start
             fi
 
-            echo "Deploy completed successfully"
+            pm2 save
