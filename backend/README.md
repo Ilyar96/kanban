@@ -178,6 +178,9 @@ If you see `Can't reach database server at localhost:5432`:
 - `DELETE /api/tasks/:taskId`
 - `PATCH /api/tasks/:taskId/toggle`
 - `PATCH /api/tasks/:taskId/move`
+- `GET /api/tasks/:taskId/comments`
+- `POST /api/tasks/:taskId/comments`
+- `DELETE /api/tasks/:taskId/comments/:commentId`
 
 ## Notes
 

@@ -1,1 +1,30 @@
-// .taskDetailsModal {}
+.taskDetailsModal {
+	--modal-width: 1200px;
+}
+
+.taskDetailsModalInner {
+	width: 100%;
+}
+
+.content {
+	width: 100%;
+	align-items: flex-start;
+}
+
+.editSection,
+.commentsSection {
+	flex: 1;
+	min-width: 0;
+}
+
+.commentsSection {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-m);
+}
+
+@media (width <= 900px) {
+	.content {
+		flex-direction: column;
+	}
+}

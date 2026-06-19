@@ -1,4 +1,5 @@
 const express = require("express");
+const crypto = require("crypto");
 const { z } = require("zod");
 const { prisma } = require("../lib/prisma");
 const { requireAuth } = require("../middleware/auth");
@@ -49,8 +50,35 @@ const moveTaskSchema = z.object({
 	query: z.object({}),
 });
 
+const createTaskCommentSchema = z.object({
+	body: z.object({
+		content: z.string().min(1).max(2000),
+	}),
+	params: z.object({
+		taskId: z.string().min(1),
+	}),
+	query: z.object({}),
+});
+
+const deleteTaskCommentSchema = z.object({
+	body: z.object({}).optional(),
+	params: z.object({
+		taskId: z.string().min(1),
+		commentId: z.string().min(1),
+	}),
+	query: z.object({}).optional(),
+});
+
 function isAdmin(user) {
 	return user.globalRole === "ADMIN";
+}
+
+function hasTaskCommentAccess(user, role) {
+	if (isAdmin(user)) {
+		return true;
+	}
+
+	return Boolean(role);
 }
 
 async function reindexTasks(tx, columnId, taskIds) {
@@ -69,7 +97,185 @@ async function reindexTasks(tx, columnId, taskIds) {
 	}
 }
 
+async function findTaskComments(taskId) {
+	if (prisma.taskComment?.findMany) {
+		return prisma.taskComment.findMany({
+			where: { taskId },
+			orderBy: { createdAt: "asc" },
+			include: {
+				author: {
+					select: { id: true, name: true, email: true },
+				},
+			},
+		});
+	}
+
+	return prisma.$queryRaw`
+		SELECT
+			c."id",
+			c."content",
+			c."taskId",
+			c."authorId",
+			c."createdAt",
+			c."updatedAt",
+			json_build_object(
+				'id', u."id",
+				'name', u."name",
+				'email', u."email"
+			) as "author"
+		FROM "TaskComment" c
+		JOIN "User" u ON u."id" = c."authorId"
+		WHERE c."taskId" = ${taskId}
+		ORDER BY c."createdAt" ASC
+	`;
+}
+
+async function createTaskComment(taskId, content, authorId) {
+	if (prisma.taskComment?.create) {
+		return prisma.taskComment.create({
+			data: {
+				content,
+				taskId,
+				authorId,
+			},
+			include: {
+				author: {
+					select: { id: true, name: true, email: true },
+				},
+			},
+		});
+	}
+
+	const commentId = crypto.randomUUID();
+
+	await prisma.$executeRaw`
+		INSERT INTO "TaskComment" ("id", "content", "taskId", "authorId", "createdAt", "updatedAt")
+		VALUES (${commentId}, ${content}, ${taskId}, ${authorId}, NOW(), NOW())
+	`;
+
+	const [comment] = await prisma.$queryRaw`
+		SELECT
+			c."id",
+			c."content",
+			c."taskId",
+			c."authorId",
+			c."createdAt",
+			c."updatedAt",
+			json_build_object(
+				'id', u."id",
+				'name', u."name",
+				'email', u."email"
+			) as "author"
+		FROM "TaskComment" c
+		JOIN "User" u ON u."id" = c."authorId"
+		WHERE c."id" = ${commentId}
+		LIMIT 1
+	`;
+
+	return comment;
+}
+
+async function findTaskCommentById(commentId) {
+	if (prisma.taskComment?.findUnique) {
+		return prisma.taskComment.findUnique({
+			where: { id: commentId },
+		});
+	}
+
+	const [comment] = await prisma.$queryRaw`
+    SELECT "id", "taskId", "authorId"
+    FROM "TaskComment"
+    WHERE "id" = ${commentId}
+    LIMIT 1
+  `;
+
+	return comment ?? null;
+}
+
+async function deleteTaskCommentById(commentId) {
+	if (prisma.taskComment?.delete) {
+		await prisma.taskComment.delete({
+			where: { id: commentId },
+		});
+		return;
+	}
+
+	await prisma.$executeRaw`
+    DELETE FROM "TaskComment"
+    WHERE "id" = ${commentId}
+  `;
+}
+
 router.use(requireAuth);
+
+router.get("/:taskId/comments", validate(taskIdSchema), async (req, res) => {
+	const { taskId } = req.validated.params;
+
+	const taskWithBoard = await getTaskWithBoard(taskId);
+	if (!taskWithBoard) {
+		return res.status(404).json({ message: "Task not found" });
+	}
+
+	const { role } = await getBoardWithRole(taskWithBoard.column.boardId, req.user.id);
+	if (!hasTaskCommentAccess(req.user, role)) {
+		return res.status(403).json({ message: "Forbidden" });
+	}
+
+	const comments = await findTaskComments(taskId);
+
+	return res.json({ comments });
+});
+
+router.post("/:taskId/comments", validate(createTaskCommentSchema), async (req, res) => {
+	const { taskId } = req.validated.params;
+	const { content } = req.validated.body;
+
+	const taskWithBoard = await getTaskWithBoard(taskId);
+	if (!taskWithBoard) {
+		return res.status(404).json({ message: "Task not found" });
+	}
+
+	const { role } = await getBoardWithRole(taskWithBoard.column.boardId, req.user.id);
+	if (!hasTaskCommentAccess(req.user, role)) {
+		return res.status(403).json({ message: "Forbidden" });
+	}
+
+	const normalizedContent = content.trim();
+	if (!normalizedContent) {
+		return res.status(400).json({ message: "Comment content cannot be empty" });
+	}
+
+	const comment = await createTaskComment(taskId, normalizedContent, req.user.id);
+
+	return res.status(201).json({ comment });
+});
+
+router.delete("/:taskId/comments/:commentId", validate(deleteTaskCommentSchema), async (req, res) => {
+	const { taskId, commentId } = req.validated.params;
+
+	const taskWithBoard = await getTaskWithBoard(taskId);
+	if (!taskWithBoard) {
+		return res.status(404).json({ message: "Task not found" });
+	}
+
+	const { role } = await getBoardWithRole(taskWithBoard.column.boardId, req.user.id);
+	if (!hasTaskCommentAccess(req.user, role)) {
+		return res.status(403).json({ message: "Forbidden" });
+	}
+
+	const comment = await findTaskCommentById(commentId);
+	if (!comment || comment.taskId !== taskId) {
+		return res.status(404).json({ message: "Comment not found" });
+	}
+
+	if (!isAdmin(req.user) && comment.authorId !== req.user.id) {
+		return res.status(403).json({ message: "You can delete only your comments" });
+	}
+
+	await deleteTaskCommentById(commentId);
+
+	return res.status(204).send();
+});
 
 router.post("/columns/:columnId/tasks", validate(createTaskSchema), async (req, res) => {
 	const { columnId } = req.validated.params;

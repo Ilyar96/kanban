@@ -5,6 +5,7 @@ import { CreateItemForm } from "@/shared/ui/CreateItemForm/CreateItemForm";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useUpdateTaskMutation } from "../../model/api/updateTaskApi";
 import { getServerErrorMessage } from "@/shared/lib/serverError/serverError";
+import cls from "./UpdateTask.module.scss";
 
 interface UpdateTaskProps {
 	className?: string;
@@ -60,7 +61,7 @@ export const UpdateTask = memo((props: UpdateTaskProps) => {
 	}, [boardId, description, task.id, title, updateTask]);
 
 	return (
-		<div className={classNames("", {}, [className])}>
+		<div className={classNames(cls.updateTask, {}, [className])}>
 			<CreateItemForm
 				btnText={"Сохранить"}
 				titleFieldType="input"

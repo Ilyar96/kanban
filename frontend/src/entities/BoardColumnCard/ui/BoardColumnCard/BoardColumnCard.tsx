@@ -48,13 +48,15 @@ export const BoardColumnCard = memo((props: BoardColumnCardProps) => {
 					/>
 				)}
 
-				<TaskList
-					tasks={tasks}
-					columnId={columnData.id}
-					renderTask={renderTask}
-					onMoveTask={onMoveTask}
-					onMoveTaskError={onMoveTaskError}
-				/>
+				{tasks.length > 0 && (
+					<TaskList
+						tasks={tasks}
+						columnId={columnData.id}
+						renderTask={renderTask}
+						onMoveTask={onMoveTask}
+						onMoveTaskError={onMoveTaskError}
+					/>
+				)}
 
 				{createTaskSlot}
 			</VStack>

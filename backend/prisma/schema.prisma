@@ -48,6 +48,7 @@ model User {
   boardMembers   BoardMember[]
   favoriteBoards BoardFavorite[]
   createdTasks   Task[]            @relation("TaskCreator")
+  taskComments   TaskComment[]
   sentInvites    BoardInvitation[] @relation("InviteSender")
 }
 
@@ -115,8 +116,22 @@ model Task {
   updatedAt   DateTime @updatedAt
   column      Column   @relation(fields: [columnId], references: [id], onDelete: Cascade)
   createdBy   User     @relation("TaskCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  comments    TaskComment[]
 
   @@unique([columnId, position])
+}
+
+model TaskComment {
+  id        String   @id @default(cuid())
+  content   String
+  taskId    String
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, createdAt])
 }
 
 model BoardInvitation {

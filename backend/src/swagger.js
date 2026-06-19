@@ -251,6 +251,45 @@ const options = {
 						},
 					],
 				},
+				TaskCommentAuthor: {
+					type: "object",
+					required: ["id", "name", "email"],
+					properties: {
+						id: { type: "string" },
+						name: { type: "string" },
+						email: { type: "string", format: "email" },
+					},
+				},
+				TaskComment: {
+					type: "object",
+					required: ["id", "content", "taskId", "authorId", "createdAt", "updatedAt", "author"],
+					properties: {
+						id: { type: "string" },
+						content: { type: "string" },
+						taskId: { type: "string" },
+						authorId: { type: "string" },
+						createdAt: { type: "string", format: "date-time" },
+						updatedAt: { type: "string", format: "date-time" },
+						author: { $ref: "#/components/schemas/TaskCommentAuthor" },
+					},
+				},
+				TaskCommentsResponse: {
+					type: "object",
+					required: ["comments"],
+					properties: {
+						comments: {
+							type: "array",
+							items: { $ref: "#/components/schemas/TaskComment" },
+						},
+					},
+				},
+				TaskCommentResponse: {
+					type: "object",
+					required: ["comment"],
+					properties: {
+						comment: { $ref: "#/components/schemas/TaskComment" },
+					},
+				},
 				BoardMember: {
 					type: "object",
 					required: ["id", "boardId", "userId", "role", "createdAt"],
@@ -423,6 +462,12 @@ const options = {
 				},
 				TaskId: {
 					name: "taskId",
+					in: "path",
+					required: true,
+					schema: { type: "string" },
+				},
+				CommentId: {
+					name: "commentId",
 					in: "path",
 					required: true,
 					schema: { type: "string" },
@@ -1976,6 +2021,166 @@ const options = {
 						},
 						404: {
 							description: "Task or target column not found",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+					},
+				},
+			},
+			"/api/tasks/{taskId}/comments": {
+				get: {
+					tags: ["Tasks"],
+					summary: "Get task comments",
+					security: [{ bearerAuth: [] }],
+					parameters: [{ $ref: "#/components/parameters/TaskId" }],
+					responses: {
+						200: {
+							description: "Task comments",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/TaskCommentsResponse" },
+								},
+							},
+						},
+						400: {
+							description: "Validation error",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ValidationErrorResponse" },
+								},
+							},
+						},
+						401: {
+							description: "Unauthorized",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+						403: {
+							description: "Forbidden",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+						404: {
+							description: "Task not found",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+					},
+				},
+				post: {
+					tags: ["Tasks"],
+					summary: "Create task comment",
+					security: [{ bearerAuth: [] }],
+					parameters: [{ $ref: "#/components/parameters/TaskId" }],
+					requestBody: {
+						required: true,
+						content: {
+							"application/json": {
+								schema: {
+									type: "object",
+									required: ["content"],
+									properties: {
+										content: { type: "string", minLength: 1, maxLength: 2000 },
+									},
+								},
+							},
+						},
+					},
+					responses: {
+						201: {
+							description: "Comment created",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/TaskCommentResponse" },
+								},
+							},
+						},
+						400: {
+							description: "Validation error",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ValidationErrorResponse" },
+								},
+							},
+						},
+						401: {
+							description: "Unauthorized",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+						403: {
+							description: "Forbidden",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+						404: {
+							description: "Task not found",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+					},
+				},
+			},
+			"/api/tasks/{taskId}/comments/{commentId}": {
+				delete: {
+					tags: ["Tasks"],
+					summary: "Delete task comment (author or ADMIN)",
+					security: [{ bearerAuth: [] }],
+					parameters: [
+						{ $ref: "#/components/parameters/TaskId" },
+						{ $ref: "#/components/parameters/CommentId" },
+					],
+					responses: {
+						204: {
+							description: "Comment deleted",
+						},
+						400: {
+							description: "Validation error",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ValidationErrorResponse" },
+								},
+							},
+						},
+						401: {
+							description: "Unauthorized",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+						403: {
+							description: "Forbidden",
+							content: {
+								"application/json": {
+									schema: { $ref: "#/components/schemas/ErrorResponse" },
+								},
+							},
+						},
+						404: {
+							description: "Task or comment not found",
 							content: {
 								"application/json": {
 									schema: { $ref: "#/components/schemas/ErrorResponse" },

@@ -1,4 +1,5 @@
 .modal {
+	--modal-width: 560px;
 	position: fixed;
 	inset: 0;
 	z-index: var(--modal-z-index);
@@ -16,7 +17,7 @@
 }
 
 .inner {
-	width: min(560px, 100%);
+	width: min(var(--modal-width), 100%);
 }
 
 .panel {

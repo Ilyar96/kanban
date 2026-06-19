@@ -5,10 +5,10 @@
 	"main": "src/server.js",
 	"scripts": {
 		"db:check": "node src/scripts/check-db.js",
-		"dev": "npm run db:check && nodemon src/server.js",
+		"dev": "npm run db:check && npm run prisma:generate && nodemon src/server.js",
 		"start": "npm run db:check && npm run prisma:deploy && node src/server.js",
 		"prisma:generate": "prisma generate",
-		"prisma:deploy": "prisma migrate deploy",
+		"prisma:deploy": "npm run prisma:generate && prisma migrate deploy",
 		"prisma:migrate": "prisma migrate dev",
 		"prisma:studio": "prisma studio"
 	},

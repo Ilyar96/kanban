@@ -5,7 +5,7 @@ import { getBearerToken } from "@/shared/lib/auth/getBearerToken";
 
 export const rtkApi = createApi({
 	reducerPath: "api",
-	tagTypes: ["Board", "FavoriteBoards"],
+	tagTypes: ["Board", "FavoriteBoards", "TaskComments"],
 	baseQuery: fetchBaseQuery({
 		baseUrl: __API__,
 		prepareHeaders: (headers) => {
