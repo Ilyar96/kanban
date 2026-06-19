@@ -30,7 +30,7 @@ interface CommonTextFieldProps {
 	registration?: UseFormRegisterReturn;
 	autoFocus?: boolean;
 	readonly?: boolean;
-	size?: "s" | "m" | "l";
+	fieldSize?: "s" | "m" | "l";
 	theme?: "primary" | "clear";
 	error?: string;
 }
@@ -52,11 +52,11 @@ export const TextField = memo(
 	forwardRef<HTMLInputElement | HTMLTextAreaElement, TextFieldProps>(
 		(props: TextFieldProps, ref) => {
 			const reactId = useId();
-			const { size, id, error, theme = "primary" } = props;
+			const { fieldSize, id, error, theme = "primary" } = props;
 			const fieldId = id ?? reactId;
-			const fieldSize = size ?? "m";
+			const resolvedFieldSize = fieldSize ?? "m";
 			const fieldClass = classNames(cls.field, { [cls.error]: error }, [
-				cls[fieldSize],
+				cls[resolvedFieldSize],
 				cls[theme],
 			]);
 
@@ -139,7 +139,7 @@ export const TextField = memo(
 					/>,
 					className,
 					label,
-					fieldSize,
+					resolvedFieldSize,
 					fieldId,
 				);
 			}
@@ -178,7 +178,7 @@ export const TextField = memo(
 				/>,
 				className,
 				label,
-				fieldSize,
+				resolvedFieldSize,
 				fieldId,
 			);
 		},

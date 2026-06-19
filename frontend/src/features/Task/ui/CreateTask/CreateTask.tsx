@@ -18,7 +18,7 @@ export const CreateTask = memo((props: CreateTaskProps) => {
 	const { className, boardId, columnId } = props;
 	const [title, setTitle] = useState("");
 	const [isFormVisible, setIsFormVisible] = useState(false);
-	const [createTask] = useCreateTaskMutation();
+	const [createTask, { isLoading: isCreateTaskLoading }] = useCreateTaskMutation();
 
 	const btnText = "Добавить карточку";
 
@@ -78,7 +78,7 @@ export const CreateTask = memo((props: CreateTaskProps) => {
 					title={title}
 					onTitleChange={onChange}
 					onSubmit={onSubmit}
-					isBtnDisabled={!title.trim()}
+					isBtnDisabled={!title.trim() || isCreateTaskLoading}
 					autoFocus
 				/>
 			)}

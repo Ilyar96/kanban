@@ -12,7 +12,7 @@ const meta = {
 	args: {
 		placeholder: "Введите текст",
 		label: "Текстовое поле",
-		size: "m",
+		fieldSize: "m",
 		error: "Ошибка ввода",
 	},
 	decorators: [ThemeDecorator(Theme.LIGHT)],
@@ -30,7 +30,7 @@ export const PrimaryDark: Story = {
 
 export const SizeS: Story = {
 	args: {
-		size: "s",
+		fieldSize: "s",
 	},
 };
 
@@ -41,7 +41,7 @@ export const SizeSDark: Story = {
 
 export const SizeM: Story = {
 	args: {
-		size: "m",
+		fieldSize: "m",
 	},
 };
 
@@ -52,7 +52,7 @@ export const SizeMDark: Story = {
 
 export const SizeL: Story = {
 	args: {
-		size: "l",
+		fieldSize: "l",
 	},
 };
 
