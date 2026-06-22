@@ -5,4 +5,9 @@ export {
 	type BoardFormInitialValues,
 	type BoardFormSubmitValues,
 } from "./ui/BoardForm/BoardForm";
-export { useGetBoardsByUserIdQuery } from "./model/api/boardsApi";
+export {
+	useGetBoardsByUserIdQuery,
+	useAddBoardToFavoriteMutation,
+	useRemoveBoardFromFavoriteMutation,
+	useDeleteBoardMutation,
+} from "./model/api/boardsApi";
