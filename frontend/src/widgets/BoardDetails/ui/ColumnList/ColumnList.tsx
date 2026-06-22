@@ -96,11 +96,8 @@ export const ColumnList = memo((props: ColumnListProps) => {
 
 	const handleDragEnd = useCallback(
 		async (event: DragEndEvent) => {
-			try {
-				await onDragEnd(event);
-			} finally {
-				setActiveColumnId(null);
-			}
+			setActiveColumnId(null);
+			await onDragEnd(event);
 		},
 		[onDragEnd],
 	);

@@ -76,11 +76,8 @@ export const TaskList = memo((props: TaskListProps) => {
 
 	const handleDragEnd = useCallback(
 		async (event: DragEndEvent) => {
-			try {
-				await onDragEnd(event);
-			} finally {
-				setActiveTaskId(null);
-			}
+			setActiveTaskId(null);
+			await onDragEnd(event);
 		},
 		[onDragEnd],
 	);
