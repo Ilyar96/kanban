@@ -2,7 +2,7 @@ import { memo, type ReactNode } from "react";
 import { classNames, type Mods } from "@/shared/lib/classNames/classNames";
 import cls from "./Text.module.scss";
 
-export type TextTheme = "primary" | "inverted" | "error";
+export type TextTheme = "primary" | "secondary" | "inverted" | "error";
 
 export type TextAlign = "right" | "left" | "center";
 

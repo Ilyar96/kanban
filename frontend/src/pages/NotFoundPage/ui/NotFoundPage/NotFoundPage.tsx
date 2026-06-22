@@ -19,7 +19,10 @@ const NotFoundPage = memo(({ className }: NotFoundPageProps) => {
 	}, [navigate]);
 
 	return (
-		<Page className={classNames(cls.notFoundPage, {}, [className])}>
+		<Page
+			className={classNames(cls.notFoundPage, {}, [className])}
+			centered
+		>
 			<div className={cls.glow} />
 			<div className={cls.content}>
 				<span className={cls.code}>404</span>

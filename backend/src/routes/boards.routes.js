@@ -128,6 +128,15 @@ const removeMemberSchema = z.object({
 	query: z.object({}).optional(),
 });
 
+const removeInvitationSchema = z.object({
+	body: z.object({}).optional(),
+	params: z.object({
+		boardId: z.string().min(1),
+		invitationId: z.string().min(1),
+	}),
+	query: z.object({}).optional(),
+});
+
 const boardsListSchema = z.object({
 	body: z.object({}).optional(),
 	params: z.object({}).optional(),
@@ -150,15 +159,17 @@ function isAdmin(user) {
 function canViewBoard(board, role, user) {
 	if (!board) return false;
 	if (isAdmin(user)) return true;
-	if (role) return true;
-	return board.visibility === "WORKSPACE" || board.visibility === "PUBLIC";
+	if (board.ownerId === user.id) return true;
+	if (board.visibility === "PUBLIC") return true;
+	if (board.visibility === "WORKSPACE") return Boolean(role);
+	return false;
 }
 
 async function ensureBoardPermission(req, res, boardId, permission) {
 	const { board, role } = await getBoardWithRole(boardId, req.user.id);
 
 	if (!board) {
-		res.status(404).json({ message: "Board not found" });
+		res.status(404).json({ message: "Доска не найдена" });
 		return null;
 	}
 
@@ -166,7 +177,7 @@ async function ensureBoardPermission(req, res, boardId, permission) {
 		return { board, role };
 	}
 
-	res.status(403).json({ message: "Forbidden" });
+	res.status(403).json({ message: "Недостаточно прав" });
 	return null;
 }
 
@@ -180,13 +191,17 @@ router.get("/", validate(boardsListSchema), async (req, res) => {
 		OR: [
 			{ ownerId: req.user.id },
 			{
-				members: {
-					some: {
-						userId: req.user.id,
+				AND: [
+					{ visibility: "WORKSPACE" },
+					{
+						members: {
+							some: {
+								userId: req.user.id,
+							},
+						},
 					},
-				},
+				],
 			},
-			{ visibility: "WORKSPACE" },
 			{ visibility: "PUBLIC" },
 		],
 	};
@@ -259,14 +274,18 @@ router.get("/by-owner/:userId", validate(ownerBoardsListSchema), async (req, res
 		? {}
 		: {
 			OR: [
-				{ visibility: "WORKSPACE" },
 				{ visibility: "PUBLIC" },
 				{
-					members: {
-						some: {
-							userId: req.user.id,
+					AND: [
+						{ visibility: "WORKSPACE" },
+						{
+							members: {
+								some: {
+									userId: req.user.id,
+								},
+							},
 						},
-					},
+					],
 				},
 			],
 		};
@@ -394,7 +413,7 @@ router.get("/:boardId", validate(boardDetailsQuerySchema), async (req, res) => {
 
 	const { board: boardAccess, role } = await getBoardWithRole(boardId, req.user.id);
 	if (!canViewBoard(boardAccess, role, req.user)) {
-		return res.status(404).json({ message: "Board not found" });
+		return res.status(404).json({ message: "Доска не найдена" });
 	}
 
 	const columnsOrderBy = { position: "asc" };
@@ -442,12 +461,12 @@ router.get("/:boardId", validate(boardDetailsQuerySchema), async (req, res) => {
 	});
 
 	if (!board) {
-		return res.status(404).json({ message: "Board not found" });
+		return res.status(404).json({ message: "Доска не найдена" });
 	}
 
 	const isFavorite = board.favorites.length > 0;
 	if (favoritesOnly && !isFavorite) {
-		return res.status(404).json({ message: "Board not found" });
+		return res.status(404).json({ message: "Доска не найдена" });
 	}
 
 	const totalPages = totalColumns === 0 ? 0 : Math.ceil(totalColumns / limit);
@@ -543,8 +562,14 @@ router.post("/:boardId/invitations", validate(inviteSchema), async (req, res) =>
 
 	const board = access.board;
 
+	if (board.visibility === "PRIVATE") {
+		return res.status(400).json({
+			message: "Для приватной доски приглашения недоступны",
+		});
+	}
+
 	if (board.ownerId === req.user.id && board.owner.email === email) {
-		return res.status(400).json({ message: "Owner is already in board" });
+		return res.status(400).json({ message: "Владелец уже находится на доске" });
 	}
 
 	const existingMemberUser = await prisma.user.findUnique({ where: { email } });
@@ -559,7 +584,9 @@ router.post("/:boardId/invitations", validate(inviteSchema), async (req, res) =>
 		});
 
 		if (existingMembership) {
-			return res.status(409).json({ message: "User is already a member" });
+			return res.status(409).json({
+				message: "Пользователь уже является участником доски. Удалите участника, чтобы пригласить повторно.",
+			});
 		}
 	}
 
@@ -594,6 +621,43 @@ router.post("/:boardId/invitations", validate(inviteSchema), async (req, res) =>
 	return res.status(201).json({ invitation });
 });
 
+router.delete(
+	"/:boardId/invitations/:invitationId",
+	validate(removeInvitationSchema),
+	async (req, res) => {
+		const { boardId, invitationId } = req.validated.params;
+
+		const access = await ensureBoardPermission(req, res, boardId, BOARD_PERMISSION.INVITE_MANAGE);
+		if (!access) {
+			return;
+		}
+
+		const invitation = await prisma.boardInvitation.findUnique({ where: { id: invitationId } });
+
+		if (!invitation || invitation.boardId !== boardId) {
+			return res.status(404).json({ message: "Приглашение не найдено" });
+		}
+
+		await prisma.$transaction(async (tx) => {
+			if (invitation.status === "ACCEPTED") {
+				const invitedUser = await tx.user.findUnique({ where: { email: invitation.email } });
+
+				if (invitedUser && invitedUser.id !== access.board.ownerId) {
+					await tx.boardMember.deleteMany({
+						where: {
+							boardId,
+							userId: invitedUser.id,
+						},
+					});
+				}
+			}
+
+			await tx.boardInvitation.delete({ where: { id: invitationId } });
+		});
+
+		return res.status(204).send();
+	},
+);
 router.patch("/:boardId/members/:memberId", validate(updateMemberRoleSchema), async (req, res) => {
 	const { boardId, memberId } = req.validated.params;
 	const { role } = req.validated.body;
@@ -606,7 +670,7 @@ router.patch("/:boardId/members/:memberId", validate(updateMemberRoleSchema), as
 	const member = await prisma.boardMember.findUnique({ where: { id: memberId } });
 
 	if (!member || member.boardId !== boardId) {
-		return res.status(404).json({ message: "Member not found" });
+		return res.status(404).json({ message: "Участник не найден" });
 	}
 
 	const updatedMember = await prisma.boardMember.update({
@@ -628,7 +692,7 @@ router.delete("/:boardId/members/:memberId", validate(removeMemberSchema), async
 	const member = await prisma.boardMember.findUnique({ where: { id: memberId } });
 
 	if (!member || member.boardId !== boardId) {
-		return res.status(404).json({ message: "Member not found" });
+		return res.status(404).json({ message: "Участник не найден" });
 	}
 
 	await prisma.boardMember.delete({ where: { id: memberId } });
@@ -641,7 +705,7 @@ router.post("/:boardId/favorite", validate(favoriteBoardSchema), async (req, res
 
 	const { board, role } = await getBoardWithRole(boardId, req.user.id);
 	if (!canViewBoard(board, role, req.user)) {
-		return res.status(404).json({ message: "Board not found" });
+		return res.status(404).json({ message: "Доска не найдена" });
 	}
 
 	const favorite = await prisma.boardFavorite.upsert({
@@ -666,7 +730,7 @@ router.delete("/:boardId/favorite", validate(favoriteBoardSchema), async (req, r
 
 	const { board, role } = await getBoardWithRole(boardId, req.user.id);
 	if (!canViewBoard(board, role, req.user)) {
-		return res.status(404).json({ message: "Board not found" });
+		return res.status(404).json({ message: "Доска не найдена" });
 	}
 
 	await prisma.boardFavorite.deleteMany({

@@ -16,3 +16,99 @@
 .deleteItem.deleteItem {
 	color: var(--text-danger);
 }
+
+.shareModalBody {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-m);
+}
+
+.shareRoleField {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-xs);
+}
+
+.shareRoleLabel {
+	font: var(--font-s);
+}
+
+.shareRoleSelect {
+	height: 40px;
+	padding: 0 var(--spacing-s);
+	border-radius: var(--border-radius-m);
+	border: 1px solid var(--border-primary);
+	background: var(--bg-card);
+	color: var(--text-primary);
+}
+
+.shareHint {
+	color: var(--text-secondary);
+}
+
+.manualLinkBlock {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-xs);
+	padding: var(--spacing-xs) var(--spacing-s);
+	border: 1px dashed var(--border-primary);
+	border-radius: var(--border-radius-s);
+	background: var(--bg-card);
+}
+
+.invitedList {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-xs);
+}
+
+.invitedListTitle {
+	font-size: 12px;
+	color: var(--text-secondary);
+}
+
+.invitedItem {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--spacing-s);
+	padding: var(--spacing-xs) var(--spacing-s);
+	border: 1px solid var(--border-primary);
+	border-radius: var(--border-radius-s);
+	background: var(--bg-card);
+}
+
+.invitedMeta {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.invitedEmail {
+	font-size: 13px;
+	color: var(--text-primary);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.invitedRole {
+	font-size: 11px;
+	color: var(--text-secondary);
+}
+
+.invitedEmpty {
+	font-size: 12px;
+	color: var(--text-secondary);
+}
+
+.invitationDeleteBtn {
+	white-space: nowrap;
+}
+
+.invitationActions {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--spacing-xs);
+}

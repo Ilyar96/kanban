@@ -806,7 +806,7 @@ const options = {
 					tags: ["Boards"],
 					summary: "Get owner boards with pagination",
 					description:
-						"Returns boards of a specific owner. Owner and ADMIN see all owner's boards. Other users see only WORKSPACE/PUBLIC boards or boards where they are members. Supports pagination, filtering only favorite boards and sorting.",
+						"Возвращает доски конкретного владельца. Владелец и ADMIN видят все доски владельца. Остальные пользователи видят только PUBLIC-доски или доски, где они участники. Для PRIVATE/WORKSPACE доступ только у владельца и участников. Поддерживаются пагинация, фильтрация избранного и сортировка.",
 					security: [{ bearerAuth: [] }],
 					parameters: [
 						{ $ref: "#/components/parameters/UserId" },
@@ -1899,7 +1899,7 @@ const options = {
 			"/api/tasks/{taskId}/toggle": {
 				patch: {
 					tags: ["Tasks"],
-					summary: "Toggle task completed (MOVER+/ADMIN)",
+					summary: "Toggle task completed (EDITOR+/ADMIN)",
 					security: [{ bearerAuth: [] }],
 					parameters: [{ $ref: "#/components/parameters/TaskId" }],
 					responses: {
@@ -1957,7 +1957,7 @@ const options = {
 			"/api/tasks/{taskId}/move": {
 				patch: {
 					tags: ["Tasks"],
-					summary: "Move task in board (MOVER+/ADMIN)",
+					summary: "Move task in board (EDITOR+/ADMIN)",
 					security: [{ bearerAuth: [] }],
 					parameters: [{ $ref: "#/components/parameters/TaskId" }],
 					requestBody: {

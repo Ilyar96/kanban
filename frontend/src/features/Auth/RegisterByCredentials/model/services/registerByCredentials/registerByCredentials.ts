@@ -37,7 +37,7 @@ export const registerByCredentials = createAsyncThunk<
 
 		return response.data;
 	} catch (e: unknown) {
-		if (isAxiosError<ServerErrorPayload>(e) && e.response?.data?.issues) {
+		if (isAxiosError<ServerErrorPayload>(e) && e.response?.data) {
 			return rejectWithValue(e.response.data);
 		}
 

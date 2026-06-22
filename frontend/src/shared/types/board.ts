@@ -11,8 +11,20 @@ export interface Board {
 	createdAt: string;
 	updatedAt: string;
 	columns?: BoardColumn[];
+	members?: BoardMember[];
 	owner?: Owner;
 	_count?: Count;
+}
+
+export type BoardMemberRole = "OWNER" | "EDITOR" | "MOVER";
+
+export interface BoardMember {
+	id: string;
+	boardId: string;
+	userId: string;
+	role: BoardMemberRole;
+	createdAt?: string;
+	user?: Owner;
 }
 
 export interface Owner {

@@ -46,7 +46,7 @@ export interface BoardFormSubmitValues {
 
 const boardPrivacyItems: ListBoxItem[] = [
 	{ value: "PRIVATE", content: "Приватная" },
-	{ value: "WORKSPACE", content: "Видимая для участников" },
+	{ value: "WORKSPACE", content: "Видимая для участников (по приглашению)" },
 	{ value: "PUBLIC", content: "Публичная" },
 ];
 

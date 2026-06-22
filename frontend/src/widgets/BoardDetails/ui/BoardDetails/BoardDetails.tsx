@@ -2,13 +2,13 @@ import { classNames } from "@/shared/lib/classNames/classNames";
 import { memo } from "react";
 import { useGetBoardsDetailsQuery } from "../../model/api/boardsDetailsApi";
 import { HStack, VStack } from "@/shared/ui/Stack";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ColumnList } from "../ColumnList/ColumnList";
 import type { Task } from "@/shared/types/board";
 import { BoardDetailsHeader } from "../BoardDetailsHeader/BoardDetailsHeader";
 import { Skeleton } from "@/shared/ui/Skeleton/Skeleton";
 import { PageError } from "@/shared/ui/PageError";
-import { getIsUserAuth } from "@/entities/User";
+import { getIsUserAuth, getUserId } from "@/entities/User";
 import { useSelector } from "react-redux";
 import { RequireAuth } from "../RequireAuth/RequireAuth";
 import cls from "./BoardDetails.module.scss";
@@ -20,11 +20,11 @@ interface BoardDetailsProps {
 
 export const BoardDetails = memo((props: BoardDetailsProps) => {
 	const { className, onTaskClick } = props;
+	const navigate = useNavigate();
 	const { boardId } = useParams<{ boardId: string }>();
 	const { data, isLoading, error } = useGetBoardsDetailsQuery(boardId);
 	const isAuth = useSelector(getIsUserAuth);
-
-	const canEdit = true; // TODO: permissions
+	const currentUserId = useSelector(getUserId);
 
 	if (!isAuth) {
 		return <RequireAuth />;
@@ -32,6 +32,16 @@ export const BoardDetails = memo((props: BoardDetailsProps) => {
 
 	if (!boardId) {
 		return null;
+	}
+
+	if (error && "status" in error && error.status === 404) {
+		return (
+			<PageError
+				title="Такой страницы не существует."
+				btnText="К списку рабочих пространств"
+				onBtnClick={() => navigate("/")}
+			/>
+		);
 	}
 
 	if (error) {
@@ -50,13 +60,19 @@ export const BoardDetails = memo((props: BoardDetailsProps) => {
 		);
 	}
 
+	const isOwner = data.board.ownerId === currentUserId;
+	const currentMemberRole = data.board.members?.find(
+		(member) => member.userId === currentUserId,
+	)?.role;
+	const canEdit = isOwner || currentMemberRole === "EDITOR";
+
 	return (
 		<VStack
 			className={cls.wrapper}
 			gap="16"
 			style={{ background: data.board.backgroundColor }}
 		>
-			<BoardDetailsHeader />
+			<BoardDetailsHeader isOwner={isOwner} />
 			<HStack
 				gap="16"
 				className={classNames(cls.boardDetails, {}, [className])}

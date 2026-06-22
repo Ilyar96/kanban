@@ -14,7 +14,11 @@ import { AppLink } from "@/shared/ui/AppLink/AppLink";
 import { RoutePaths } from "@/shared/const/router";
 import { getRegisterIsLoading } from "../../model/selectors/getRegisterIsLoading/getRegisterIsLoading";
 import { getRegisterError } from "../../model/selectors/getRegisterError/getRegisterError";
-import { applyServerFieldErrors, getServerErrorIssues } from "@/shared/lib/serverError/serverError";
+import {
+	applyServerFieldErrors,
+	getServerErrorIssues,
+	getServerErrorMessage,
+} from "@/shared/lib/serverError/serverError";
 import {
 	DynamicModuleLoader,
 	type ReducersList,
@@ -50,6 +54,8 @@ export const RegisterForm = memo(({ className }: RegisterFormProps) => {
 	const { redirectAfterAuth } = useAuthRedirect();
 	const isLoading = useSelector(getRegisterIsLoading);
 	const error = useSelector(getRegisterError);
+	const registerErrorMessage = getServerErrorMessage(error);
+
 	const {
 		register,
 		handleSubmit,
@@ -159,7 +165,8 @@ export const RegisterForm = memo(({ className }: RegisterFormProps) => {
 						size="s"
 						theme="error"
 					>
-						Произошла ошибка при регистрации. Пожалуйста, попробуйте снова.
+						{registerErrorMessage ??
+							"Произошла ошибка при регистрации. Пожалуйста, попробуйте снова."}
 					</Text>
 				)}
 			</VStack>

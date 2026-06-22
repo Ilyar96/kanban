@@ -24,6 +24,7 @@ export const routeConfig: Record<AppRoutes, AppRoutesProps> = {
 	board: {
 		path: RoutePaths.board + "/:boardId",
 		element: <BoardDetailPage />,
+		authOnly: true,
 	},
 
 	forbidden: {
