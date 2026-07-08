@@ -1,0 +1,16 @@
+{
+	"name": "Kanban",
+	"short_name": "Kanban",
+	"description": "Kanban for managing boards and tasks",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#ffffff",
+	"theme_color": "#ffffff",
+	"icons": [
+		{
+			"src": "/favicon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml"
+		}
+	]
+}

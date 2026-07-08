@@ -1,4 +1,5 @@
 import { BoardDetailPage } from "@/pages/BoardDetailPage";
+import { ForbiddenPage } from "@/pages/ForbiddenPage";
 import { LoginPage } from "@/pages/LoginPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { RegisterPage } from "@/pages/RegisterPage";
@@ -29,7 +30,7 @@ export const routeConfig: Record<AppRoutes, AppRoutesProps> = {
 
 	forbidden: {
 		path: RoutePaths.forbidden,
-		element: <div>Forbidden</div>,
+		element: <ForbiddenPage />,
 	},
 
 	not_found: {

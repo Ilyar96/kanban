@@ -1,18 +1,18 @@
 import { classNames } from "@/shared/lib/classNames/classNames";
 import { memo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import cls from "./NotFoundPage.module.scss";
+import cls from "./ForbiddenPage.module.scss";
 import { Text } from "@/shared/ui/Text/Text";
 import { Button } from "@/shared/ui/Button/Button";
 import { RoutePaths } from "@/shared/const/router";
 import { Seo } from "@/shared/lib/seo/Seo";
 import { Page } from "@/shared/ui/Page/Page";
 
-interface NotFoundPageProps {
+interface ForbiddenPageProps {
 	className?: string;
 }
 
-const NotFoundPage = memo(({ className }: NotFoundPageProps) => {
+const ForbiddenPage = memo(({ className }: ForbiddenPageProps) => {
 	const navigate = useNavigate();
 
 	const onBackHome = useCallback(() => {
@@ -21,26 +21,26 @@ const NotFoundPage = memo(({ className }: NotFoundPageProps) => {
 
 	return (
 		<Page
-			className={classNames(cls.notFoundPage, {}, [className])}
+			className={classNames(cls.forbiddenPage, {}, [className])}
 			centered
 		>
 			<Seo
-				title="Страница не найдена"
-				description="Страница не найдена в Kanban."
+				title="Доступ запрещен"
+				description="У вас нет доступа к этой странице Kanban."
 				noindex
 			/>
 			<div className={cls.glow} />
 			<div className={cls.content}>
-				<span className={cls.code}>404</span>
+				<span className={cls.code}>403</span>
 				<Text
 					className={cls.title}
-					title="Страница не найдена"
+					title="Доступ запрещен"
 					size="l"
 					align="center"
 				/>
 				<Text
 					className={cls.subtitle}
-					text="Похоже, ссылка устарела или страница была перемещена."
+					text="Похоже, у вас недостаточно прав для просмотра этой страницы."
 					align="center"
 					size="m"
 				/>
@@ -56,4 +56,4 @@ const NotFoundPage = memo(({ className }: NotFoundPageProps) => {
 	);
 });
 
-export default NotFoundPage;
+export default ForbiddenPage;

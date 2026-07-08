@@ -9,6 +9,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { useAcceptBoardInvitationMutation } from "@/features/Board";
 import { appToast } from "@/shared/lib/toast";
 import { getServerErrorMessage } from "@/shared/lib/serverError/serverError";
+import { Seo } from "@/shared/lib/seo/Seo";
 import cls from "./BoardDetailPage.module.scss";
 
 interface BoardDetailPageProps {
@@ -64,6 +65,11 @@ const BoardDetailPage = memo(({ className }: BoardDetailPageProps) => {
 
 	return (
 		<Page className={classNames("", {}, [className])}>
+			<Seo
+				title="Доска"
+				description="Приватная доска Kanban для управления задачами команды."
+				noindex
+			/>
 			<Container
 				className={cls.container}
 				type="max"

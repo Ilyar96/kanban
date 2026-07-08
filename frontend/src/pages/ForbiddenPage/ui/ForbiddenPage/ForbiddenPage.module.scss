@@ -1,0 +1,101 @@
+.forbiddenPage {
+	position: relative;
+	overflow: hidden;
+	min-height: calc(100vh - var(--navbar-height));
+	display: grid;
+	place-items: center;
+	padding: var(--spacing-xl);
+	background:
+		radial-gradient(circle at 20% 20%, rgb(79 140 255 / 18%), transparent 40%),
+		radial-gradient(circle at 80% 80%, rgb(11 91 211 / 20%), transparent 42%),
+		linear-gradient(
+			160deg,
+			var(--bg-app) 0%,
+			color-mix(in srgb, var(--bg-card) 66%, var(--bg-app)) 100%
+		);
+}
+
+.glow {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background:
+		radial-gradient(circle at 50% 50%, rgb(255 255 255 / 14%), transparent 55%),
+		repeating-linear-gradient(
+			-45deg,
+			transparent 0,
+			transparent 20px,
+			rgb(255 255 255 / 2%) 20px,
+			rgb(255 255 255 / 2%) 40px
+		);
+}
+
+.content {
+	position: relative;
+	z-index: 1;
+	width: min(720px, 100%);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--spacing-l);
+	padding: calc(var(--spacing-xl) * 2) var(--spacing-xl);
+	border-radius: var(--border-radius-l);
+	border: 1px solid color-mix(in srgb, var(--border-primary) 78%, transparent);
+	box-shadow: var(--shadow-card);
+	background: color-mix(in srgb, var(--bg-surface) 86%, transparent);
+	backdrop-filter: blur(4px);
+	animation: fade-in 0.5s ease-out both;
+}
+
+.code {
+	font-family: var(--font-family-main);
+	font-size: clamp(72px, 18vw, 168px);
+	line-height: 0.9;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	color: color-mix(in srgb, var(--accent-color) 64%, var(--text-primary));
+	text-shadow: 0 10px 22px rgb(11 91 211 / 26%);
+	user-select: none;
+}
+
+.title {
+	max-width: 22ch;
+}
+
+.subtitle {
+	max-width: 42ch;
+	color: var(--text-secondary);
+}
+
+.action {
+	margin-top: var(--spacing-s);
+	min-width: 240px;
+}
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@media (width <= 768px) {
+	.forbiddenPage {
+		padding: var(--spacing-m);
+	}
+
+	.content {
+		padding: var(--spacing-xl) var(--spacing-l);
+		gap: var(--spacing-m);
+	}
+
+	.action {
+		width: 100%;
+		min-width: 0;
+	}
+}
