@@ -253,11 +253,18 @@ export const useOptimisticTaskColumns = (
 			const destBase =
 				activeContainer === overContainer ? withoutActive : (base[overContainer] ?? []);
 			const overIndex = destBase.findIndex((task) => task.id === overId);
-			const insertAt = overIndex >= 0 ? overIndex : destBase.length;
+			const overIndexInSource = sourceItems.findIndex((task) => task.id === overId);
+			const isMovingDownWithinSameColumn =
+				activeContainer === overContainer &&
+				overIndexInSource >= 0 &&
+				activeIndex < overIndexInSource;
+			const insertAtBase = overIndex >= 0 ? overIndex : destBase.length;
+			const insertAt =
+				isMovingDownWithinSameColumn && overIndex >= 0 ? insertAtBase + 1 : insertAtBase;
 
 			if (
 				activeContainer === overContainer &&
-				insertAt === activeIndex &&
+				(insertAt === activeIndex || overId === activeId) &&
 				sourceContainerAtStart === overContainer
 			) {
 				return;
