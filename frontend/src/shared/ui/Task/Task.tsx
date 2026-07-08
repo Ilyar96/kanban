@@ -1,5 +1,5 @@
 import { classNames } from "@/shared/lib/classNames/classNames";
-import { memo } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import cls from "./Task.module.scss";
 import { Button } from "../Button/Button";
 import { SpriteIcon } from "../SpriteIcon/SpriteIcon";
@@ -7,17 +7,70 @@ import { HStack } from "../Stack";
 import { Text } from "../Text/Text";
 import { Popover } from "../Popover/Popover";
 
+interface MutationPromise extends Promise<unknown> {
+	abort: () => void;
+	unwrap: () => Promise<unknown>;
+}
+
 interface TaskProps {
 	className?: string;
 	completed?: boolean;
 	title: string;
 	description?: string | null;
 	onClickTask?: () => void;
-	onClickComplete?: () => void;
+	onToggleComplete?: () => MutationPromise;
 }
 
 export const Task = memo((props: TaskProps) => {
-	const { className, completed, title, description, onClickTask, onClickComplete } = props;
+	const { className, completed, title, description, onClickTask, onToggleComplete } = props;
+	const [localCompleted, setLocalCompleted] = useState(completed);
+
+	const completedRef = useRef(completed);
+	const requestRef = useRef<MutationPromise | null>(null);
+
+	useEffect(() => {
+		completedRef.current = completed;
+		setLocalCompleted(completed);
+	}, [completed]);
+
+	useEffect(() => {
+		return () => {
+			requestRef.current?.abort();
+		};
+	}, []);
+
+	const handleComplete = useCallback(async () => {
+		const previous = completedRef.current;
+		const next = !previous;
+
+		completedRef.current = next;
+		setLocalCompleted(next);
+
+		requestRef.current?.abort();
+
+		const request = onToggleComplete?.();
+
+		if (!request) {
+			return;
+		}
+
+		requestRef.current = request;
+
+		try {
+			await request.unwrap();
+		} catch (error: unknown) {
+			if (error instanceof Error && error.name === "AbortError") {
+				return;
+			}
+
+			completedRef.current = previous;
+			setLocalCompleted(previous);
+		} finally {
+			if (requestRef.current === request) {
+				requestRef.current = null;
+			}
+		}
+	}, [onToggleComplete]);
 
 	const isIconWrapper = !!description;
 
@@ -31,9 +84,9 @@ export const Task = memo((props: TaskProps) => {
 			<Button
 				className={cls.completeBtn}
 				theme="clear"
-				onClick={onClickComplete}
+				onClick={handleComplete}
 			>
-				{completed ? (
+				{localCompleted ? (
 					<>
 						<SpriteIcon
 							className={cls.icon}
@@ -56,7 +109,7 @@ export const Task = memo((props: TaskProps) => {
 				fullWidth
 				onClick={onClickTask}
 			>
-				<Text className={classNames(cls.taskTitle, { [cls.completedText]: completed }, [])}>
+				<Text className={classNames(cls.taskTitle, { [cls.completedText]: localCompleted }, [])}>
 					{title}
 				</Text>
 

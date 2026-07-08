@@ -121,7 +121,7 @@ export const ColumnList = memo((props: ColumnListProps) => {
 				description={task.description}
 				completed={task.completed}
 				onClickTask={() => handleTaskClick(task)}
-				onClickComplete={() => toggleTaskCompleted({ taskId: task.id, boardId })}
+				onToggleComplete={() => toggleTaskCompleted({ taskId: task.id, boardId })}
 			/>
 		),
 		[boardId, handleTaskClick, toggleTaskCompleted],
