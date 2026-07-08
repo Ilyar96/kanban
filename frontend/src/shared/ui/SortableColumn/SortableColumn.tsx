@@ -9,12 +9,14 @@ interface SortableColumnProps {
 	children: ReactNode;
 	className?: string;
 	isGhost?: boolean;
+	data?: Record<string, unknown>;
 }
 
 export const SortableColumn = memo((props: SortableColumnProps) => {
-	const { id, children, className, isGhost = false } = props;
+	const { id, children, className, isGhost = false, data } = props;
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id,
+		data,
 	});
 
 	const style: CSSProperties = {

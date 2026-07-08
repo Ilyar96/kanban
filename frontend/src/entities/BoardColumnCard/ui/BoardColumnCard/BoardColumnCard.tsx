@@ -10,28 +10,25 @@ import { TaskList } from "../TaskList/TaskList";
 interface BoardColumnCardProps {
 	className?: string;
 	columnData: BoardColumn;
+	tasks?: TaskType[];
 	createTaskSlot?: ReactNode;
 	headerSlot?: ReactNode;
 	renderTask?: (task: TaskType) => ReactNode;
-	onMoveTask?: (params: {
-		taskId: string;
-		targetPosition: number;
-		targetColumnId: string;
-	}) => Promise<void>;
-	onMoveTaskError?: (error: unknown) => void;
+	activeTaskId?: string | null;
 }
 
 export const BoardColumnCard = memo((props: BoardColumnCardProps) => {
 	const {
 		columnData,
+		tasks: tasksOverride,
 		className,
 		createTaskSlot,
 		headerSlot,
 		renderTask,
-		onMoveTask,
-		onMoveTaskError,
+		activeTaskId,
 	} = props;
-	const { title, tasks } = columnData;
+	const { title, id: columnId, tasks: columnTasks } = columnData;
+	const tasks = tasksOverride ?? columnTasks;
 
 	return (
 		<Card className={classNames(cls.boardColumnCard, {}, [className])}>
@@ -48,15 +45,12 @@ export const BoardColumnCard = memo((props: BoardColumnCardProps) => {
 					/>
 				)}
 
-				{tasks.length > 0 && (
-					<TaskList
-						tasks={tasks}
-						columnId={columnData.id}
-						renderTask={renderTask}
-						onMoveTask={onMoveTask}
-						onMoveTaskError={onMoveTaskError}
-					/>
-				)}
+				<TaskList
+					tasks={tasks}
+					columnId={columnId}
+					renderTask={renderTask}
+					activeTaskId={activeTaskId}
+				/>
 
 				{createTaskSlot}
 			</VStack>

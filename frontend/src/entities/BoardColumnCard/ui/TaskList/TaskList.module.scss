@@ -1,7 +1,35 @@
 .taskList {
 	width: 100%;
+	border-radius: var(--border-radius-m);
+	transition: background-color 0.15s ease;
+}
+
+.taskListEmpty {
+	min-height: 0;
+}
+
+.taskListEmpty:not(.taskListOver) {
+	padding: 0;
+}
+
+.taskListOver {
+	background: rgb(255 255 255 / 6%);
 }
 
 .sortableTask {
 	width: 100%;
+}
+
+.emptyPlaceholder {
+	width: 100%;
+	min-height: 48px;
+	border-radius: var(--border-radius-m);
+	border: 1px dashed transparent;
+	transition: border-color 0.15s ease;
+	display: none;
+}
+
+.taskListOver .emptyPlaceholder {
+	display: block;
+	border-color: rgb(255 255 255 / 22%);
 }

@@ -1,6 +1,7 @@
 const express = require("express");
 const crypto = require("crypto");
 const { z } = require("zod");
+const { Prisma } = require("@prisma/client");
 const { prisma } = require("../lib/prisma");
 const { requireAuth } = require("../middleware/auth");
 const { validate } = require("../middleware/validate");
@@ -81,11 +82,31 @@ function hasTaskCommentAccess(user, role) {
 	return Boolean(role);
 }
 
+
 async function reindexTasks(tx, columnId, taskIds) {
+	if (taskIds.length === 0) {
+		return;
+	}
+
+	// Postgres checks the (columnId, position) unique constraint immediately as
+	// each row is written (even within a single multi-row statement), so we can't
+	// just assign final positions directly - two rows could momentarily swap into
+	// each other's slot. Instead, first move every row to a temporary position
+	// range that is guaranteed to be lower than any position currently used in
+	// this column (so no collision is possible), then assign the final 0..n-1
+	// positions in a second pass, by which point the temp range no longer
+	// overlaps with any not-yet-updated row.
+	const minPositionResult = await tx.task.aggregate({
+		where: { columnId },
+		_min: { position: true },
+	});
+
+	const minPosition = minPositionResult._min.position ?? 0;
+
 	for (let index = 0; index < taskIds.length; index += 1) {
 		await tx.task.update({
 			where: { id: taskIds[index] },
-			data: { position: -(index + 1), columnId },
+			data: { position: minPosition - (index + 1), columnId },
 		});
 	}
 
@@ -95,6 +116,24 @@ async function reindexTasks(tx, columnId, taskIds) {
 			data: { position: index, columnId },
 		});
 	}
+}
+
+// Locks every task row currently in the given columns (SELECT ... FOR UPDATE) so
+// that concurrent move/delete requests touching the same columns are serialized
+// instead of reading a stale snapshot and computing conflicting positions.
+async function lockColumnsForUpdate(tx, columnIds) {
+	const ids = [...new Set(columnIds.filter(Boolean))];
+
+	if (ids.length === 0) {
+		return;
+	}
+
+	await tx.$queryRaw`
+		SELECT "id" FROM "Task"
+		WHERE "columnId" IN (${Prisma.join(ids)})
+		ORDER BY "id"
+		FOR UPDATE
+	`;
 }
 
 async function findTaskComments(taskId) {
@@ -348,6 +387,8 @@ router.delete("/:taskId", validate(taskIdSchema), async (req, res) => {
 	}
 
 	await prisma.$transaction(async (tx) => {
+		await lockColumnsForUpdate(tx, [taskWithBoard.columnId]);
+
 		await tx.task.delete({ where: { id: taskId } });
 
 		const restTasks = await tx.task.findMany({
@@ -419,6 +460,8 @@ router.patch("/:taskId/move", validate(moveTaskSchema), async (req, res) => {
 	const sourceColumnId = taskWithBoard.columnId;
 
 	await prisma.$transaction(async (tx) => {
+		await lockColumnsForUpdate(tx, [sourceColumnId, targetColumnId]);
+
 		if (sourceColumnId === targetColumnId) {
 			const tasksInColumn = await tx.task.findMany({
 				where: { columnId: sourceColumnId },

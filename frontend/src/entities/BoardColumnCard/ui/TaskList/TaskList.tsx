@@ -1,17 +1,7 @@
-import { memo, useCallback, useState, type ReactNode } from "react";
-import {
-	DndContext,
-	DragOverlay,
-	closestCenter,
-	PointerSensor,
-	useSensor,
-	useSensors,
-	type DragStartEvent,
-	type DragEndEvent,
-} from "@dnd-kit/core";
+import { memo, type ReactNode } from "react";
+import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import type { Task as TaskType } from "@/shared/types/board";
-import { useOptimisticSortable } from "@/shared/lib/hooks/useOptimisticSortable/useOptimisticSortable";
 import { SortableColumn } from "@/shared/ui/SortableColumn/SortableColumn";
 import { Task } from "@/shared/ui/Task/Task";
 import { VStack } from "@/shared/ui/Stack";
@@ -23,127 +13,61 @@ interface TaskListProps {
 	columnId: string;
 	className?: string;
 	renderTask?: (task: TaskType) => ReactNode;
-	onMoveTask?: (params: {
-		taskId: string;
-		targetPosition: number;
-		targetColumnId: string;
-	}) => Promise<void>;
-	onMoveTaskError?: (error: unknown) => void;
+	activeTaskId?: string | null;
 }
 
 export const TaskList = memo((props: TaskListProps) => {
-	const { tasks, columnId, className, renderTask, onMoveTask, onMoveTaskError } = props;
-	const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
+	const { tasks, columnId, className, renderTask, activeTaskId } = props;
 
-	const sensors = useSensors(
-		useSensor(PointerSensor, {
-			activationConstraint: { distance: 6 },
-		}),
-	);
-
-	const getTaskId = useCallback((task: TaskType) => task.id, []);
-	const getTaskPosition = useCallback((task: TaskType) => task.position, []);
-	const setTaskPosition = useCallback(
-		(task: TaskType, position: number) => ({
-			...task,
-			position,
-		}),
-		[],
-	);
-
-	const { items, onDragEnd } = useOptimisticSortable({
-		sourceItems: tasks,
-		getId: getTaskId,
-		getPosition: getTaskPosition,
-		setPosition: setTaskPosition,
-		onPersistMove: async ({ activeId, newIndex }) => {
-			if (!onMoveTask) {
-				return;
-			}
-
-			await onMoveTask({
-				taskId: activeId,
-				targetPosition: newIndex,
-				targetColumnId: columnId,
-			});
-		},
-		onPersistError: onMoveTaskError,
+	const { setNodeRef, isOver } = useDroppable({
+		id: `dropzone-${columnId}`,
+		data: { type: "column", columnId },
 	});
 
-	const handleDragStart = useCallback((event: DragStartEvent) => {
-		setActiveTaskId(String(event.active.id));
-	}, []);
-
-	const handleDragEnd = useCallback(
-		async (event: DragEndEvent) => {
-			setActiveTaskId(null);
-			await onDragEnd(event);
-		},
-		[onDragEnd],
-	);
-
-	const handleDragCancel = useCallback(() => {
-		setActiveTaskId(null);
-	}, []);
-
-	const activeTask = activeTaskId ? items.find((task) => task.id === activeTaskId) : undefined;
+	if (tasks.length === 0) {
+		return null;
+	}
 
 	return (
 		<div
-			className={classNames(cls.taskList, {}, [className])}
+			ref={setNodeRef}
+			className={classNames(
+				cls.taskList,
+				{ [cls.taskListOver]: isOver, [cls.taskListEmpty]: tasks.length === 0 },
+				[className],
+			)}
 			onPointerDown={(event) => event.stopPropagation()}
 		>
-			<DndContext
-				sensors={sensors}
-				collisionDetection={closestCenter}
-				onDragStart={handleDragStart}
-				onDragEnd={handleDragEnd}
-				onDragCancel={handleDragCancel}
+			<SortableContext
+				items={tasks.map((task) => task.id)}
+				strategy={verticalListSortingStrategy}
 			>
-				<SortableContext
-					items={items.map((task) => task.id)}
-					strategy={verticalListSortingStrategy}
+				<VStack
+					gap="8"
+					max
 				>
-					<VStack
-						gap="8"
-						max
-					>
-						{items.map((task) => (
-							<SortableColumn
-								key={task.id}
-								id={task.id}
-								isGhost={activeTaskId === task.id}
-								className={cls.sortableTask}
-							>
-								{renderTask ? (
-									renderTask(task)
-								) : (
-									<Task
-										title={task.title}
-										description={task.description}
-										completed={task.completed}
-									/>
-								)}
-							</SortableColumn>
-						))}
-					</VStack>
-				</SortableContext>
-				<DragOverlay>
-					{activeTask ? (
-						<div className={cls.sortableTask}>
+					{tasks.map((task) => (
+						<SortableColumn
+							key={task.id}
+							id={task.id}
+							data={{ type: "task", columnId }}
+							isGhost={activeTaskId === task.id}
+							className={cls.sortableTask}
+						>
 							{renderTask ? (
-								renderTask(activeTask)
+								renderTask(task)
 							) : (
 								<Task
-									title={activeTask.title}
-									description={activeTask.description}
-									completed={activeTask.completed}
+									title={task.title}
+									description={task.description}
+									completed={task.completed}
 								/>
 							)}
-						</div>
-					) : null}
-				</DragOverlay>
-			</DndContext>
+						</SortableColumn>
+					))}
+					{tasks.length === 0 && <div className={cls.emptyPlaceholder} />}
+				</VStack>
+			</SortableContext>
 		</div>
 	);
 });

@@ -8,11 +8,14 @@ import {
 	useSensors,
 	type DragStartEvent,
 	type DragEndEvent,
+	type DragOverEvent,
+	type DragCancelEvent,
 } from "@dnd-kit/core";
 import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
 import type { BoardColumn, Task as TaskType } from "@/shared/types/board";
 import { HStack } from "@/shared/ui/Stack";
 import { useOptimisticSortable } from "@/shared/lib/hooks/useOptimisticSortable/useOptimisticSortable";
+import { useOptimisticTaskColumns } from "@/shared/lib/hooks/useOptimisticTaskColumns/useOptimisticTaskColumns";
 import { SortableColumn } from "@/shared/ui/SortableColumn/SortableColumn";
 import { BoardColumnCard } from "@/entities/BoardColumnCard";
 import { CreateBoardColumn } from "@/features/CreateBoardColumn";
@@ -28,6 +31,10 @@ interface ColumnListProps {
 	columns: BoardColumn[];
 	canEdit?: boolean;
 	onTaskClick?: (task: TaskType) => void;
+}
+
+function isColumnDrag(event: { active: { data: { current?: unknown } } }): boolean {
+	return (event.active.data.current as { type?: string } | undefined)?.type === "column";
 }
 
 export const ColumnList = memo((props: ColumnListProps) => {
@@ -53,15 +60,16 @@ export const ColumnList = memo((props: ColumnListProps) => {
 		[],
 	);
 
-	const handleMoveTask = useCallback(
+	const handlePersistTaskMove = useCallback(
 		async ({
 			taskId,
-			targetPosition,
 			targetColumnId,
+			targetPosition,
 		}: {
 			taskId: string;
-			targetPosition: number;
+			sourceColumnId: string;
 			targetColumnId: string;
+			targetPosition: number;
 		}) => {
 			await moveTask({
 				taskId,
@@ -73,7 +81,15 @@ export const ColumnList = memo((props: ColumnListProps) => {
 		[boardId, moveTask],
 	);
 
-	const { items: columns, onDragEnd } = useOptimisticSortable({
+	const taskDnd = useOptimisticTaskColumns({
+		columns: sourceColumns,
+		onPersistMove: handlePersistTaskMove,
+		onPersistError: () => {
+			appToast.error("Не удалось переместить карточку");
+		},
+	});
+
+	const { items: columns, onDragEnd: onColumnDragEnd } = useOptimisticSortable({
 		sourceItems: sourceColumns,
 		getId: getColumnId,
 		getPosition: getColumnPosition,
@@ -90,21 +106,53 @@ export const ColumnList = memo((props: ColumnListProps) => {
 		},
 	});
 
-	const handleDragStart = useCallback((event: DragStartEvent) => {
-		setActiveColumnId(String(event.active.id));
-	}, []);
+	const handleDragStart = useCallback(
+		(event: DragStartEvent) => {
+			if (isColumnDrag(event)) {
+				setActiveColumnId(String(event.active.id));
+				return;
+			}
+
+			taskDnd.onDragStart(event);
+		},
+		[taskDnd],
+	);
+
+	const handleDragOver = useCallback(
+		(event: DragOverEvent) => {
+			if (isColumnDrag(event)) {
+				return;
+			}
+
+			taskDnd.onDragOver(event);
+		},
+		[taskDnd],
+	);
 
 	const handleDragEnd = useCallback(
 		async (event: DragEndEvent) => {
-			setActiveColumnId(null);
-			await onDragEnd(event);
+			if (isColumnDrag(event)) {
+				setActiveColumnId(null);
+				await onColumnDragEnd(event);
+				return;
+			}
+
+			await taskDnd.onDragEnd(event);
 		},
-		[onDragEnd],
+		[onColumnDragEnd, taskDnd],
 	);
 
-	const handleDragCancel = useCallback(() => {
-		setActiveColumnId(null);
-	}, []);
+	const handleDragCancel = useCallback(
+		(event: DragCancelEvent) => {
+			if (isColumnDrag(event)) {
+				setActiveColumnId(null);
+				return;
+			}
+
+			taskDnd.onDragCancel(event);
+		},
+		[taskDnd],
+	);
 
 	const handleTaskClick = useCallback(
 		(task: TaskType) => {
@@ -163,6 +211,7 @@ export const ColumnList = memo((props: ColumnListProps) => {
 	const activeColumn = activeColumnId
 		? columns.find((column) => column.id === activeColumnId)
 		: undefined;
+	const activeTaskId = taskDnd.activeTask?.id ?? null;
 
 	return (
 		<HStack gap="16">
@@ -171,6 +220,7 @@ export const ColumnList = memo((props: ColumnListProps) => {
 					sensors={sensors}
 					collisionDetection={closestCenter}
 					onDragStart={handleDragStart}
+					onDragOver={handleDragOver}
 					onDragEnd={handleDragEnd}
 					onDragCancel={handleDragCancel}
 				>
@@ -183,15 +233,16 @@ export const ColumnList = memo((props: ColumnListProps) => {
 								<SortableColumn
 									key={column.id}
 									id={column.id}
+									data={{ type: "column", columnId: column.id }}
 									isGhost={activeColumnId === column.id}
 								>
 									<BoardColumnCard
 										columnData={column}
-										onMoveTask={handleMoveTask}
-										onMoveTaskError={() => appToast.error("Не удалось переместить карточку")}
+										tasks={taskDnd.getColumnTasks(column.id)}
 										createTaskSlot={renderCreateTask(column.id)}
 										headerSlot={renderColumnHeader(column)}
 										renderTask={renderColumnTask}
+										activeTaskId={activeTaskId}
 									/>
 								</SortableColumn>
 							))}
@@ -202,9 +253,18 @@ export const ColumnList = memo((props: ColumnListProps) => {
 							<div className={cls.dragOverlayColumn}>
 								<BoardColumnCard
 									columnData={activeColumn}
+									tasks={taskDnd.getColumnTasks(activeColumn.id)}
 									createTaskSlot={renderCreateTask(activeColumn.id)}
 									headerSlot={renderColumnHeader(activeColumn)}
 									renderTask={renderOverlayTask}
+								/>
+							</div>
+						) : taskDnd.activeTask ? (
+							<div className={cls.dragOverlayTask}>
+								<Task
+									title={taskDnd.activeTask.title}
+									description={taskDnd.activeTask.description}
+									completed={taskDnd.activeTask.completed}
 								/>
 							</div>
 						) : null}
