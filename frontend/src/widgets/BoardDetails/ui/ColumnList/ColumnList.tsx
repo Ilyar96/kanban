@@ -26,8 +26,6 @@ import { appToast } from "@/shared/lib/toast";
 import { ColumnHeader } from "../ColumnHeader/ColumnHeader";
 import cls from "./ColumnList.module.scss";
 
-// TODO починить dnd колонок
-
 interface ColumnListProps {
 	boardId: string;
 	columns: BoardColumn[];
@@ -45,6 +43,10 @@ export const ColumnList = memo((props: ColumnListProps) => {
 	const [toggleTaskCompleted] = useToggleTaskCompletedMutation();
 	const [moveBoardColumn] = useMoveBoardColumnMutation();
 	const [activeColumnId, setActiveColumnId] = useState<string | null>(null);
+	const isTouchDevice =
+		typeof window !== "undefined" &&
+		(window.matchMedia("(hover: none) and (pointer: coarse)").matches ||
+			navigator.maxTouchPoints > 0);
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
@@ -217,62 +219,77 @@ export const ColumnList = memo((props: ColumnListProps) => {
 
 	return (
 		<HStack gap="l">
-			{columns.length > 0 && (
-				<DndContext
-					sensors={sensors}
-					collisionDetection={closestCenter}
-					onDragStart={handleDragStart}
-					onDragOver={handleDragOver}
-					onDragEnd={handleDragEnd}
-					onDragCancel={handleDragCancel}
-				>
-					<SortableContext
-						items={columns.map((c) => c.id)}
-						strategy={horizontalListSortingStrategy}
+			{columns.length > 0 &&
+				(isTouchDevice ? (
+					<HStack gap="l">
+						{columns.map((column) => (
+							<BoardColumnCard
+								key={column.id}
+								columnData={column}
+								tasks={taskDnd.getColumnTasks(column.id)}
+								createTaskSlot={renderCreateTask(column.id)}
+								headerSlot={renderColumnHeader(column)}
+								renderTask={renderColumnTask}
+								activeTaskId={activeTaskId}
+							/>
+						))}
+					</HStack>
+				) : (
+					<DndContext
+						sensors={sensors}
+						collisionDetection={closestCenter}
+						onDragStart={handleDragStart}
+						onDragOver={handleDragOver}
+						onDragEnd={handleDragEnd}
+						onDragCancel={handleDragCancel}
 					>
-						<HStack gap="l">
-							{columns.map((column) => (
-								<SortableColumn
-									key={column.id}
-									id={column.id}
-									data={{ type: "column", columnId: column.id }}
-									isGhost={activeColumnId === column.id}
-								>
+						<SortableContext
+							items={columns.map((c) => c.id)}
+							strategy={horizontalListSortingStrategy}
+						>
+							<HStack gap="l">
+								{columns.map((column) => (
+									<SortableColumn
+										key={column.id}
+										id={column.id}
+										data={{ type: "column", columnId: column.id }}
+										isGhost={activeColumnId === column.id}
+									>
+										<BoardColumnCard
+											columnData={column}
+											tasks={taskDnd.getColumnTasks(column.id)}
+											createTaskSlot={renderCreateTask(column.id)}
+											headerSlot={renderColumnHeader(column)}
+											renderTask={renderColumnTask}
+											activeTaskId={activeTaskId}
+										/>
+									</SortableColumn>
+								))}
+							</HStack>
+						</SortableContext>
+						<DragOverlay>
+							{activeColumn ? (
+								<div className={cls.dragOverlayColumn}>
 									<BoardColumnCard
-										columnData={column}
-										tasks={taskDnd.getColumnTasks(column.id)}
-										createTaskSlot={renderCreateTask(column.id)}
-										headerSlot={renderColumnHeader(column)}
-										renderTask={renderColumnTask}
-										activeTaskId={activeTaskId}
+										columnData={activeColumn}
+										tasks={taskDnd.getColumnTasks(activeColumn.id)}
+										createTaskSlot={renderCreateTask(activeColumn.id)}
+										headerSlot={renderColumnHeader(activeColumn)}
+										renderTask={renderOverlayTask}
 									/>
-								</SortableColumn>
-							))}
-						</HStack>
-					</SortableContext>
-					<DragOverlay>
-						{activeColumn ? (
-							<div className={cls.dragOverlayColumn}>
-								<BoardColumnCard
-									columnData={activeColumn}
-									tasks={taskDnd.getColumnTasks(activeColumn.id)}
-									createTaskSlot={renderCreateTask(activeColumn.id)}
-									headerSlot={renderColumnHeader(activeColumn)}
-									renderTask={renderOverlayTask}
-								/>
-							</div>
-						) : taskDnd.activeTask ? (
-							<div className={cls.dragOverlayTask}>
-								<Task
-									title={taskDnd.activeTask.title}
-									description={taskDnd.activeTask.description}
-									completed={taskDnd.activeTask.completed}
-								/>
-							</div>
-						) : null}
-					</DragOverlay>
-				</DndContext>
-			)}
+								</div>
+							) : taskDnd.activeTask ? (
+								<div className={cls.dragOverlayTask}>
+									<Task
+										title={taskDnd.activeTask.title}
+										description={taskDnd.activeTask.description}
+										completed={taskDnd.activeTask.completed}
+									/>
+								</div>
+							) : null}
+						</DragOverlay>
+					</DndContext>
+				))}
 			<CreateBoardColumn
 				boardId={boardId}
 				noColumns={columns.length === 0}

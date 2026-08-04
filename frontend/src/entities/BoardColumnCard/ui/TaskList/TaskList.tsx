@@ -18,6 +18,10 @@ interface TaskListProps {
 
 export const TaskList = memo((props: TaskListProps) => {
 	const { tasks, columnId, className, renderTask, activeTaskId } = props;
+	const isTouchDevice =
+		typeof window !== "undefined" &&
+		(window.matchMedia("(hover: none) and (pointer: coarse)").matches ||
+			navigator.maxTouchPoints > 0);
 
 	const { setNodeRef, isOver } = useDroppable({
 		id: `dropzone-${columnId}`,
@@ -38,20 +42,14 @@ export const TaskList = memo((props: TaskListProps) => {
 			)}
 			onPointerDown={(event) => event.stopPropagation()}
 		>
-			<SortableContext
-				items={tasks.map((task) => task.id)}
-				strategy={verticalListSortingStrategy}
-			>
+			{isTouchDevice ? (
 				<VStack
 					gap="m"
 					max
 				>
 					{tasks.map((task) => (
-						<SortableColumn
+						<div
 							key={task.id}
-							id={task.id}
-							data={{ type: "task", columnId }}
-							isGhost={activeTaskId === task.id}
 							className={cls.sortableTask}
 						>
 							{renderTask ? (
@@ -63,11 +61,40 @@ export const TaskList = memo((props: TaskListProps) => {
 									completed={task.completed}
 								/>
 							)}
-						</SortableColumn>
+						</div>
 					))}
-					{tasks.length === 0 && <div className={cls.emptyPlaceholder} />}
 				</VStack>
-			</SortableContext>
+			) : (
+				<SortableContext
+					items={tasks.map((task) => task.id)}
+					strategy={verticalListSortingStrategy}
+				>
+					<VStack
+						gap="m"
+						max
+					>
+						{tasks.map((task) => (
+							<SortableColumn
+								key={task.id}
+								id={task.id}
+								data={{ type: "task", columnId }}
+								isGhost={activeTaskId === task.id}
+								className={cls.sortableTask}
+							>
+								{renderTask ? (
+									renderTask(task)
+								) : (
+									<Task
+										title={task.title}
+										description={task.description}
+										completed={task.completed}
+									/>
+								)}
+							</SortableColumn>
+						))}
+					</VStack>
+				</SortableContext>
+			)}
 		</div>
 	);
 });
