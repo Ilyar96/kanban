@@ -48,7 +48,7 @@ export const BoardGrid = memo((props: BoardGridProps) => {
 	return (
 		<Grid
 			className={cls.grid}
-			gap="16"
+			gap="l"
 			as="section"
 		>
 			{title && (
@@ -59,9 +59,8 @@ export const BoardGrid = memo((props: BoardGridProps) => {
 			)}
 			<Grid
 				className={classNames(cls.workspaceGrid, {}, [className])}
-				columns={4}
 				minColumnWidth="280px"
-				gap="16"
+				gap="l"
 			>
 				<BoardList
 					data={data?.boards ?? []}

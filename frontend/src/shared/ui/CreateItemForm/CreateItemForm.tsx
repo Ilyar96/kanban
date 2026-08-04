@@ -58,7 +58,7 @@ export const CreateItemForm = memo((props: CreateItemFormProps) => {
 		<Wrapper>
 			<VStack
 				as="form"
-				gap="8"
+				gap="s"
 				className={classNames(cls.createItemForm, {}, [className])}
 				onSubmit={submitHandler}
 			>
@@ -79,7 +79,7 @@ export const CreateItemForm = memo((props: CreateItemFormProps) => {
 				)}
 				<HStack
 					align="center"
-					gap="16"
+					gap="l"
 				>
 					<Button
 						type="submit"

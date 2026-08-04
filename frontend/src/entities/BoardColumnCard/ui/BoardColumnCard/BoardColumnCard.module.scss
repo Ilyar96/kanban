@@ -1,7 +1,11 @@
 .boardColumnCard {
-	--card-width: 272px;
+	--card-width: 222px;
 	flex: 0 0 var(--card-width);
 	width: var(--card-width);
+
+	@media (min-width: 575px) {
+		--card-width: 272px;
+	}
 }
 
 .clearTextField input[readonly] {

@@ -9,6 +9,14 @@
 .content {
 	width: 100%;
 	align-items: flex-start;
+
+	@media (max-width: 767px) {
+		flex-direction: column;
+
+		> * {
+			width: 100%;
+		}
+	}
 }
 
 .editSection,
@@ -21,10 +29,4 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--spacing-m);
-}
-
-@media (width <= 900px) {
-	.content {
-		flex-direction: column;
-	}
 }

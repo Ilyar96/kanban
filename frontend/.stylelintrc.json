@@ -5,6 +5,7 @@
 		"declaration-empty-line-before": "never",
 		"color-function-notation": null,
 		"alpha-value-notation": null,
-		"color-function-alias-notation": null
+		"color-function-alias-notation": null,
+		"media-feature-range-notation": "prefix"
 	}
 }

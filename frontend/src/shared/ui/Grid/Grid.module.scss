@@ -18,28 +18,54 @@
 	align-items: stretch;
 }
 
-.gap4 {
-	gap: 4px;
+.xs {
+	gap: 2px;
 }
 
-.gap8 {
+.s {
+	gap: 6px;
+}
+
+.m {
 	gap: 8px;
 }
 
-.gap12 {
+.l {
 	gap: 12px;
 }
 
-.gap16 {
-	gap: 16px;
+.xl {
+	gap: 20px;
 }
 
-.gap24 {
+.xxl {
 	gap: 24px;
 }
 
-.gap32 {
-	gap: 32px;
+@media (min-width: 768px) {
+	.xs {
+		gap: 4px;
+	}
+
+	.s {
+		gap: 8px;
+	}
+
+	.m {
+		gap: 12px;
+	}
+
+	.l {
+		gap: 16px;
+	}
+
+	.xl {
+		gap: 24px;
+	}
+
+	.xxl {
+		gap: 32px;
+	}
 }
 
 .max {

@@ -40,13 +40,13 @@ export const TaskComment = memo((props: TaskCommentProps) => {
 		<>
 			<VStack
 				className={classNames(cls.taskComment, {}, [className])}
-				gap="4"
+				gap="s"
 			>
 				<HStack
 					className={cls.meta}
 					align="center"
 					justify="between"
-					gap="8"
+					gap="m"
 					max
 				>
 					<span className={cls.authorName}>{comment.author.name}</span>

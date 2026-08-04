@@ -104,9 +104,9 @@
 	}
 }
 
-@media (width <= 767px) {
+@media (max-width: 767px) {
 	.modal {
-		padding: var(--spacing-s);
+		padding: var(--spacing-m);
 	}
 
 	.panel {

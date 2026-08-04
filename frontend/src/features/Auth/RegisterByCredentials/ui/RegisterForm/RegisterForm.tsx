@@ -93,12 +93,12 @@ export const RegisterForm = memo(({ className }: RegisterFormProps) => {
 		<DynamicModuleLoader reducers={reducers}>
 			<VStack
 				as={Card}
-				gap="16"
+				gap="l"
 				className={classNames("", {}, [className])}
 			>
 				<VStack
 					as="form"
-					gap="16"
+					gap="l"
 					max
 					onSubmit={onSubmit}
 				>

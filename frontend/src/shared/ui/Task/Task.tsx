@@ -78,7 +78,7 @@ export const Task = memo((props: TaskProps) => {
 		<HStack
 			align="center"
 			max
-			gap="4"
+			gap="xs"
 			className={classNames(cls.taskWrapper, {}, [className])}
 		>
 			<Button

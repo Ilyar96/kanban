@@ -6,21 +6,23 @@ import { memo, useCallback, useEffect, useState } from "react";
 import { useUpdateTaskMutation } from "../../model/api/updateTaskApi";
 import { getServerErrorMessage } from "@/shared/lib/serverError/serverError";
 import cls from "./UpdateTask.module.scss";
+import { Text } from "@/shared/ui/Text/Text";
 
 interface UpdateTaskProps {
 	className?: string;
+	title?: string;
 	boardId: string;
 	task: Task;
 }
 
 export const UpdateTask = memo((props: UpdateTaskProps) => {
 	const { className, boardId, task } = props;
-	const [title, setTitle] = useState(task.title ?? "");
+	const [taskTitle, setTaskTitle] = useState(task.title ?? "");
 	const [description, setDescription] = useState(task.description ?? "");
 	const [updateTask, { isLoading }] = useUpdateTaskMutation();
 
 	const onTitleChange = useCallback((value: string) => {
-		setTitle(value);
+		setTaskTitle(value);
 	}, []);
 
 	const onDescriptionChange = useCallback((value: string) => {
@@ -28,17 +30,17 @@ export const UpdateTask = memo((props: UpdateTaskProps) => {
 	}, []);
 
 	useEffect(() => {
-		setTitle(task.title ?? "");
+		setTaskTitle(task.title ?? "");
 		setDescription(task.description ?? "");
 	}, [task.description, task.id, task.title]);
 
 	const onCancel = useCallback(() => {
-		setTitle(task.title ?? "");
+		setTaskTitle(task.title ?? "");
 		setDescription(task.description ?? "");
 	}, [task.description, task.title]);
 
 	const onSubmit = useCallback(async () => {
-		const normalizedTitle = title.trim();
+		const normalizedTitle = taskTitle.trim();
 		const normalizedDescription = description.trim();
 
 		if (!normalizedTitle) {
@@ -58,14 +60,18 @@ export const UpdateTask = memo((props: UpdateTaskProps) => {
 		} catch (error) {
 			appToast.error(getServerErrorMessage(error) ?? "Не удалось обновить карточку");
 		}
-	}, [boardId, description, task.id, title, updateTask]);
+	}, [boardId, description, task.id, taskTitle, updateTask]);
 
 	return (
 		<div className={classNames(cls.updateTask, {}, [className])}>
+			<Text
+				title="Редактирование карточки"
+				size="m"
+			/>
 			<CreateItemForm
 				btnText={"Сохранить"}
 				titleFieldType="input"
-				title={title}
+				title={taskTitle}
 				description={description}
 				onTitleChange={onTitleChange}
 				onDescriptionChange={onDescriptionChange}

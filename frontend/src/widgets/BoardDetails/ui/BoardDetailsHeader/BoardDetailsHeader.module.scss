@@ -1,7 +1,11 @@
 .boardDetailsHeader {
 	width: 100%;
-	padding: var(--spacing-m) var(--spacing-xl);
+	padding: var(--spacing-m) var(--spacing-l);
 	background: var(--card-overlay-bg);
+
+	@media (min-width: 768px) {
+		padding: var(--spacing-m) var(--spacing-xl);
+	}
 }
 
 .titleField {

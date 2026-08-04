@@ -23,10 +23,10 @@ export const RequireAuth = memo(({ className }: RequireAuthProps) => {
 			align="center"
 			justify="center"
 			className={classNames(cls.requireAuth, {}, [className])}
-			gap="32"
+			gap="xxl"
 		>
 			<VStack
-				gap="8"
+				gap="s"
 				align="center"
 			>
 				<h1 className={cls.title}>Зарегистрируйтесь, чтобы открыть эту доску</h1>
@@ -34,7 +34,7 @@ export const RequireAuth = memo(({ className }: RequireAuthProps) => {
 			</VStack>
 			<VStack
 				align="center"
-				gap="12"
+				gap="m"
 			>
 				<Button onClick={onRegisterClick}>Бесплатная регистрация</Button>
 				<AppLink to="/login">Уже есть аккаунт? Войдите в него</AppLink>

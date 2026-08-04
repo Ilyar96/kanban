@@ -312,7 +312,7 @@ export const BoardDetailsHeader = memo(
 
 					<HStack
 						align="center"
-						gap="8"
+						gap="s"
 					>
 						{isOwner && (
 							<>

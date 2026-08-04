@@ -32,7 +32,7 @@ export const TaskDetailsModal = memo((props: TaskDetailsModalProps) => {
 				{task && (
 					<HStack
 						className={cls.content}
-						gap="16"
+						gap="l"
 					>
 						<UpdateTask
 							className={cls.editSection}

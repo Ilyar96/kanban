@@ -20,7 +20,7 @@ const WorkspacePage = memo(({ className }: WorkspacePageProps) => {
 			/>
 			<VStack
 				as={Container}
-				gap="32"
+				gap="xxl"
 			>
 				<BoardGrid
 					title="Избранное"

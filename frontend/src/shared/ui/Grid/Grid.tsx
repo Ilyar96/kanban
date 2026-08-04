@@ -8,17 +8,8 @@ import {
 import { classNames } from "@/shared/lib/classNames/classNames";
 import cls from "./Grid.module.scss";
 
-export type GridGap = "4" | "8" | "12" | "16" | "24" | "32";
+export type GridGap = "xs" | "s" | "m" | "l" | "xl" | "xxl";
 export type GridAlign = "start" | "center" | "end" | "stretch";
-
-const gapClasses: Record<GridGap, string> = {
-	4: cls.gap4,
-	8: cls.gap8,
-	12: cls.gap12,
-	16: cls.gap16,
-	24: cls.gap24,
-	32: cls.gap32,
-};
 
 const alignClasses: Record<GridAlign, string> = {
 	start: cls.alignStart,
@@ -46,7 +37,7 @@ const GridComponent = <C extends ElementType = "div">(props: GridProps<C>) => {
 	const {
 		className,
 		children,
-		gap = "16",
+		gap = "l",
 		align = "stretch",
 		max = false,
 		columns,
@@ -71,7 +62,7 @@ const GridComponent = <C extends ElementType = "div">(props: GridProps<C>) => {
 
 	return (
 		<Component
-			className={classNames(cls.Grid, mods, [className, gapClasses[gap], alignClasses[align]])}
+			className={classNames(cls.Grid, mods, [className, cls[gap], alignClasses[align]])}
 			style={{ ...gridStyles, ...style }}
 			{...otherProps}
 		>

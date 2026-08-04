@@ -107,7 +107,7 @@ export const ColumnHeader = memo((props: ColumnHeaderProps) => {
 		<>
 			<HStack
 				className={classNames("", {}, [className])}
-				gap="8"
+				gap="s"
 				justify="between"
 				max
 			>

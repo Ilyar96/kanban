@@ -26,6 +26,8 @@ import { appToast } from "@/shared/lib/toast";
 import { ColumnHeader } from "../ColumnHeader/ColumnHeader";
 import cls from "./ColumnList.module.scss";
 
+// TODO починить dnd колонок
+
 interface ColumnListProps {
 	boardId: string;
 	columns: BoardColumn[];
@@ -214,7 +216,7 @@ export const ColumnList = memo((props: ColumnListProps) => {
 	const activeTaskId = taskDnd.activeTask?.id ?? null;
 
 	return (
-		<HStack gap="16">
+		<HStack gap="l">
 			{columns.length > 0 && (
 				<DndContext
 					sensors={sensors}
@@ -228,7 +230,7 @@ export const ColumnList = memo((props: ColumnListProps) => {
 						items={columns.map((c) => c.id)}
 						strategy={horizontalListSortingStrategy}
 					>
-						<HStack gap="16">
+						<HStack gap="l">
 							{columns.map((column) => (
 								<SortableColumn
 									key={column.id}

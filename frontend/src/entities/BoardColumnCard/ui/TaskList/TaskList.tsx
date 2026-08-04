@@ -43,7 +43,7 @@ export const TaskList = memo((props: TaskListProps) => {
 				strategy={verticalListSortingStrategy}
 			>
 				<VStack
-					gap="8"
+					gap="m"
 					max
 				>
 					{tasks.map((task) => (

@@ -32,7 +32,7 @@ export const BoardColumnCard = memo((props: BoardColumnCardProps) => {
 
 	return (
 		<Card className={classNames(cls.boardColumnCard, {}, [className])}>
-			<VStack gap="16">
+			<VStack gap="l">
 				{headerSlot ? (
 					headerSlot
 				) : (

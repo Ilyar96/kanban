@@ -69,12 +69,12 @@ export const BoardDetails = memo((props: BoardDetailsProps) => {
 	return (
 		<VStack
 			className={cls.wrapper}
-			gap="16"
+			gap="l"
 			style={{ background: data.board.backgroundColor }}
 		>
 			<BoardDetailsHeader isOwner={isOwner} />
 			<HStack
-				gap="16"
+				gap="l"
 				className={classNames(cls.boardDetails, {}, [className])}
 			>
 				<ColumnList

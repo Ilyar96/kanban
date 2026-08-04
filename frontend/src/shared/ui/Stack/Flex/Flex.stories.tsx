@@ -12,7 +12,7 @@ const meta: Meta<typeof Flex> = {
 	argTypes: {
 		gap: {
 			control: { type: "radio" },
-			options: ["4", "8", "12", "16", "32"],
+			options: ["xs", "s", "m", "l", "xl", "xxl"],
 		},
 		justify: {
 			control: { type: "radio" },
@@ -55,7 +55,7 @@ export const RowDark: Story = {
 export const RowGap16: Story = {
 	args: {
 		children,
-		gap: "16",
+		gap: "l",
 	},
 };
 
@@ -103,7 +103,7 @@ export const ColumnDark: Story = {
 export const ColumnGap16: Story = {
 	args: {
 		direction: "column",
-		gap: "16",
+		gap: "l",
 		children,
 	},
 };

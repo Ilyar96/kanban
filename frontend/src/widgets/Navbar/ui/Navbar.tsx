@@ -23,7 +23,7 @@ export const Navbar = memo(({ className }: NavbarProps) => {
 				as={Container}
 				align="center"
 				justify="between"
-				gap="12"
+				gap="m"
 			>
 				<Logo className={cls.logo} />
 

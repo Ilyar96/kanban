@@ -13,7 +13,7 @@ const meta: Meta<typeof Grid> = {
 	argTypes: {
 		gap: {
 			control: { type: "radio" },
-			options: ["4", "8", "12", "16", "24", "32"],
+			options: ["xs", "s", "m", "l", "xl", "xxl"],
 		},
 		align: {
 			control: { type: "radio" },
@@ -38,7 +38,7 @@ const children = (
 export const AutoFit: Story = {
 	args: {
 		children,
-		gap: "16",
+		gap: "l",
 		autoFit: true,
 		minColumnWidth: "240px",
 		style: { padding: "24px" },
@@ -48,7 +48,7 @@ export const AutoFit: Story = {
 export const FixedColumns: Story = {
 	args: {
 		children,
-		gap: "16",
+		gap: "l",
 		autoFit: false,
 		columns: 3,
 		style: { padding: "24px" },
