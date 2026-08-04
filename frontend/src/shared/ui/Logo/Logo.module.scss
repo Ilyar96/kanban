@@ -6,7 +6,18 @@
 	}
 }
 
-.logo {
+.logoWrapper {
 	font: var(--font-l);
 	font-weight: 700;
+}
+
+.logo.logo {
+	--icon-size: 85px;
+	--icon-height: 18px;
+	object-fit: contain;
+
+	@media (min-width: 768px) {
+		--icon-size: 114px;
+		--icon-height: 24px;
+	}
 }

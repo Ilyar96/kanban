@@ -3,6 +3,7 @@ import { memo } from "react";
 import cls from "./Logo.module.scss";
 import { AppLink } from "../AppLink/AppLink";
 import { RoutePaths, type AppRoutes } from "@/shared/const/router";
+import { SpriteIcon } from "../SpriteIcon/SpriteIcon";
 
 interface LogoProps {
 	className?: string;
@@ -17,7 +18,12 @@ export const Logo = memo((props: LogoProps) => {
 			to={to}
 			className={classNames(cls.logoWrapper, {}, [className])}
 		>
-			<div className={cls.logo}>KANBAN</div>
+			<div className={cls.logoWrapper}>
+				<SpriteIcon
+					spriteId="logo"
+					className={cls.logo}
+				/>
+			</div>
 		</AppLink>
 	);
 });
