@@ -1,6 +1,7 @@
 export type { UserSchema } from "./model/types/userSchema";
 export { userReducer, userActions } from "./model/slice/userSlice";
 export { initAuthData } from "./model/services/initAuthData/initAuthData";
+export { logoutUser } from "./model/services/logoutUser/logoutUser";
 export {
 	getUserAuthData,
 	getUserId,

@@ -6,6 +6,7 @@ import { setCookie } from "@/shared/lib/cookies";
 import { USER_TOKEN_KEY } from "@/shared/const/cookie";
 import type { User } from "@/shared/types/auth";
 import type { ServerErrorPayload } from "@/shared/types/serverError";
+import { authChannel } from "@/shared/lib/authChannel/authChannel";
 
 interface LoginByUsernameProps {
 	usernameOrEmail: string;
@@ -43,6 +44,7 @@ export const loginByUsername = createAsyncThunk<
 
 		setCookie(USER_TOKEN_KEY, response.data.token);
 		dispatch(userActions.setAuthData(response.data.user));
+		authChannel.postMessage("auth-changed");
 
 		return response.data;
 	} catch (e: unknown) {

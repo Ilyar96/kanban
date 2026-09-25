@@ -3,7 +3,7 @@ import { Dropdown, type DropdownItem } from "@/shared/ui/Dropdown/Dropdown";
 import { Avatar } from "@/shared/ui/Avatar/Avatar";
 import { Button } from "@/shared/ui/Button/Button";
 import { useAppDispatch } from "@/shared/lib/hooks/useAppDispatch/useAppDispatch";
-import { userActions } from "@/entities/User";
+import { logoutUser } from "@/entities/User";
 import { RoutePaths } from "@/shared/const/router";
 
 interface AvatarDropdownProps {
@@ -13,7 +13,7 @@ interface AvatarDropdownProps {
 export const AvatarDropdown = memo(({ className }: AvatarDropdownProps) => {
 	const dispatch = useAppDispatch();
 	const logout = useCallback(() => {
-		dispatch(userActions.logout());
+		dispatch(logoutUser());
 	}, [dispatch]);
 
 	const trigger = (
