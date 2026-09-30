@@ -202,10 +202,10 @@ export const useOptimisticTaskColumns = (
 					activeContainer === overContainer
 						? { ...base, [overContainer]: reorderedItems }
 						: {
-							...base,
-							[activeContainer]: sourceItems.filter((task) => task.id !== activeId),
-							[overContainer]: reorderedItems,
-						};
+								...base,
+								[activeContainer]: sourceItems.filter((task) => task.id !== activeId),
+								[overContainer]: reorderedItems,
+							};
 
 				return {
 					tasksByColumn: nextTasksByColumn,
