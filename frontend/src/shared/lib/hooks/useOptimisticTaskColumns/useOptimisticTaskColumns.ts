@@ -164,8 +164,17 @@ export const useOptimisticTaskColumns = (
 			setOptimisticState((prev) => {
 				const base = prev.signature === sourceSignature ? sourceTasksByColumn : prev.tasksByColumn;
 				const activeContainer = findTaskContainer(base, activeId);
+				const sourceContainer = findTaskContainer(
+					dragStartSnapshotRef.current ?? sourceTasksByColumn,
+					activeId,
+				);
 
-				if (!activeContainer || activeContainer === overContainer) {
+				if (
+					!activeContainer ||
+					!sourceContainer ||
+					(activeContainer === overContainer && activeContainer === sourceContainer) ||
+					overId === activeId
+				) {
 					return prev;
 				}
 
@@ -177,19 +186,26 @@ export const useOptimisticTaskColumns = (
 				}
 
 				const movingTask = sourceItems[activeIndex];
-				const destItems = base[overContainer] ?? [];
+				const destItems =
+					activeContainer === overContainer
+						? sourceItems.filter((task) => task.id !== activeId)
+						: (base[overContainer] ?? []);
 				const overIndex = destItems.findIndex((task) => task.id === overId);
 				const insertAt = overIndex >= 0 ? overIndex : destItems.length;
+				const reorderedItems = [
+					...destItems.slice(0, insertAt),
+					movingTask,
+					...destItems.slice(insertAt),
+				];
 
-				const nextTasksByColumn: TasksByColumn = {
-					...base,
-					[activeContainer]: sourceItems.filter((task) => task.id !== activeId),
-					[overContainer]: [
-						...destItems.slice(0, insertAt),
-						movingTask,
-						...destItems.slice(insertAt),
-					],
-				};
+				const nextTasksByColumn: TasksByColumn =
+					activeContainer === overContainer
+						? { ...base, [overContainer]: reorderedItems }
+						: {
+							...base,
+							[activeContainer]: sourceItems.filter((task) => task.id !== activeId),
+							[overContainer]: reorderedItems,
+						};
 
 				return {
 					tasksByColumn: nextTasksByColumn,
@@ -259,8 +275,16 @@ export const useOptimisticTaskColumns = (
 				overIndexInSource >= 0 &&
 				activeIndex < overIndexInSource;
 			const insertAtBase = overIndex >= 0 ? overIndex : destBase.length;
-			const insertAt =
-				isMovingDownWithinSameColumn && overIndex >= 0 ? insertAtBase + 1 : insertAtBase;
+			let insertAt = insertAtBase;
+			if (isMovingDownWithinSameColumn && overIndex >= 0) {
+				insertAt += 1;
+			} else if (
+				overIndex < 0 &&
+				sourceContainerAtStart !== overContainer &&
+				activeContainer === overContainer
+			) {
+				insertAt = activeIndex;
+			}
 
 			if (
 				activeContainer === overContainer &&
