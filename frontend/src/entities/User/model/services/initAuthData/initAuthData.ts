@@ -28,7 +28,13 @@ export const initAuthData = createAsyncThunk<User | undefined, void, ThunkConfig
 
 			return response.data.user;
 		} catch (error) {
-			removeCookie(USER_TOKEN_KEY);
+			if (
+				isAxiosError(error) &&
+				error.response?.status === 401 &&
+				getCookie(USER_TOKEN_KEY) === token
+			) {
+				removeCookie(USER_TOKEN_KEY);
+			}
 
 			if (isAxiosError(error)) {
 				return rejectWithValue(error.response?.data?.message ?? "Unauthorized");

@@ -6,7 +6,7 @@
 	"scripts": {
 		"db:check": "node src/scripts/check-db.js",
 		"dev": "npm run db:check && npm run prisma:generate && nodemon src/server.js",
-		"start": "npm run db:check && npm run prisma:deploy && node src/server.js",
+		"start": "npm run db:check && node src/server.js",
 		"prisma:generate": "prisma generate",
 		"prisma:deploy": "npm run prisma:generate && prisma migrate deploy",
 		"prisma:migrate": "prisma migrate dev",

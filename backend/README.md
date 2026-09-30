@@ -113,7 +113,7 @@ npx prisma migrate deploy
 npm run start
 ```
 
-`npm run start` performs `db:check` and `prisma migrate deploy` before launching the server.
+`npm run start` checks the database connection and launches the server. Production deployment applies Prisma migrations before restarting the service.
 
 7. Run with PM2 (recommended).
 
