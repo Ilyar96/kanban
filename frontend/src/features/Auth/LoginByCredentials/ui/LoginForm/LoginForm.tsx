@@ -19,6 +19,8 @@ import {
 	DynamicModuleLoader,
 	type ReducersList,
 } from "@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader";
+import cls from "./LoginForm.module.scss";
+import { classNames } from "@/shared/lib/classNames/classNames";
 
 interface LoginFormProps {
 	className?: string;
@@ -85,7 +87,7 @@ export const LoginForm = memo(({ className }: LoginFormProps) => {
 			<VStack
 				as={Card}
 				gap="m"
-				className={className}
+				className={classNames(cls.formWrapper, {}, [className])}
 			>
 				<VStack
 					as="form"

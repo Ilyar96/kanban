@@ -24,6 +24,7 @@ import {
 	type ReducersList,
 } from "@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader";
 import { classNames } from "@/shared/lib/classNames/classNames";
+import cls from "./RegisterForm.module.scss";
 
 interface RegisterFormProps {
 	className?: string;
@@ -94,7 +95,7 @@ export const RegisterForm = memo(({ className }: RegisterFormProps) => {
 			<VStack
 				as={Card}
 				gap="l"
-				className={classNames("", {}, [className])}
+				className={classNames(cls.formWrapper, {}, [className])}
 			>
 				<VStack
 					as="form"
