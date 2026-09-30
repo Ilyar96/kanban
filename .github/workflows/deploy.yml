@@ -1,4 +1,4 @@
-name: Deploy to Server
+name: Deploy frontend
 
 on:
   push:
@@ -8,134 +8,60 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: deploy-production
-  cancel-in-progress: false
+  group: frontend-deploy
+  cancel-in-progress: true
 
 jobs:
-  deploy-backend:
-    name: Deploy backend and frontend via SSH
+  build-and-deploy:
+    name: Build frontend and deploy dist to server
+    environment: production
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 15
+
+    env:
+      VITE_API_URL: ${{ vars.VITE_API_URL }}
+      VITE_ENABLE_IMAGE_OPTIMIZER: "false"
 
     steps:
-      - name: Deploy on remote server
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install --no-audit --no-fund
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Upload production build to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          source: "frontend/dist"
+          target: "/var/www/kanban/frontend"
+          strip_components: 1
+          rm: true
+
+      - name: Reload nginx
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          timeout: 5m
-          command_timeout: 90m
-          debug: true
           script: |
             set -e
-
-            log() {
-              echo "[deploy] $1"
-            }
-
-            install_node_dependencies() {
-              TARGET_NAME="$1"
-              shift
-
-              if [ -f "package-lock.json" ]; then
-                if run_with_progress "$TARGET_NAME npm ci" "$TARGET_NAME install via npm ci is running..." npm ci "$@"; then
-                  return 0
-                fi
-
-                log "$TARGET_NAME npm ci failed, falling back to npm install"
-              else
-                log "package-lock.json not found for $TARGET_NAME, using npm install"
-              fi
-
-              run_with_progress "$TARGET_NAME npm install" "$TARGET_NAME install via npm install is running..." npm install "$@"
-            }
-
-            run_with_progress() {
-              STEP_NAME="$1"
-              PROGRESS_MESSAGE="$2"
-              shift 2
-              START_TS=$(date +%s)
-
-              log "START: $STEP_NAME"
-              log "CMD: $*"
-
-              (
-                while true; do
-                  log "$PROGRESS_MESSAGE"
-                  sleep 30
-                done
-              ) &
-              HEARTBEAT_PID=$!
-
-              set +e
-              "$@"
-              COMMAND_STATUS=$?
-              set -e
-
-              kill "$HEARTBEAT_PID" >/dev/null 2>&1 || true
-              wait "$HEARTBEAT_PID" 2>/dev/null || true
-
-              END_TS=$(date +%s)
-              DURATION=$((END_TS - START_TS))
-
-              if [ "$COMMAND_STATUS" -ne 0 ]; then
-                log "FAIL: $STEP_NAME (exit code $COMMAND_STATUS, ${DURATION}s)"
-                return "$COMMAND_STATUS"
-              fi
-
-              log "DONE: $STEP_NAME (${DURATION}s)"
-
-              return "$COMMAND_STATUS"
-            }
-
-            PROJECT_DIR="/var/www/kanban"
-            BACKEND_DIR="$PROJECT_DIR/backend"
-            FRONTEND_DIR="$PROJECT_DIR/frontend"
-            BRANCH="${{ github.ref_name }}"
-
-            if [ ! -d "$PROJECT_DIR/.git" ]; then
-              log "Repository not found at $PROJECT_DIR"
-              exit 1
-            fi
-
-            cd "$PROJECT_DIR"
-            run_with_progress "sync repository" "repository sync is running..." git fetch --all --prune
-            run_with_progress "checkout branch" "branch checkout is running..." git checkout "$BRANCH"
-            run_with_progress "reset branch to origin" "git reset is running..." git reset --hard "origin/$BRANCH"
-            run_with_progress "clean repository" "git clean is running..." git clean -fd
-
-            if [ ! -d "$FRONTEND_DIR" ]; then
-              log "Frontend directory not found at $FRONTEND_DIR"
-              exit 1
-            fi
-
-            cd "$FRONTEND_DIR"
-            log "install frontend dependencies"
-            install_node_dependencies "frontend" --no-audit --no-fund
-            log "build frontend"
-            export VITE_ENABLE_IMAGE_OPTIMIZER=false
-            run_with_progress "frontend build" "frontend build is running..." npm run build
-
-            if [ ! -d "$BACKEND_DIR" ]; then
-              log "Backend directory not found at $BACKEND_DIR"
-              exit 1
-            fi
-
-            cd "$BACKEND_DIR"
-            log "install backend dependencies"
-            install_node_dependencies "backend" --omit=dev --no-audit --no-fund
-            log "run prisma"
-            run_with_progress "prisma generate" "prisma generate is running..." npx prisma generate
-            run_with_progress "prisma migrate deploy" "prisma migrate deploy is running..." npx prisma migrate deploy
-
-            log "restart backend"
-            if pm2 describe kanban > /dev/null 2>&1; then
-              run_with_progress "pm2 restart" "pm2 restart is running..." pm2 restart kanban --update-env
-            else
-              run_with_progress "pm2 start" "pm2 start is running..." pm2 start npm --name kanban -- start
-            fi
-
-            run_with_progress "pm2 save" "pm2 save is running..." pm2 save
-            log "done"
+            sudo mkdir -p /var/www/kanban/frontend
+            sudo nginx -t
+            sudo systemctl reload nginx
